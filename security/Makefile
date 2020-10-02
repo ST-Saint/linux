@@ -36,3 +36,6 @@ obj-$(CONFIG_BPF_LSM)			+= bpf/
 # Object integrity file lists
 subdir-$(CONFIG_INTEGRITY)		+= integrity
 obj-$(CONFIG_INTEGRITY)			+= integrity/
+
+# ARM Watchpoint Isolation Domain
+obj-$(CONFIG_AWID) += awid/
