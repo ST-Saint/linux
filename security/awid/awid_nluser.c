@@ -1,4 +1,5 @@
 /* #include "awid_nluser.h" */
+#include "awid.h"
 #include <errno.h>
 #include <linux/netlink.h>
 #include <stdint.h>
@@ -25,8 +26,25 @@ int main(int argc, char **argv) {
   socklen_t len;
   struct nlmsghdr *nlh = NULL;
   struct sockaddr_nl saddr, daddr;
-  char *umsg = "hello netlink!!";
+  char umsg[1024];
   int loop_count = 0;
+  unsigned long test_addr = 0;
+
+  int real = getuid();
+  int euid = geteuid();
+  printf("The REAL UID =: %d\n", real);
+  printf("The EFFECTIVE UID =: %d\n", euid);
+
+  ToChar(umsg, (unsigned long)&test_addr);
+
+  printf("%u %016x\n", &test_addr, (unsigned long)&test_addr);
+  for (int i = 0; i < 8; ++i) {
+    printf("%x ", umsg[i]);
+  }
+  printf("\n\n");
+
+  test_addr = ToUnsignedLong(umsg);
+  printf("%x\n", test_addr);
 
   /*Create netlink socket*/
   skfd = socket(AF_NETLINK, SOCK_RAW,
@@ -65,31 +83,27 @@ int main(int argc, char **argv) {
   nlh->nlmsg_pid = saddr.nl_pid; // self port
 
   memcpy(NLMSG_DATA(nlh), umsg, strlen(umsg));
-  while (loop_count < 11) {
-    printf("sendto kernel:%s\n", umsg);
-    ret = sendto(skfd, nlh, nlh->nlmsg_len, 0, (struct sockaddr *)&daddr,
-                 sizeof(struct sockaddr_nl));
-    if (!ret) {
-      perror("sendto error\n");
-      close(skfd);
-      exit(-1);
-    }
-
-    // Receive netlink message from kernel.
-    memset(&u_info, 0, sizeof(u_info));
-    len = sizeof(struct sockaddr_nl);
-    ret = recvfrom(skfd, &u_info, sizeof(user_msg_info), 0,
-                   (struct sockaddr *)&daddr, &len);
-    if (!ret) {
-      perror("recv form kernel error\n");
-      close(skfd);
-      exit(-1);
-    }
-
-    printf("from kernel:%s\n", u_info.msg);
-    // usleep(1000);
-    loop_count++;
+  printf("sendto kernel:%s\n", umsg);
+  ret = sendto(skfd, nlh, nlh->nlmsg_len, 0, (struct sockaddr *)&daddr,
+               sizeof(struct sockaddr_nl));
+  if (!ret) {
+    perror("sendto error\n");
+    close(skfd);
+    exit(-1);
   }
+
+  // Receive netlink message from kernel.
+  memset(&u_info, 0, sizeof(u_info));
+  len = sizeof(struct sockaddr_nl);
+  ret = recvfrom(skfd, &u_info, sizeof(user_msg_info), 0,
+                 (struct sockaddr *)&daddr, &len);
+  if (!ret) {
+    perror("recv form kernel error\n");
+    close(skfd);
+    exit(-1);
+  }
+
+  printf("from kernel:%s\n", u_info.msg);
   close(skfd);
 
   free((void *)nlh);

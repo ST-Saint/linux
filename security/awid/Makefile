@@ -14,9 +14,9 @@ KDIR := ../../
 PWD := ${CURDIR}
 SOURCES=$(wildcard *.c^)
 HEADERS=$(wildcard *.h^)
-all: $(SOURCES) $(HEADERS)
-	make -C $(KDIR) M=$(PWD) modules
-awid_nluser:
+all: $(SOURCES) $(HEADERS) awid_nluser
+	make -C $(KDIR) M=$(PWD)
+awid_nluser: awid_nluser.c
 	aarch64-linux-gnu-gcc awid_nluser.c -o awid_nluser
 clean:
 	rm -f *.ko *.o *.mod.o *.mod.c *.symvers *.order awid_nluser
