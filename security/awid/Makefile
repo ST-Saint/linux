@@ -11,7 +11,10 @@
 obj-$(CONFIG_AWID) += awid.o
 awid-objs := awid_core.o awid_nlkern.o
 KDIR := ../../
-all: awid_nluser
+PWD := ${CURDIR}
+SOURCES=$(wildcard *.c^)
+HEADERS=$(wildcard *.h^)
+all: $(SOURCES) $(HEADERS)
 	make -C $(KDIR) M=$(PWD) modules
 awid_nluser:
 	aarch64-linux-gnu-gcc awid_nluser.c -o awid_nluser
