@@ -19,21 +19,26 @@ MODULE_PARM_DESC(ksym, "Kernel symbol to monitor; this module will report any"
 static void sample_hbp_handler(struct perf_event *bp,
                                struct perf_sample_data *data,
                                struct pt_regs *regs) {
-  printk(KERN_INFO "%s value is changed\n", ksym_name);
-  dump_stack();
-  printk(KERN_INFO "Dump stack from sample_hbp_handler\n");
+  /* printk(KERN_INFO "%s value is changed\n", ksym_name); */
+  /* dump_stack(); */
+  /* printk(KERN_INFO "Dump stack from sample_hbp_handler\n"); */
+  printk(KERN_INFO "watchpoint handler is triggered\n");
+  do_exit(SIGKILL);
 }
 
 static int __init register_test_watchpoint(void) {
   int ret;
   struct perf_event_attr attr;
-  void *addr = __symbol_get(ksym_name);
+  int test_value = 0;
 
-  if (!addr)
-    return -ENXIO;
+  /* void *addr = __symbol_get(ksym_name); */
+
+  /* if (!addr) */
+  /*   return -ENXIO; */
 
   hw_breakpoint_init(&attr);
-  attr.bp_addr = (unsigned long)addr;
+  /* attr.bp_addr = (unsigned long)addr; */
+  attr.bp_addr = (unsigned long)(&test_value);
   attr.bp_len = HW_BREAKPOINT_LEN_4;
   attr.bp_type = HW_BREAKPOINT_W;
 
@@ -43,7 +48,7 @@ static int __init register_test_watchpoint(void) {
     goto fail;
   }
 
-  printk(KERN_INFO "HW Breakpoint for %s write installed\n", ksym_name);
+  /* printk(KERN_INFO "HW Breakpoint for %s write installed\n", ksym_name); */
 
   return 0;
 
