@@ -1,0 +1,6 @@
+config AWID
+    tristate "Build ARM Watchpoint Isolation Domain"
+    depends on HAVE_HW_BREAKPOINT
+    default m
+    help
+      This builds arm watchpoint isolation domain.
