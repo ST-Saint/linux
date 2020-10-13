@@ -32,7 +32,7 @@ static void sample_hbp_handler(struct perf_event *bp,
 
 int test_value = 0;
 
-asmlinkage long sys_register_watchpoint(unsigned long addr) {
+long __arm64_sys_register_watchpoint(unsigned long addr) {
   printk(KERN_INFO
          "Code Called in hook_func. My pid: %d, comm: %s, uid: %d, euid: %d\n",
          current->tgid, current->comm, current->cred->uid, current->cred->euid, current->pid, current->tgid);
