@@ -20,21 +20,23 @@ struct perf_event *__percpu *sample_hbp;
 static void sample_hbp_handler(struct perf_event *bp,
                                struct perf_sample_data *data,
                                struct pt_regs *regs) {
-  /* printk(KERN_INFO "%s value is changed\n", ksym_name); */
-  /* printk(KERN_INFO "Dump stack from sample_hbp_handler\n"); */
-  unregister_wide_hw_breakpoint(sample_hbp);
-  printk(KERN_INFO "watchpoint handler is triggered\n");
-  dump_stack();
+  printk("--------------------------------------\n")
+  printk(KERN_INFO
+         "trigger hook_func. My pid: %d, tgid: %d, comm: %s, uid: %d, euid: %d\n",
+         current->pid, current->tgid, current->comm, current->cred->uid, current->cred->euid);
+  printk("--------------------------------------\n")
+  /* dump_stack(); */
   /* do_exit(SIGKILL); */
 }
 
 int test_value = 0;
 
 asmlinkage long __arm64_sys_register_watchpoint(unsigned long addr) {
+  printk("--------------------------------------\n")
   printk(KERN_INFO
-         "Code Called in hook_func. My pid: %d, comm: %s, uid: %d, euid: %d\n",
-         current->tgid, current->comm, current->cred->uid, current->cred->euid, current->pid, current->tgid);
-
+         "syscall func. My pid: %d, tgid: %d, comm: %s, uid: %d, euid: %d\n",
+         current->pid, current->tgid, current->comm, current->cred->uid, current->cred->euid);
+  printk("--------------------------------------\n")
   test_value+=1;
   int ret;
   struct perf_event_attr attr;
@@ -44,7 +46,7 @@ asmlinkage long __arm64_sys_register_watchpoint(unsigned long addr) {
   /* if (!addr) */
   /*   return -ENXIO; */
 
-  printk("watchpoint at %08lx\n", addr);
+  printk("watchpoint at %08lx value: %d\n", addr, test_value);
 
   hw_breakpoint_init(&attr);
   /* attr.bp_addr = (unsigned long)addr; */
@@ -69,10 +71,10 @@ fail:
 }
 
 static int __init awid_module_init(void) {
-  __arm64_sys_register_watchpoint((unsigned long)(&test_value));
+  /* __arm64_sys_register_watchpoint((unsigned long)(&test_value)); */
   printk(KERN_INFO
-         "Code Called in hook_func. My pid: %d, comm: %s, uid: %d, euid: %d\n",
-         current->tgid, current->comm, current->cred->uid, current->cred->euid);
+         "Code Called in hook_func. My pid: %d, tgid: %d, comm: %s, uid: %d, euid: %d\n",
+         current->pid, current->tgid, current->comm, current->cred->uid, current->cred->euid);
   return 0;
 }
 
@@ -80,9 +82,6 @@ static void __exit awid_module_exit(void) {
   printk("awid_netlink_unregister!\n");
   if (!IS_ERR((void __force *)sample_hbp)) {
     unregister_wide_hw_breakpoint(sample_hbp);
-    /* symbol_put(ksym_name); */
-    /* printk(KERN_INFO "HW Breakpoint for %s write uninstalled\n", ksym_name);
-     */
   }
 }
 

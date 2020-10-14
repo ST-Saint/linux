@@ -24,6 +24,7 @@ int main(int argc, char **argv) {
   printf("The PID = %d\n", pid);
   printf("The tid = %d\n", tid);
 
+  printf("syscall id %d\n", __NR_register_watchpoint);
   syscall(__NR_register_watchpoint, 0xffff00001234);
   return 0;
 }
