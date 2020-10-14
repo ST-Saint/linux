@@ -14,7 +14,6 @@
 
 int main(int argc, char **argv) {
   int ret;
-  unsigned long test_addr = 0;
 
   int real = getuid();
   int euid = geteuid();
@@ -25,6 +24,6 @@ int main(int argc, char **argv) {
   printf("The PID = %d\n", pid);
   printf("The tid = %d\n", tid);
 
-  sys_register_watchpoint();
+  syscall(__NR_register_watchpoint, 0xffff00001234);
   return 0;
 }
