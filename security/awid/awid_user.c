@@ -1,5 +1,5 @@
 /* #include "awid_nluser.h" */
-#include "awid.h"
+#include "awid_core.h"
 #include <errno.h>
 #include <linux/netlink.h>
 #include <stdint.h>

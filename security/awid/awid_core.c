@@ -1,14 +1,12 @@
 #include "awid_core.h"
-#include "awid_nlkern.h"
 
 #include <linux/init.h> /* Needed for the macros */
 #include <linux/kallsyms.h>
 #include <linux/kernel.h> /* Needed for KERN_INFO */
 #include <linux/module.h> /* Needed by all modules */
 
-#include "asm/string.h"
+#include <asm/string.h>
 #include "awid_core.h"
-#include "awid_nlkern.h"
 #include <linux/hw_breakpoint.h>
 #include <linux/perf_event.h>
 
@@ -32,7 +30,7 @@ static void sample_hbp_handler(struct perf_event *bp,
 
 int test_value = 0;
 
-long __arm64_sys_register_watchpoint(unsigned long addr) {
+asmlinkage long __arm64_sys_register_watchpoint(unsigned long addr) {
   printk(KERN_INFO
          "Code Called in hook_func. My pid: %d, comm: %s, uid: %d, euid: %d\n",
          current->tgid, current->comm, current->cred->uid, current->cred->euid, current->pid, current->tgid);
@@ -71,7 +69,7 @@ fail:
 }
 
 static int __init awid_module_init(void) {
-  sys_register_watchpoint((unsigned long)(&test_value));
+  __arm64_sys_register_watchpoint((unsigned long)(&test_value));
   printk(KERN_INFO
          "Code Called in hook_func. My pid: %d, comm: %s, uid: %d, euid: %d\n",
          current->tgid, current->comm, current->cred->uid, current->cred->euid);
