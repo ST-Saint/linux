@@ -20,7 +20,7 @@ struct perf_event *__percpu *sample_hbp;
 static void sample_hbp_handler(struct perf_event *bp,
                                struct perf_sample_data *data,
                                struct pt_regs *regs) {
-  printk("--------------------------------------\n");
+  printk("-------------------------------------\n");
   printk(KERN_INFO
          "trigger hook_func. My pid: %d, tgid: %d, comm: %s, uid: %d, euid: %d\n",
          current->pid, current->tgid, current->comm, current->cred->uid, current->cred->euid);
@@ -55,13 +55,13 @@ asmlinkage long __arm64_sys_register_watchpoint(unsigned long addr) {
   printk(KERN_INFO "Watchpoint registration start\n");
   /* rcu_read_lock(); */
   /* printk(KERN_INFO "Watchpoint registration rcu read lock\n"); */
-  preempt_disable();
-  printk(KERN_INFO "Watchpoint registration preempt disable\n");
+  /* preempt_disable(); */
+  /* printk(KERN_INFO "Watchpoint registration preempt disable\n"); */
   sample_hbp = register_wide_hw_breakpoint(&attr, sample_hbp_handler, NULL);
   /* rcu_read_unlock(); */
   /* printk(KERN_INFO "Watchpoint registration rcu read unlock\n"); */
-  preempt_enable();
-  printk(KERN_INFO "Watchpoint registration preempt enable\n");
+  /* preempt_enable(); */
+  /* printk(KERN_INFO "Watchpoint registration preempt enable\n"); */
   if (IS_ERR((void __force *)sample_hbp)) {
     ret = PTR_ERR((void __force *)sample_hbp);
     printk(KERN_INFO "Watchpoint registration done %d\n", ret);
