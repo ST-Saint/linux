@@ -20,47 +20,56 @@ struct perf_event *__percpu *sample_hbp;
 static void sample_hbp_handler(struct perf_event *bp,
                                struct perf_sample_data *data,
                                struct pt_regs *regs) {
-  printk("--------------------------------------\n")
+  printk("--------------------------------------\n");
   printk(KERN_INFO
          "trigger hook_func. My pid: %d, tgid: %d, comm: %s, uid: %d, euid: %d\n",
          current->pid, current->tgid, current->comm, current->cred->uid, current->cred->euid);
-  printk("--------------------------------------\n")
   /* dump_stack(); */
-  /* do_exit(SIGKILL); */
+  do_exit(SIGKILL);
 }
 
 int test_value = 0;
 
 asmlinkage long __arm64_sys_register_watchpoint(unsigned long addr) {
-  printk("--------------------------------------\n")
+  printk("--------------------------------------\n");
   printk(KERN_INFO
          "syscall func. My pid: %d, tgid: %d, comm: %s, uid: %d, euid: %d\n",
          current->pid, current->tgid, current->comm, current->cred->uid, current->cred->euid);
-  printk("--------------------------------------\n")
-  test_value+=1;
   int ret;
   struct perf_event_attr attr;
 
   /* void *addr = __symbol_get(ksym_name); */
 
   /* if (!addr) */
-  /*   return -ENXIO; */
+  /*   RETURN -ENXIO; */
 
-  printk("watchpoint at %08lx value: %d\n", addr, test_value);
 
   hw_breakpoint_init(&attr);
-  /* attr.bp_addr = (unsigned long)addr; */
+  /* attr.bp_addr = (unsigned long)(&test_value); */
   attr.bp_addr = addr;
   attr.bp_len = HW_BREAKPOINT_LEN_4;
   attr.bp_type = HW_BREAKPOINT_W;
 
+  test_value+=1;
+  printk("watchpoint at %08lx value: %d\n", addr, test_value);
+  printk(KERN_INFO "Watchpoint registration start\n");
+  /* rcu_read_lock(); */
+  /* printk(KERN_INFO "Watchpoint registration rcu read lock\n"); */
+  preempt_disable();
+  printk(KERN_INFO "Watchpoint registration preempt disable\n");
   sample_hbp = register_wide_hw_breakpoint(&attr, sample_hbp_handler, NULL);
+  /* rcu_read_unlock(); */
+  /* printk(KERN_INFO "Watchpoint registration rcu read unlock\n"); */
+  preempt_enable();
+  printk(KERN_INFO "Watchpoint registration preempt enable\n");
   if (IS_ERR((void __force *)sample_hbp)) {
     ret = PTR_ERR((void __force *)sample_hbp);
+    printk(KERN_INFO "Watchpoint registration done %d\n", ret);
     goto fail;
   }
 
   /* printk(KERN_INFO "HW Breakpoint for %s write installed\n", ksym_name); */
+  printk(KERN_INFO "Watchpoint registration succeed\n");
 
   return 0;
 
