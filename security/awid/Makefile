@@ -17,6 +17,6 @@ HEADERS=$(wildcard *.h^)
 all: $(SOURCES) $(HEADERS)
 	make -C $(KDIR) M=$(PWD)
 awid_user: awid_user.c
-	aarch64-linux-gnu-gcc awid_user.c -o awid_user
+	aarch64-linux-gnu-gcc awid_user.c -o awid_user -lpthread
 clean:
 	rm -f *.ko *.o *.mod.o *.mod.c *.symvers *.order awid_user

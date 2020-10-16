@@ -24,7 +24,10 @@ static void sample_hbp_handler(struct perf_event *bp,
   printk(KERN_INFO
          "trigger hook_func. My pid: %d, tgid: %d, comm: %s, uid: %d, euid: %d\n",
          current->pid, current->tgid, current->comm, current->cred->uid, current->cred->euid);
-  /* dump_stack(); */
+  printk("-------------------------------------\n");
+  printk("\ndump trigger trace\n");
+  printk("-------------------------------------\n");
+  dump_stack();
   do_exit(SIGKILL);
 }
 
@@ -53,6 +56,7 @@ asmlinkage long __arm64_sys_register_watchpoint(unsigned long addr) {
   test_value+=1;
   printk("watchpoint at %08lx value: %d\n", addr, test_value);
   printk(KERN_INFO "Watchpoint registration start\n");
+  synchronize_rcu();
   /* rcu_read_lock(); */
   /* printk(KERN_INFO "Watchpoint registration rcu read lock\n"); */
   /* preempt_disable(); */

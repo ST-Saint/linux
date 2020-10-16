@@ -9,15 +9,14 @@
 #include <sys/socket.h>
 #include <sys/syscall.h>
 #include <unistd.h>
+#include <pthread.h>
 
 #define gettid() syscall(SYS_gettid)
 
 static int test_value=0;
 
-int main(int argc, char **argv) {
+void test_ntid(){
   int ret;
-
-  /* fork(); */
   int real = getuid();
   int euid = geteuid();
   pid_t pid = getpid();
@@ -27,12 +26,29 @@ int main(int argc, char **argv) {
   printf("The PID = %d\n", pid);
   printf("The tid = %d\n\n", tid);
   /* printf("syscall id %d\n", __NR_register_watchpoint); */
-  printf("test value addr: %x\n\n", (unsigned long)(&test_value));
+  // printf("test value addr: %x\n\n", (unsigned long)(&test_value));
   ret = syscall(__NR_register_watchpoint, (unsigned long)(&test_value));
   printf("syscall return %d\n\n", ret);
   printf("------------------\n\n");
-  printf("test trigger ori value: %d\n", test_value);
+  int i, n;
+  for(i=0;i<3;++i){
+    scanf("%d", &n);
+    printf("input %d: %d\n", i, n);
+  }
+  // printf("test trigger ori value: %d\n", test_value);
   /* printf("test_value++ : %d\n", test_value++); */
-  /* printf("++test_value : %d\n", ++test_value); */
-  return 0;
+  /* printf("++test_value : %d\n", ++test_value); */ 
+  //  return NULL;
 }
+
+int main(int argc, char **argv) {
+
+  /* fork(); */
+  pthread_t ntid;
+  // int err = pthread_create(&ntid, NULL, test_ntid, NULL);
+  // if (err != 0)
+  // printf("can't create thread: %s\n", strerror(err));
+  // pthread_join(ntid,NULL);
+  test_ntid();
+  return 0;
+ }
