@@ -52,7 +52,8 @@ asmlinkage long __arm64_sys_register_watchpoint(unsigned long addr) {
   attr.bp_addr = addr;
   attr.bp_len = HW_BREAKPOINT_LEN_4;
   attr.bp_type = HW_BREAKPOINT_W;
-
+  attr.disabled = 1;
+  
   test_value+=1;
   printk("watchpoint at %08lx value: %d\n", addr, test_value);
   printk(KERN_INFO "Watchpoint registration start\n");
