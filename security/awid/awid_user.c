@@ -15,7 +15,8 @@
 
 static int test_value=0;
 
-void test_ntid(){
+void test_ntid()
+{
   int ret;
   int real = getuid();
   int euid = geteuid();
@@ -27,18 +28,24 @@ void test_ntid(){
   printf("The tid = %d\n\n", tid);
   /* printf("syscall id %d\n", __NR_register_watchpoint); */
   // printf("test value addr: %x\n\n", (unsigned long)(&test_value));
-  ret = syscall(__NR_register_watchpoint, (unsigned long)(&test_value));
+  ret = syscall(__NR_register_watchpoint, (unsigned long)(&test_value),
+          HW_BREAKPOINT_LEN_4, HW_BREAKPOINT_W, HW_BREAKPOINT_SELF);
   printf("syscall return %d\n\n", ret);
   printf("------------------\n\n");
   int i, n;
-  for(i=0;i<3;++i){
-    scanf("%d", &n);
-    printf("input %d: %d\n", i, n);
+  char c;
+  while (1) {
+    scanf("%c", &c);
+    switch (c) {
+      default: {
+        printf("%c\n\n", c);
+        break;
+    }
+    case 'q': {
+      return;
+    }
+    }
   }
-  // printf("test trigger ori value: %d\n", test_value);
-  /* printf("test_value++ : %d\n", test_value++); */
-  /* printf("++test_value : %d\n", ++test_value); */ 
-  //  return NULL;
 }
 
 int main(int argc, char **argv) {

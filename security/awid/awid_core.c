@@ -110,6 +110,8 @@ asmlinkage long __arm64_sys_register_watchpoint(
 	       current->cred->uid.val, current->cred->euid.val);
 	printk("--------------------------------------\n");
 
+	printk("addr: %lx length: %d type: %d auth: %d\n", addr, wp_length,
+	       wp_type, wp_auth);
 	hw_breakpoint_init(&attr);
 	attr.bp_addr = addr;
 	if (wp_length == HW_BREAKPOINT_LEN_1 ||
@@ -122,17 +124,26 @@ asmlinkage long __arm64_sys_register_watchpoint(
 	    wp_length == HW_BREAKPOINT_LEN_8) {
 		attr.bp_len = wp_length;
 	} else {
-		return EINVAL;
+		return -EINVAL;
 	}
 	if (wp_type == HW_BREAKPOINT_EMPTY || wp_type == HW_BREAKPOINT_R ||
 	    wp_type == HW_BREAKPOINT_W || wp_type == HW_BREAKPOINT_RW ||
 	    wp_type == HW_BREAKPOINT_X || wp_type == HW_BREAKPOINT_INVALID) {
 		attr.bp_type = wp_type;
 	} else {
-		return EINVAL;
+		return -EINVAL;
+	}
+	if( wp_auth == HW_BREAKPOINT_NONE ||
+		wp_auth == HW_BREAKPOINT_SELF ||
+		wp_auth == HW_BREAKPOINT_PROC ||
+		wp_auth == HW_BREAKPOINT_THRD
+	){
+		attr.bp_auth = wp_auth;
+	}
+	else{
+		return -EINVAL;
 	}
 	attr.disabled = 1;
-	attr.bp_auth = 0;
 
 	/* printk(KERN_INFO "Watchpoint registration start\n"); */
 	/* synchronize_rcu(); */
