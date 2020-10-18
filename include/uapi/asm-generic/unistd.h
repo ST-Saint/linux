@@ -858,12 +858,10 @@ __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
 #define __NR_faccessat2 439
 __SYSCALL(__NR_faccessat2, sys_faccessat2)
 
-#ifdef CONFIG_AWID
 #define __NR_register_watchpoint 440
 __SYSCALL(__NR_register_watchpoint, sys_register_watchpoint)
 #define __NR_watchpoint_trigger 441
 __SYSCALL(__NR_watchpoint_trigger, sys_watchpoint_trigger)
-#endif
 
 #undef __NR_syscalls
 #define __NR_syscalls 442
