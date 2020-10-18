@@ -99,7 +99,7 @@ __arm64_sys_watchpoint_trigger(struct perf_event *wp)
 
 asmlinkage long __arm64_sys_register_watchpoint(
 	unsigned long addr, enum HW_BREAKPOINT_LEN wp_length,
-	enum HW_BREAKPOINT_TYPE wp_type, enum HW_BREAkPOINT_AUTH wp_auth)
+	enum HW_BREAKPOINT_TYPE wp_type, enum HW_BREAKPOINT_AUTH wp_auth)
 {
 	int ret;
 	struct perf_event_attr attr;
