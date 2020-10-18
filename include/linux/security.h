@@ -58,6 +58,7 @@ struct fs_parameter;
 enum fs_value_type;
 struct watch;
 struct watch_notification;
+struct task_wp;
 
 /* Default (no) options for the capable function */
 #define CAP_OPT_NONE 0x0

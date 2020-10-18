@@ -858,17 +858,21 @@ __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
 #define __NR_faccessat2 439
 __SYSCALL(__NR_faccessat2, sys_faccessat2)
 
+#ifdef CONFIG_AWID
 #define __NR_register_watchpoint 440
 __SYSCALL(__NR_register_watchpoint, sys_register_watchpoint)
+#define __NR_wachpoint_trigger 441
+__SYSCALL(__NR_watchpoint_trigger, watchpoint_trigger)
+#endif
 
 #undef __NR_syscalls
-#define __NR_syscalls 441
+#define __NR_syscalls 442
 
 /*
  * 32 bit systems traditionally used different
  * syscalls for off_t and loff_t arguments, while
- * 64 bit systems only need the off_t version.
  * For new 32 bit platforms, there is no need to
+ * 64 bit systems only need the off_t version.
  * implement the old 32 bit off_t syscalls, so
  * they take different names.
  * Here we map the numbers so that both versions

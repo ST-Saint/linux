@@ -56,50 +56,50 @@ int hw_breakpoint_slots(int type)
 	}
 }
 
-#define READ_WB_REG_CASE(OFF, N, REG, VAL)	\
-	case (OFF + N):				\
-		AARCH64_DBG_READ(N, REG, VAL);	\
+#define READ_WB_REG_CASE(OFF, N, REG, VAL)                                     \
+	case (OFF + N):                                                        \
+		AARCH64_DBG_READ(N, REG, VAL);                                 \
 		break
 
-#define WRITE_WB_REG_CASE(OFF, N, REG, VAL)	\
-	case (OFF + N):				\
-		AARCH64_DBG_WRITE(N, REG, VAL);	\
+#define WRITE_WB_REG_CASE(OFF, N, REG, VAL)                                    \
+	case (OFF + N):                                                        \
+		AARCH64_DBG_WRITE(N, REG, VAL);                                \
 		break
 
-#define GEN_READ_WB_REG_CASES(OFF, REG, VAL)	\
-	READ_WB_REG_CASE(OFF,  0, REG, VAL);	\
-	READ_WB_REG_CASE(OFF,  1, REG, VAL);	\
-	READ_WB_REG_CASE(OFF,  2, REG, VAL);	\
-	READ_WB_REG_CASE(OFF,  3, REG, VAL);	\
-	READ_WB_REG_CASE(OFF,  4, REG, VAL);	\
-	READ_WB_REG_CASE(OFF,  5, REG, VAL);	\
-	READ_WB_REG_CASE(OFF,  6, REG, VAL);	\
-	READ_WB_REG_CASE(OFF,  7, REG, VAL);	\
-	READ_WB_REG_CASE(OFF,  8, REG, VAL);	\
-	READ_WB_REG_CASE(OFF,  9, REG, VAL);	\
-	READ_WB_REG_CASE(OFF, 10, REG, VAL);	\
-	READ_WB_REG_CASE(OFF, 11, REG, VAL);	\
-	READ_WB_REG_CASE(OFF, 12, REG, VAL);	\
-	READ_WB_REG_CASE(OFF, 13, REG, VAL);	\
-	READ_WB_REG_CASE(OFF, 14, REG, VAL);	\
+#define GEN_READ_WB_REG_CASES(OFF, REG, VAL)                                   \
+	READ_WB_REG_CASE(OFF, 0, REG, VAL);                                    \
+	READ_WB_REG_CASE(OFF, 1, REG, VAL);                                    \
+	READ_WB_REG_CASE(OFF, 2, REG, VAL);                                    \
+	READ_WB_REG_CASE(OFF, 3, REG, VAL);                                    \
+	READ_WB_REG_CASE(OFF, 4, REG, VAL);                                    \
+	READ_WB_REG_CASE(OFF, 5, REG, VAL);                                    \
+	READ_WB_REG_CASE(OFF, 6, REG, VAL);                                    \
+	READ_WB_REG_CASE(OFF, 7, REG, VAL);                                    \
+	READ_WB_REG_CASE(OFF, 8, REG, VAL);                                    \
+	READ_WB_REG_CASE(OFF, 9, REG, VAL);                                    \
+	READ_WB_REG_CASE(OFF, 10, REG, VAL);                                   \
+	READ_WB_REG_CASE(OFF, 11, REG, VAL);                                   \
+	READ_WB_REG_CASE(OFF, 12, REG, VAL);                                   \
+	READ_WB_REG_CASE(OFF, 13, REG, VAL);                                   \
+	READ_WB_REG_CASE(OFF, 14, REG, VAL);                                   \
 	READ_WB_REG_CASE(OFF, 15, REG, VAL)
 
-#define GEN_WRITE_WB_REG_CASES(OFF, REG, VAL)	\
-	WRITE_WB_REG_CASE(OFF,  0, REG, VAL);	\
-	WRITE_WB_REG_CASE(OFF,  1, REG, VAL);	\
-	WRITE_WB_REG_CASE(OFF,  2, REG, VAL);	\
-	WRITE_WB_REG_CASE(OFF,  3, REG, VAL);	\
-	WRITE_WB_REG_CASE(OFF,  4, REG, VAL);	\
-	WRITE_WB_REG_CASE(OFF,  5, REG, VAL);	\
-	WRITE_WB_REG_CASE(OFF,  6, REG, VAL);	\
-	WRITE_WB_REG_CASE(OFF,  7, REG, VAL);	\
-	WRITE_WB_REG_CASE(OFF,  8, REG, VAL);	\
-	WRITE_WB_REG_CASE(OFF,  9, REG, VAL);	\
-	WRITE_WB_REG_CASE(OFF, 10, REG, VAL);	\
-	WRITE_WB_REG_CASE(OFF, 11, REG, VAL);	\
-	WRITE_WB_REG_CASE(OFF, 12, REG, VAL);	\
-	WRITE_WB_REG_CASE(OFF, 13, REG, VAL);	\
-	WRITE_WB_REG_CASE(OFF, 14, REG, VAL);	\
+#define GEN_WRITE_WB_REG_CASES(OFF, REG, VAL)                                  \
+	WRITE_WB_REG_CASE(OFF, 0, REG, VAL);                                   \
+	WRITE_WB_REG_CASE(OFF, 1, REG, VAL);                                   \
+	WRITE_WB_REG_CASE(OFF, 2, REG, VAL);                                   \
+	WRITE_WB_REG_CASE(OFF, 3, REG, VAL);                                   \
+	WRITE_WB_REG_CASE(OFF, 4, REG, VAL);                                   \
+	WRITE_WB_REG_CASE(OFF, 5, REG, VAL);                                   \
+	WRITE_WB_REG_CASE(OFF, 6, REG, VAL);                                   \
+	WRITE_WB_REG_CASE(OFF, 7, REG, VAL);                                   \
+	WRITE_WB_REG_CASE(OFF, 8, REG, VAL);                                   \
+	WRITE_WB_REG_CASE(OFF, 9, REG, VAL);                                   \
+	WRITE_WB_REG_CASE(OFF, 10, REG, VAL);                                  \
+	WRITE_WB_REG_CASE(OFF, 11, REG, VAL);                                  \
+	WRITE_WB_REG_CASE(OFF, 12, REG, VAL);                                  \
+	WRITE_WB_REG_CASE(OFF, 13, REG, VAL);                                  \
+	WRITE_WB_REG_CASE(OFF, 14, REG, VAL);                                  \
 	WRITE_WB_REG_CASE(OFF, 15, REG, VAL)
 
 static u64 read_wb_reg(int reg, int n)
@@ -107,12 +107,17 @@ static u64 read_wb_reg(int reg, int n)
 	u64 val = 0;
 
 	switch (reg + n) {
-	GEN_READ_WB_REG_CASES(AARCH64_DBG_REG_BVR, AARCH64_DBG_REG_NAME_BVR, val);
-	GEN_READ_WB_REG_CASES(AARCH64_DBG_REG_BCR, AARCH64_DBG_REG_NAME_BCR, val);
-	GEN_READ_WB_REG_CASES(AARCH64_DBG_REG_WVR, AARCH64_DBG_REG_NAME_WVR, val);
-	GEN_READ_WB_REG_CASES(AARCH64_DBG_REG_WCR, AARCH64_DBG_REG_NAME_WCR, val);
+		GEN_READ_WB_REG_CASES(AARCH64_DBG_REG_BVR,
+				      AARCH64_DBG_REG_NAME_BVR, val);
+		GEN_READ_WB_REG_CASES(AARCH64_DBG_REG_BCR,
+				      AARCH64_DBG_REG_NAME_BCR, val);
+		GEN_READ_WB_REG_CASES(AARCH64_DBG_REG_WVR,
+				      AARCH64_DBG_REG_NAME_WVR, val);
+		GEN_READ_WB_REG_CASES(AARCH64_DBG_REG_WCR,
+				      AARCH64_DBG_REG_NAME_WCR, val);
 	default:
-		pr_warn("attempt to read from unknown breakpoint register %d\n", n);
+		pr_warn("attempt to read from unknown breakpoint register %d\n",
+			n);
 	}
 
 	return val;
@@ -122,12 +127,17 @@ NOKPROBE_SYMBOL(read_wb_reg);
 static void write_wb_reg(int reg, int n, u64 val)
 {
 	switch (reg + n) {
-	GEN_WRITE_WB_REG_CASES(AARCH64_DBG_REG_BVR, AARCH64_DBG_REG_NAME_BVR, val);
-	GEN_WRITE_WB_REG_CASES(AARCH64_DBG_REG_BCR, AARCH64_DBG_REG_NAME_BCR, val);
-	GEN_WRITE_WB_REG_CASES(AARCH64_DBG_REG_WVR, AARCH64_DBG_REG_NAME_WVR, val);
-	GEN_WRITE_WB_REG_CASES(AARCH64_DBG_REG_WCR, AARCH64_DBG_REG_NAME_WCR, val);
+		GEN_WRITE_WB_REG_CASES(AARCH64_DBG_REG_BVR,
+				       AARCH64_DBG_REG_NAME_BVR, val);
+		GEN_WRITE_WB_REG_CASES(AARCH64_DBG_REG_BCR,
+				       AARCH64_DBG_REG_NAME_BCR, val);
+		GEN_WRITE_WB_REG_CASES(AARCH64_DBG_REG_WVR,
+				       AARCH64_DBG_REG_NAME_WVR, val);
+		GEN_WRITE_WB_REG_CASES(AARCH64_DBG_REG_WCR,
+				       AARCH64_DBG_REG_NAME_WCR, val);
 	default:
-		pr_warn("attempt to write to unknown breakpoint register %d\n", n);
+		pr_warn("attempt to write to unknown breakpoint register %d\n",
+			n);
 	}
 	isb();
 }
@@ -264,8 +274,7 @@ static int hw_breakpoint_control(struct perf_event *bp,
 
 		/* Setup the control register. */
 		ctrl = encode_ctrl_reg(info->ctrl);
-		write_wb_reg(ctrl_reg, i,
-			     reg_enable ? ctrl | 0x1 : ctrl & ~0x1);
+		write_wb_reg(ctrl_reg, i, reg_enable ? ctrl : ctrl & ~0x1);
 		break;
 	case HW_BREAKPOINT_UNINSTALL:
 		/* Reset the control register. */
@@ -348,8 +357,8 @@ int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw)
  * Hopefully this will disappear when ptrace can bypass the conversion
  * to generic breakpoint descriptions.
  */
-int arch_bp_generic_fields(struct arch_hw_breakpoint_ctrl ctrl,
-			   int *gen_len, int *gen_type, int *offset)
+int arch_bp_generic_fields(struct arch_hw_breakpoint_ctrl ctrl, int *gen_len,
+			   int *gen_type, int *offset)
 {
 	/* Type */
 	switch (ctrl.type) {
@@ -656,7 +665,7 @@ static int breakpoint_handler(unsigned long unused, unsigned int esr,
 		/* Do we need to handle the stepping? */
 		if (is_default_overflow_handler(bp))
 			step = 1;
-unlock:
+	unlock:
 		rcu_read_unlock();
 	}
 
@@ -780,7 +789,7 @@ static int watchpoint_handler(unsigned long addr, unsigned int esr,
 		 * 0 => load, otherwise => store
 		 */
 		access = (esr & AARCH64_ESR_ACCESS_MASK) ? HW_BREAKPOINT_W :
-			 HW_BREAKPOINT_R;
+							   HW_BREAKPOINT_R;
 		if (!(access & hw_breakpoint_type(wp)))
 			continue;
 
@@ -863,13 +872,15 @@ int reinstall_suspended_bps(struct pt_regs *regs)
 	if (user_mode(regs)) {
 		if (debug_info->bps_disabled) {
 			debug_info->bps_disabled = 0;
-			toggle_bp_registers(AARCH64_DBG_REG_BCR, DBG_ACTIVE_EL0, 1);
+			toggle_bp_registers(AARCH64_DBG_REG_BCR, DBG_ACTIVE_EL0,
+					    1);
 			handled_exception = 1;
 		}
 
 		if (debug_info->wps_disabled) {
 			debug_info->wps_disabled = 0;
-			toggle_bp_registers(AARCH64_DBG_REG_WCR, DBG_ACTIVE_EL0, 1);
+			toggle_bp_registers(AARCH64_DBG_REG_WCR, DBG_ACTIVE_EL0,
+					    1);
 			handled_exception = 1;
 		}
 
@@ -887,7 +898,8 @@ int reinstall_suspended_bps(struct pt_regs *regs)
 		toggle_bp_registers(AARCH64_DBG_REG_WCR, DBG_ACTIVE_EL1, 1);
 
 		if (!debug_info->wps_disabled)
-			toggle_bp_registers(AARCH64_DBG_REG_WCR, DBG_ACTIVE_EL0, 1);
+			toggle_bp_registers(AARCH64_DBG_REG_WCR, DBG_ACTIVE_EL0,
+					    1);
 
 		if (*kernel_step != ARM_KERNEL_STEP_SUSPEND) {
 			kernel_disable_single_step();
@@ -924,15 +936,38 @@ void hw_breakpoint_thread_switch(struct task_struct *next)
 
 	/* Update breakpoints. */
 	if (current_debug_info->bps_disabled != next_debug_info->bps_disabled)
-		toggle_bp_registers(AARCH64_DBG_REG_BCR,
-				    DBG_ACTIVE_EL0,
+		toggle_bp_registers(AARCH64_DBG_REG_BCR, DBG_ACTIVE_EL0,
 				    !next_debug_info->bps_disabled);
 
 	/* Update watchpoints. */
 	if (current_debug_info->wps_disabled != next_debug_info->wps_disabled)
-		toggle_bp_registers(AARCH64_DBG_REG_WCR,
-				    DBG_ACTIVE_EL0,
+		toggle_bp_registers(AARCH64_DBG_REG_WCR, DBG_ACTIVE_EL0,
 				    !next_debug_info->wps_disabled);
+
+	/*  enable current watchpoint domains and disable next watchpoint domrns */
+	int i;
+	struct perf_event *wp = NULL;
+	struct arch_hw_breakpoint *info = NULL;
+	for (i = 0; i < ARM_MAX_WRP; ++i) {
+		wp = current_debug_info->hbp_watch[i];
+		if (wp != NULL) {
+			info = counter_arch_bp(wp);
+			info->ctrl.enabled = 0;
+			hw_breakpoint_control(current_debug_info->hbp_watch[i],
+					      HW_BREAKPOINT_RESTORE);
+		}
+	}
+	wp = NULL;
+	info = NULL;
+	for (i = 0; i < ARM_MAX_WRP; ++i) {
+		wp = next_debug_info->hbp_watch[i];
+		if (wp != NULL) {
+			info = counter_arch_bp(wp);
+			info->ctrl.enabled = 1;
+			hw_breakpoint_control(next_debug_info->hbp_watch[i],
+					      HW_BREAKPOINT_RESTORE);
+		}
+	}
 }
 
 /*
@@ -976,7 +1011,8 @@ static int hw_breakpoint_reset(unsigned int cpu)
 #ifdef CONFIG_CPU_PM
 extern void cpu_suspend_set_dbg_restorer(int (*hw_bp_restore)(unsigned int));
 #else
-static inline void cpu_suspend_set_dbg_restorer(int (*hw_bp_restore)(unsigned int))
+static inline void
+cpu_suspend_set_dbg_restorer(int (*hw_bp_restore)(unsigned int))
 {
 }
 #endif
@@ -1005,8 +1041,8 @@ static int __init arch_hw_breakpoint_init(void)
 	 * debugger will leave the world in a nice state for us.
 	 */
 	ret = cpuhp_setup_state(CPUHP_AP_PERF_ARM_HW_BREAKPOINT_STARTING,
-			  "perf/arm64/hw_breakpoint:starting",
-			  hw_breakpoint_reset, NULL);
+				"perf/arm64/hw_breakpoint:starting",
+				hw_breakpoint_reset, NULL);
 	if (ret)
 		pr_err("failed to register CPU hotplug notifier: %d\n", ret);
 

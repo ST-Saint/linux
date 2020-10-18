@@ -1222,6 +1222,8 @@ asmlinkage long sys_old_mmap(struct mmap_arg_struct __user *arg);
 
 asmlinkage long __arm64_sys_register_watchpoint(unsigned long addr);
 
+asmlinkage long __arm64_sys_watchpoint_trigger(struct perf_event *bp);
+
 /*
  * Not a real system call, but a placeholder for syscalls which are
  * not implemented -- see kernel/sys_ni.c

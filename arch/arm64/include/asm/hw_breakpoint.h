@@ -21,6 +21,7 @@ struct arch_hw_breakpoint_ctrl {
 struct arch_hw_breakpoint {
 	u64 address;
 	u64 trigger;
+	u32 authority;
 	struct arch_hw_breakpoint_ctrl ctrl;
 };
 
