@@ -930,6 +930,9 @@ void hw_breakpoint_thread_switch(struct task_struct *next)
 	 */
 
 	struct debug_info *current_debug_info, *next_debug_info;
+	int i;
+	struct perf_event *wp = NULL;
+	struct arch_hw_breakpoint *info = NULL;
 
 	current_debug_info = &current->thread.debug;
 	next_debug_info = &next->thread.debug;
@@ -945,9 +948,6 @@ void hw_breakpoint_thread_switch(struct task_struct *next)
 				    !next_debug_info->wps_disabled);
 
 	/*  enable current watchpoint domains and disable next watchpoint domrns */
-	int i;
-	struct perf_event *wp = NULL;
-	struct arch_hw_breakpoint *info = NULL;
 	for (i = 0; i < ARM_MAX_WRP; ++i) {
 		wp = current_debug_info->hbp_watch[i];
 		if (wp != NULL) {
