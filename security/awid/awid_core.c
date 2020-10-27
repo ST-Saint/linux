@@ -22,7 +22,7 @@
 #include <net/sock.h>
 #include <linux/syscalls.h>
 
-struct perf_event *hbp_awids[ARM_MAX_WRP];
+struct perf_event *awid_hwps[ARM_MAX_WRP];
 
 static void awid_simple_handler(struct perf_event *bp,
 				struct perf_sample_data *data,
@@ -101,9 +101,9 @@ void awid_clear(void)
 {
 	int i;
 	for (i = 0; i < ARM_MAX_WRP; ++i) {
-		if (hbp_awids[i] != NULL) {
-			unregister_hw_breakpoint(hbp_awids[i]);
-			hbp_awids[i] = NULL;
+		if (awid_hwps[i] != NULL) {
+			unregister_hw_breakpoint(awid_hwps[i]);
+			awid_hwps[i] = NULL;
 		}
 	}
 }
@@ -113,11 +113,22 @@ asmlinkage long __arm64_sys_watchpoint_clear(void)
 	awid_clear();
 }
 
+int awid_find_wp_slot(void)
+{
+	int i;
+	for (i = 0; i < ARM_MAX_WRP; ++i) {
+		if (awid_hwps[i] == NULL) {
+			return i;
+		}
+	}
+	return -1;
+}
 
-SYSCALL_DEFINE4(register_watchpoint, 
-// asmlinkage long __arm64_sys_register_watchpoint(
-	unsigned long, addr, enum HW_BREAKPOINT_LEN, wp_length,
-	enum HW_BREAKPOINT_TYPE, wp_type, enum HW_BREAKPOINT_AUTH, wp_auth)
+SYSCALL_DEFINE4(register_watchpoint,
+		// asmlinkage long __arm64_sys_register_watchpoint(
+		unsigned long, addr, enum HW_BREAKPOINT_LEN, wp_length,
+		enum HW_BREAKPOINT_TYPE, wp_type, enum HW_BREAKPOINT_AUTH,
+		wp_auth)
 {
 	int ret, i;
 	struct perf_event_attr attr;
@@ -166,17 +177,9 @@ SYSCALL_DEFINE4(register_watchpoint,
 	/* preempt_disable(); */
 	/* printk(KERN_INFO "Watchpoint registration preempt disable\n"); */
 
-	struct perf_event *hbp = NULL;
-	for (i = 0; i < ARM_MAX_WRP; ++i) {
-		if (hbp_awids[i] == NULL) {
-			hbp = hbp_awids[i];
-			break;
-		}
-	}
-	if (hbp == NULL) {
-		return -EPERM;
-	}
-	hbp = register_user_hw_breakpoint(&attr, awid_simple_handler, NULL,
+	int slot = awid_find_wp_slot();
+	struct perf_event **hbp = awid_hwps+slot;
+	*hbp = register_user_hw_breakpoint(&attr, awid_simple_handler, NULL,
 					  NULL);
 
 	/* rcu_read_unlock(); */
@@ -185,7 +188,7 @@ SYSCALL_DEFINE4(register_watchpoint,
 	/* printk(KERN_INFO "Watchpoint registration preempt enable\n"); */
 	if (IS_ERR((void __force *)hbp)) {
 		ret = PTR_ERR((void __force *)hbp);
-		hbp = NULL;
+		*hbp = NULL;
 		printk(KERN_INFO "Watchpoint registration done %d\n", ret);
 		goto fail;
 	}
