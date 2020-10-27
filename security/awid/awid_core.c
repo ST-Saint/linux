@@ -22,11 +22,11 @@
 #include <net/sock.h>
 #include <linux/syscalls.h>
 
-struct perf_event *__percpu *sample_hbp;
+struct perf_event *hbp_awids[ARM_MAX_WRP];
 
-static void simple_wbp_handler(struct perf_event *bp,
-			       struct perf_sample_data *data,
-			       struct pt_regs *regs)
+static void awid_simple_handler(struct perf_event *bp,
+				struct perf_sample_data *data,
+				struct pt_regs *regs)
 {
 	printk("--------------------------------------\n");
 	printk(KERN_INFO
@@ -74,7 +74,7 @@ asmlinkage __attribute__((optimize("O0"))) long
 __arm64_sys_watchpoint_trigger(struct perf_event *wp)
 {
 	switch (wp->attr.bp_type) {
-	defaut : {
+	default: {
 		return -EINVAL;
 	}
 	case HW_BREAKPOINT_R: {
@@ -97,11 +97,27 @@ __arm64_sys_watchpoint_trigger(struct perf_event *wp)
 	return 0;
 }
 
+void awid_clear(void)
+{
+	int i;
+	for (i = 0; i < ARM_MAX_WRP; ++i) {
+		if (hbp_awids[i] != NULL) {
+			unregister_hw_breakpoint(hbp_awids[i]);
+			hbp_awids[i] = NULL;
+		}
+	}
+}
+
+asmlinkage long __arm64_sys_watchpoint_clear(void)
+{
+	awid_clear();
+}
+
 asmlinkage long __arm64_sys_register_watchpoint(
 	unsigned long addr, enum HW_BREAKPOINT_LEN wp_length,
 	enum HW_BREAKPOINT_TYPE wp_type, enum HW_BREAKPOINT_AUTH wp_auth)
 {
-	int ret;
+	int ret, i;
 	struct perf_event_attr attr;
 	printk("--------------------------------------\n");
 	printk(KERN_INFO
@@ -133,17 +149,13 @@ asmlinkage long __arm64_sys_register_watchpoint(
 	} else {
 		return -EINVAL;
 	}
-	if( wp_auth == HW_BREAKPOINT_NONE ||
-		wp_auth == HW_BREAKPOINT_SELF ||
-		wp_auth == HW_BREAKPOINT_PROC ||
-		wp_auth == HW_BREAKPOINT_THRD
-	){
+	if (wp_auth == HW_BREAKPOINT_NONE || wp_auth == HW_BREAKPOINT_SELF ||
+	    wp_auth == HW_BREAKPOINT_PROC || wp_auth == HW_BREAKPOINT_THRD) {
 		attr.bp_auth = wp_auth;
-	}
-	else{
+	} else {
 		return -EINVAL;
 	}
-	attr.disabled = 1;
+	attr.disabled = 0;
 
 	/* printk(KERN_INFO "Watchpoint registration start\n"); */
 	/* synchronize_rcu(); */
@@ -151,14 +163,27 @@ asmlinkage long __arm64_sys_register_watchpoint(
 	/* printk(KERN_INFO "Watchpoint registration rcu read lock\n"); */
 	/* preempt_disable(); */
 	/* printk(KERN_INFO "Watchpoint registration preempt disable\n"); */
-	sample_hbp =
-		register_wide_hw_breakpoint(&attr, simple_wbp_handler, NULL);
+
+	struct perf_event *hbp = NULL;
+	for (i = 0; i < ARM_MAX_WRP; ++i) {
+		if (hbp_awids[i] == NULL) {
+			hbp = hbp_awids[i];
+			break;
+		}
+	}
+	if (hbp == NULL) {
+		return -EPERM;
+	}
+	hbp = register_user_hw_breakpoint(&attr, awid_simple_handler, NULL,
+					  NULL);
+
 	/* rcu_read_unlock(); */
 	/* printk(KERN_INFO "Watchpoint registration rcu read unlock\n"); */
 	/* preempt_enable(); */
 	/* printk(KERN_INFO "Watchpoint registration preempt enable\n"); */
-	if (IS_ERR((void __force *)sample_hbp)) {
-		ret = PTR_ERR((void __force *)sample_hbp);
+	if (IS_ERR((void __force *)hbp)) {
+		ret = PTR_ERR((void __force *)hbp);
+		hbp = NULL;
 		printk(KERN_INFO "Watchpoint registration done %d\n", ret);
 		goto fail;
 	}
@@ -182,9 +207,7 @@ static int __init awid_module_init(void)
 
 static void __exit awid_module_exit(void)
 {
-	if (!IS_ERR((void __force *)sample_hbp)) {
-		unregister_wide_hw_breakpoint(sample_hbp);
-	}
+	awid_clear();
 }
 
 module_init(awid_module_init);
