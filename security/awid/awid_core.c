@@ -113,9 +113,11 @@ asmlinkage long __arm64_sys_watchpoint_clear(void)
 	awid_clear();
 }
 
-asmlinkage long __arm64_sys_register_watchpoint(
-	unsigned long addr, enum HW_BREAKPOINT_LEN wp_length,
-	enum HW_BREAKPOINT_TYPE wp_type, enum HW_BREAKPOINT_AUTH wp_auth)
+
+SYSCALL_DEFINE4(register_watchpoint, 
+// asmlinkage long __arm64_sys_register_watchpoint(
+	unsigned long, addr, enum HW_BREAKPOINT_LEN, wp_length,
+	enum HW_BREAKPOINT_TYPE, wp_type, enum HW_BREAKPOINT_AUTH, wp_auth)
 {
 	int ret, i;
 	struct perf_event_attr attr;
