@@ -170,15 +170,15 @@ SYSCALL_DEFINE4(register_watchpoint,
 	} else {
 		return -EINVAL;
 	}
-	attr.disabled = 0;
+	attr.disabled = 1;
 
 	slot = awid_find_wp_slot();
 	printk(KERN_INFO "register watchpoint on slot %d\n", slot);
 	hbp = awid_hwps + slot;
 	*hbp = register_wide_hw_breakpoint(&attr, awid_simple_handler, NULL);
 
-	if (IS_ERR((void __force *)hbp)) {
-		ret = PTR_ERR((void __force *)hbp);
+	if (IS_ERR((void __force *)*hbp)) {
+		ret = PTR_ERR((void __force *)*hbp);
 		*hbp = NULL;
 		printk(KERN_INFO "Watchpoint registration done %d\n", ret);
 		goto fail;
