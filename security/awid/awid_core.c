@@ -22,7 +22,7 @@
 #include <net/sock.h>
 #include <linux/syscalls.h>
 
-struct perf_event *awid_hwps[ARM_MAX_WRP];
+struct perf_event **awid_hwps[ARM_MAX_WRP];
 
 static void awid_simple_handler(struct perf_event *bp,
 				struct perf_sample_data *data,
@@ -102,7 +102,7 @@ void awid_clear(void)
 	int i;
 	for (i = 0; i < ARM_MAX_WRP; ++i) {
 		if (awid_hwps[i] != NULL) {
-			unregister_hw_breakpoint(awid_hwps[i]);
+			unregister_wide_hw_breakpoint(awid_hwps[i]);
 			awid_hwps[i] = NULL;
 		}
 	}
@@ -111,6 +111,7 @@ void awid_clear(void)
 asmlinkage long __arm64_sys_watchpoint_clear(void)
 {
 	awid_clear();
+	return 0;
 }
 
 int awid_find_wp_slot(void)
@@ -130,7 +131,8 @@ SYSCALL_DEFINE4(register_watchpoint,
 		enum HW_BREAKPOINT_TYPE, wp_type, enum HW_BREAKPOINT_AUTH,
 		wp_auth)
 {
-	int ret, i;
+	int ret, slot;
+	struct perf_event ***hbp;
 	struct perf_event_attr attr;
 	printk("--------------------------------------\n");
 	printk(KERN_INFO
@@ -170,22 +172,11 @@ SYSCALL_DEFINE4(register_watchpoint,
 	}
 	attr.disabled = 0;
 
-	/* printk(KERN_INFO "Watchpoint registration start\n"); */
-	/* synchronize_rcu(); */
-	/* rcu_read_lock(); */
-	/* printk(KERN_INFO "Watchpoint registration rcu read lock\n"); */
-	/* preempt_disable(); */
-	/* printk(KERN_INFO "Watchpoint registration preempt disable\n"); */
+	slot = awid_find_wp_slot();
+	printk(KERN_INFO "register watchpoint on slot %d\n", slot);
+	hbp = awid_hwps + slot;
+	*hbp = register_wide_hw_breakpoint(&attr, awid_simple_handler, NULL);
 
-	int slot = awid_find_wp_slot();
-	struct perf_event **hbp = awid_hwps+slot;
-	*hbp = register_user_hw_breakpoint(&attr, awid_simple_handler, NULL,
-					  NULL);
-
-	/* rcu_read_unlock(); */
-	/* printk(KERN_INFO "Watchpoint registration rcu read unlock\n"); */
-	/* preempt_enable(); */
-	/* printk(KERN_INFO "Watchpoint registration preempt enable\n"); */
 	if (IS_ERR((void __force *)hbp)) {
 		ret = PTR_ERR((void __force *)hbp);
 		*hbp = NULL;

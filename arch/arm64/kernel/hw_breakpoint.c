@@ -951,6 +951,7 @@ void hw_breakpoint_thread_switch(struct task_struct *next)
 	for (i = 0; i < ARM_MAX_WRP; ++i) {
 		wp = current_debug_info->hbp_watch[i];
 		if (wp != NULL) {
+			printk(KERN_INFO "found wbp in pid: %d address: %llx and disable\n", current->pid, wp->attr.bp_addr);
 			info = counter_arch_bp(wp);
 			info->ctrl.enabled = 0;
 			hw_breakpoint_control(current_debug_info->hbp_watch[i],
@@ -962,6 +963,7 @@ void hw_breakpoint_thread_switch(struct task_struct *next)
 	for (i = 0; i < ARM_MAX_WRP; ++i) {
 		wp = next_debug_info->hbp_watch[i];
 		if (wp != NULL) {
+			printk(KERN_INFO "found wbp in pid: %d address: %llx and enable\n", current->pid, wp->attr.bp_addr);
 			info = counter_arch_bp(wp);
 			info->ctrl.enabled = 1;
 			hw_breakpoint_control(next_debug_info->hbp_watch[i],
