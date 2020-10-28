@@ -947,6 +947,7 @@ void hw_breakpoint_thread_switch(struct task_struct *next)
 		toggle_bp_registers(AARCH64_DBG_REG_WCR, DBG_ACTIVE_EL0,
 				    !next_debug_info->wps_disabled);
 
+	printk(KERN_DEBUG "check switch pid: %d npid: %d\n", current->pid, next->pid);
 	/*  enable current watchpoint domains and disable next watchpoint domrns */
 	for (i = 0; i < ARM_MAX_WRP; ++i) {
 		wp = current_debug_info->hbp_watch[i];
