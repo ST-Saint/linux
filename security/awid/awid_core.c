@@ -169,7 +169,7 @@ SYSCALL_DEFINE4(register_watchpoint,
 
 	slot = awid_find_wp_slot();
 	printk(KERN_INFO "register watchpoint on slot %d\n", slot);
-	hbp = awid_hwps + slot;
+	hbp = current->thread.debug.awid_hbp + slot;
 	*hbp = register_wide_hw_breakpoint(&attr, awid_simple_handler, NULL);
 
 	if (IS_ERR((void __force *)*hbp)) {
