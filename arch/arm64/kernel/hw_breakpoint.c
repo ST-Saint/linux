@@ -950,7 +950,10 @@ void hw_breakpoint_thread_switch(struct task_struct *next)
 	/*  enable current watchpoint domains and disable next watchpoint domains */
 	cpu = get_cpu();
 	for (i = 0; i < ARM_MAX_WRP; ++i) {
+		printk(KERN_DEBUG "try access awid hp %d at %lx\n", i,
+		       (unsigned long)(&(current_debug_info->awid_hbp+i)));
 		if (current_debug_info->awid_hbp[i] != NULL) {
+			printk(KERN_DEBUG "access per cpu error");
 			wp = current_debug_info->awid_hbp[i][cpu];
 			printk(KERN_INFO
 			       "found wbp in pid: %d address: %llx and disable\n",
