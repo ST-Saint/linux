@@ -118,7 +118,8 @@ int awid_find_wp_slot(void)
 {
 	int i;
 	for (i = 0; i < ARM_MAX_WRP; ++i) {
-		if (awid_hwps[i] == NULL) {
+		// if (awid_hwps[i] == NULL) {
+		if (current->thread.debug.awid_hbp[i] == NULL) {
 			return i;
 		}
 	}
