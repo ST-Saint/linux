@@ -107,6 +107,7 @@ struct debug_info {
 	/* Hardware breakpoints pinned to this task. */
 	struct perf_event	*hbp_break[ARM_MAX_BRP];
 	struct perf_event	*hbp_watch[ARM_MAX_WRP];
+	struct perf_event *__percpu *awid_hbp[ARM_MAX_WRP];
 #endif
 };
 

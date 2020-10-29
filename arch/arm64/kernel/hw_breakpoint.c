@@ -930,7 +930,7 @@ void hw_breakpoint_thread_switch(struct task_struct *next)
 	 */
 
 	struct debug_info *current_debug_info, *next_debug_info;
-	int i;
+	int i, cpu;
 	struct perf_event *wp = NULL;
 	struct arch_hw_breakpoint *info = NULL;
 
@@ -947,28 +947,30 @@ void hw_breakpoint_thread_switch(struct task_struct *next)
 		toggle_bp_registers(AARCH64_DBG_REG_WCR, DBG_ACTIVE_EL0,
 				    !next_debug_info->wps_disabled);
 
-	printk(KERN_DEBUG "check switch pid: %d npid: %d\n", current->pid, next->pid);
-	/*  enable current watchpoint domains and disable next watchpoint domrns */
+	/*  enable current watchpoint domains and disable next watchpoint domains */
+	cpu = get_cpu();
 	for (i = 0; i < ARM_MAX_WRP; ++i) {
-		wp = current_debug_info->hbp_watch[i];
-		if (wp != NULL) {
-			printk(KERN_INFO "found wbp in pid: %d address: %llx and disable\n", current->pid, wp->attr.bp_addr);
+		if (current_debug_info->awid_hbp[i] != NULL) {
+			wp = current_debug_info->awid_hbp[i][cpu];
+			printk(KERN_INFO
+			       "found wbp in pid: %d address: %llx and disable\n",
+			       current->pid, wp->attr.bp_addr);
 			info = counter_arch_bp(wp);
 			info->ctrl.enabled = 0;
-			hw_breakpoint_control(current_debug_info->hbp_watch[i],
-					      HW_BREAKPOINT_RESTORE);
+			hw_breakpoint_control(wp, HW_BREAKPOINT_RESTORE);
 		}
 	}
 	wp = NULL;
 	info = NULL;
 	for (i = 0; i < ARM_MAX_WRP; ++i) {
-		wp = next_debug_info->hbp_watch[i];
-		if (wp != NULL) {
-			printk(KERN_INFO "found wbp in pid: %d address: %llx and enable\n", current->pid, wp->attr.bp_addr);
+		if (next_debug_info->awid_hbp[i] != NULL) {
+			wp = next_debug_info->awid_hbp[i][cpu];
+			printk(KERN_INFO
+			       "found wbp in pid: %d address: %llx and enable\n",
+			       current->pid, wp->attr.bp_addr);
 			info = counter_arch_bp(wp);
 			info->ctrl.enabled = 1;
-			hw_breakpoint_control(next_debug_info->hbp_watch[i],
-					      HW_BREAKPOINT_RESTORE);
+			hw_breakpoint_control(wp, HW_BREAKPOINT_RESTORE);
 		}
 	}
 }

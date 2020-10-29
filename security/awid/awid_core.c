@@ -164,12 +164,6 @@ SYSCALL_DEFINE4(register_watchpoint,
 	} else {
 		return -EINVAL;
 	}
-	if (wp_auth == HW_BREAKPOINT_NONE || wp_auth == HW_BREAKPOINT_SELF ||
-	    wp_auth == HW_BREAKPOINT_PROC || wp_auth == HW_BREAKPOINT_THRD) {
-		attr.bp_auth = wp_auth;
-	} else {
-		return -EINVAL;
-	}
 	attr.disabled = 0;
 
 	slot = awid_find_wp_slot();
