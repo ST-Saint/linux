@@ -183,9 +183,9 @@ SYSCALL_DEFINE4(register_watchpoint,
 	printk(KERN_INFO "hbp addr %lx\nhbp value %lx\n",
 	       (unsigned long)&current->thread.debug.awid_hbp[slot],
 	       (unsigned long)current->thread.debug.awid_hbp[slot]);
-	if (IS_ERR((void __force *)*hbp)) {
-		ret = PTR_ERR((void __force *)*hbp);
-		*hbp = NULL;
+	if (IS_ERR((void __force *)hbp)) {
+		ret = PTR_ERR((void __force *)hbp);
+		hbp = NULL;
 		printk(KERN_INFO "Watchpoint registration done %d\n", ret);
 		goto fail;
 	}
