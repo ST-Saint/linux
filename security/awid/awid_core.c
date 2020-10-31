@@ -170,23 +170,23 @@ SYSCALL_DEFINE4(register_watchpoint,
 	slot = awid_find_wp_slot();
 	printk(KERN_INFO "register watchpoint on slot %d\n", slot);
 	printk(KERN_DEBUG
-	       "current addr %lx current thread addr %lx current thread debug addr %lx current addr debug awid hbp addr %lx %lx value %d \n",
+	       "current addr %lx\ncurrent thread addr %lx\ncurrent thread debug addr %lx\ncurrent addr debug awid hbp addr %lx\nslot: %lx\nvalue %lx\n",
 	       (unsigned long)current, (unsigned long)&current->thread,
 	       (unsigned long)&current->thread.debug,
 	       (unsigned long)&current->thread.debug.awid_hbp,
 	       (unsigned long)&(current->thread.debug.awid_hbp[slot]),
-	       (int)current->thread.debug.awid_hbp[slot]);
+	       (unsigned long)current->thread.debug.awid_hbp[slot]);
 	hbp = current->thread.debug.awid_hbp + slot;
 
 	*hbp = register_wide_hw_breakpoint(&attr, awid_simple_handler, NULL);
 
 	printk(KERN_DEBUG
-	       "current addr %lx current thread addr %lx current thread debug addr %lx current addr debug awid hbp addr %lx %lx value %d \n",
+	       "current addr %lx\ncurrent thread addr %lx\ncurrent thread debug addr %lx\ncurrent addr debug awid hbp addr %lx\nslot: %lx\nvalue %lx\n",
 	       (unsigned long)current, (unsigned long)&current->thread,
 	       (unsigned long)&current->thread.debug,
 	       (unsigned long)&current->thread.debug.awid_hbp,
 	       (unsigned long)&(current->thread.debug.awid_hbp[slot]),
-	       (int)current->thread.debug.awid_hbp[slot]);
+	       (unsigned long)current->thread.debug.awid_hbp[slot]);
 	if (IS_ERR((void __force *)*hbp)) {
 		ret = PTR_ERR((void __force *)*hbp);
 		*hbp = NULL;
