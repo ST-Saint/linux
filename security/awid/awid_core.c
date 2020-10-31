@@ -22,6 +22,7 @@
 #include <net/sock.h>
 #include <linux/syscalls.h>
 
+struct perf_event **hbp;
 struct perf_event **awid_hwps[ARM_MAX_WRP];
 
 static void awid_simple_handler(struct perf_event *bp,
@@ -133,7 +134,6 @@ SYSCALL_DEFINE4(register_watchpoint,
 		wp_auth)
 {
 	int ret, slot;
-	struct perf_event **hbp;
 	struct perf_event_attr attr;
 	printk("--------------------------------------\n");
 	printk(KERN_INFO
@@ -177,7 +177,7 @@ SYSCALL_DEFINE4(register_watchpoint,
 		kmalloc(sizeof(struct perf_event **), GFP_KERNEL);
 	unsigned long remain =
 		copy_from_user(current->thread.debug.awid_hbp + slot, hbp,
-					   sizeof(struct perf_event **));
+			       sizeof(struct perf_event **));
 	printk(KERN_INFO "copy remain %lu\n", remain);
 	printk(KERN_INFO "hbp %lx\ntarget slot %lx %lx\n", (unsigned long)hbp,
 	       (unsigned long)(current->thread.debug.awid_hbp + slot),
