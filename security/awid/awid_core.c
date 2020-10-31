@@ -172,17 +172,13 @@ SYSCALL_DEFINE4(register_watchpoint,
 		return -EPERM;
 	}
 	printk(KERN_INFO "register watchpoint on slot %d\n", slot);
-	printk(KERN_INFO "hbp addr %lx\nhbp value %lx\n",
-	       (unsigned long)&current->thread.debug.awid_hbp[slot],
-	       (unsigned long)current->thread.debug.awid_hbp[slot]);
 	hbp = register_wide_hw_breakpoint(&attr, awid_simple_handler, NULL);
-	unsigned long size =
-		copy_from_user(current->thread.debug.awid_hbp + slot, hbp,
-			       sizeof(struct perf_event));
-	printk("copy size %lu\n", size);
-	printk(KERN_INFO "hbp addr %lx\nhbp value %lx\n",
-	       (unsigned long)&current->thread.debug.awid_hbp[slot],
+	copy_from_user(current->thread.debug.awid_hbp + slot, hbp,
+		       sizeof(struct perf_event));
+	printk(KERN_INFO "target slot %lx %lx\n",
+	       (unsigned long)(current->thread.debug.awid_hbp + slot),
 	       (unsigned long)current->thread.debug.awid_hbp[slot]);
+	hbp = NULL;
 	if (IS_ERR((void __force *)hbp)) {
 		ret = PTR_ERR((void __force *)hbp);
 		hbp = NULL;
