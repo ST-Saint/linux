@@ -133,7 +133,7 @@ SYSCALL_DEFINE4(register_watchpoint,
 		wp_auth)
 {
 	int ret, slot;
-	struct perf_event ***hbp;
+	struct perf_event **hbp;
 	struct perf_event_attr attr;
 	printk("--------------------------------------\n");
 	printk(KERN_INFO
@@ -168,13 +168,18 @@ SYSCALL_DEFINE4(register_watchpoint,
 	attr.disabled = 0;
 
 	slot = awid_find_wp_slot();
+	if (slot == -1) {
+		return -EPERM;
+	}
 	printk(KERN_INFO "register watchpoint on slot %d\n", slot);
-	printk(KERN_INFO "hbp addr %lx\nhbp value %lx\n", (unsigned long)&hbp, (unsigned long)hbp);
-	hbp = current->thread.debug.awid_hbp + slot;
-
-	printk(KERN_INFO "hbp addr %lx\nhbp value %lx\n", (unsigned long)&hbp, (unsigned long)hbp);
-	*hbp = register_wide_hw_breakpoint(&attr, awid_simple_handler, NULL);
-	printk(KERN_INFO "hbp addr %lx\nhbp value %lx\n", (unsigned long)&hbp, (unsigned long)hbp);
+	printk(KERN_INFO "hbp addr %lx\nhbp value %lx\n",
+	       (unsigned long)&current->thread.debug.awid_hbp[slot],
+	       (unsigned long)current->thread.debug.awid_hbp[slot]);
+	hbp = register_wide_hw_breakpoint(&attr, awid_simple_handler, NULL);
+	copy_from_user(current->thread.debug.awid_hbp + slot, hbp, sizeof(hbp));
+	printk(KERN_INFO "hbp addr %lx\nhbp value %lx\n",
+	       (unsigned long)&current->thread.debug.awid_hbp[slot],
+	       (unsigned long)current->thread.debug.awid_hbp[slot]);
 	if (IS_ERR((void __force *)*hbp)) {
 		ret = PTR_ERR((void __force *)*hbp);
 		*hbp = NULL;
