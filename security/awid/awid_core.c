@@ -176,7 +176,10 @@ SYSCALL_DEFINE4(register_watchpoint,
 	       (unsigned long)&current->thread.debug.awid_hbp[slot],
 	       (unsigned long)current->thread.debug.awid_hbp[slot]);
 	hbp = register_wide_hw_breakpoint(&attr, awid_simple_handler, NULL);
-	copy_from_user(current->thread.debug.awid_hbp + slot, hbp, sizeof(hbp));
+	unsigned long size =
+		copy_from_user(current->thread.debug.awid_hbp + slot, hbp,
+			       sizeof(struct perf_event));
+	printk("copy size %lu\n", size);
 	printk(KERN_INFO "hbp addr %lx\nhbp value %lx\n",
 	       (unsigned long)&current->thread.debug.awid_hbp[slot],
 	       (unsigned long)current->thread.debug.awid_hbp[slot]);
