@@ -22,7 +22,7 @@
 #include <net/sock.h>
 #include <linux/syscalls.h>
 
-struct perf_event **hbp;
+struct perf_event ***hbp;
 struct perf_event **awid_hwps[ARM_MAX_WRP];
 
 static void awid_simple_handler(struct perf_event *bp,
@@ -127,6 +127,8 @@ int awid_find_wp_slot(void)
 	return -1;
 }
 
+int wp_cnt = 0;
+
 SYSCALL_DEFINE4(register_watchpoint,
 		// asmlinkage long __arm64_sys_register_watchpoint(
 		unsigned long, addr, enum HW_BREAKPOINT_LEN, wp_length,
@@ -172,23 +174,25 @@ SYSCALL_DEFINE4(register_watchpoint,
 		return -EPERM;
 	}
 	printk(KERN_INFO "register watchpoint on slot %d\n", slot);
-	hbp = register_wide_hw_breakpoint(&attr, awid_simple_handler, NULL);
-	current->thread.debug.awid_hbp[slot] =
-		kmalloc(sizeof(struct perf_event **), GFP_KERNEL);
-	unsigned long remain =
-		copy_from_user(current->thread.debug.awid_hbp + slot, hbp,
-			       sizeof(struct perf_event **));
-	printk(KERN_INFO "copy remain %lu\n", remain);
+	hbp = awid_hwps + wp_cnt;
+	*hbp = register_wide_hw_breakpoint(&attr, awid_simple_handler, NULL);
+	if (IS_ERR((void __force *)*hbp)) {
+		ret = PTR_ERR((void __force *)*hbp);
+		*hbp = NULL;
+		printk(KERN_INFO "Watchpoint registration done %d\n", ret);
+		goto fail;
+	}
+	current->thread.debug.awid_hbp[slot] = *hbp;
+	/* current->thread.debug.awid_hbp[slot] = */
+	/* 	kmalloc(sizeof(struct perf_event **), GFP_KERNEL); */
+	/* unsigned long remain = */
+	/* 	copy_from_user(current->thread.debug.awid_hbp + slot, hbp, */
+	/* 		       sizeof(struct perf_event **)); */
+	/* printk(KERN_INFO "copy remain %lu\n", remain); */
 	printk(KERN_INFO "hbp %lx\ntarget slot %lx %lx\n", (unsigned long)hbp,
 	       (unsigned long)(current->thread.debug.awid_hbp + slot),
 	       (unsigned long)current->thread.debug.awid_hbp[slot]);
 	hbp = NULL;
-	if (IS_ERR((void __force *)hbp)) {
-		ret = PTR_ERR((void __force *)hbp);
-		hbp = NULL;
-		printk(KERN_INFO "Watchpoint registration done %d\n", ret);
-		goto fail;
-	}
 
 	/* printk(KERN_INFO "HW Breakpoint for %s write installed\n", ksym_name); */
 	printk(KERN_INFO "Watchpoint registration succeed\n");
