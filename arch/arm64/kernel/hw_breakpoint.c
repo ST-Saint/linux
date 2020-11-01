@@ -952,6 +952,7 @@ void hw_breakpoint_thread_switch(struct task_struct *next)
 	for (i = 0; i < ARM_MAX_WRP; ++i) {
 		if (current_debug_info->awid_hbp[i] != NULL) {
 			printk(KERN_DEBUG "access per cpu error pid: %d id: %d cpu: %d addr %lx\n", current->pid, i, cpu, (unsigned long)&current_debug_info->awid_hbp[i]);
+			unregister_wide_hw_breakpoint(current_debug_info->awid_hbp[i]);
 			wp = current_debug_info->awid_hbp[i][cpu];
 			printk(KERN_INFO
 			       "found wbp in pid: %d address: %llx and disable\n",
