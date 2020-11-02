@@ -22,7 +22,7 @@
 #include <net/sock.h>
 #include <linux/syscalls.h>
 
-struct perf_event ***hbp;
+struct perf_event **hbp;
 struct perf_event **awid_hwps[ARM_MAX_WRP];
 
 static void awid_simple_handler(struct perf_event *bp,
@@ -127,7 +127,6 @@ int awid_find_wp_slot(void)
 	return -1;
 }
 
-int wp_cnt = 0;
 
 SYSCALL_DEFINE4(register_watchpoint,
 		// asmlinkage long __arm64_sys_register_watchpoint(
@@ -136,6 +135,7 @@ SYSCALL_DEFINE4(register_watchpoint,
 		wp_auth)
 {
 	int ret, slot;
+	unsigned long size;
 	struct perf_event_attr attr;
 	printk("--------------------------------------\n");
 	printk(KERN_INFO
@@ -174,15 +174,16 @@ SYSCALL_DEFINE4(register_watchpoint,
 		return -EPERM;
 	}
 	printk(KERN_INFO "register watchpoint on slot %d\n", slot);
-	hbp = awid_hwps + wp_cnt;
-	*hbp = register_wide_hw_breakpoint(&attr, awid_simple_handler, NULL);
-	if (IS_ERR((void __force *)*hbp)) {
-		ret = PTR_ERR((void __force *)*hbp);
+	hbp = register_wide_hw_breakpoint(&attr, awid_simple_handler, NULL);
+	if (IS_ERR((void __force *)hbp)) {
+		ret = PTR_ERR((void __force *)hbp);
 		*hbp = NULL;
 		printk(KERN_INFO "Watchpoint registration done %d\n", ret);
 		goto fail;
 	}
-	current->thread.debug.awid_hbp[slot] = *hbp;
+	size = copy_from_user(&awid_hwps[0], &hbp, sizeof(hbp));
+	printk(KERN_INFO "copy remain size %lu\n", size);
+	printk(KERN_INFO "copy addr %lx value %lx\n", &awid_hwps[0], awid_hwp[0]);
 	/* current->thread.debug.awid_hbp[slot] = */
 	/* 	kmalloc(sizeof(struct perf_event **), GFP_KERNEL); */
 	/* unsigned long remain = */
