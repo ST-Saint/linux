@@ -183,7 +183,7 @@ SYSCALL_DEFINE4(register_watchpoint,
 	}
 	size = copy_from_user(&awid_hwps[0], &hbp, sizeof(hbp));
 	printk(KERN_INFO "copy remain size %lu\n", size);
-	printk(KERN_INFO "copy addr %lx value %lx\n", &awid_hwps[0], awid_hwp[0]);
+	printk(KERN_INFO "copy addr %lx value %lx\n", (unsigned long)&awid_hwps[0], (unsigned long)awid_hwps[0]);
 	/* current->thread.debug.awid_hbp[slot] = */
 	/* 	kmalloc(sizeof(struct perf_event **), GFP_KERNEL); */
 	/* unsigned long remain = */
