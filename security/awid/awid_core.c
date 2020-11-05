@@ -168,7 +168,7 @@ SYSCALL_DEFINE4(register_watchpoint,
 	} else {
 		return -EINVAL;
 	}
-	attr.disabled = 0;
+	attr.disabled = 1;
 
 	slot = awid_find_wp_slot();
 	if (slot == -1) {
@@ -176,25 +176,38 @@ SYSCALL_DEFINE4(register_watchpoint,
 	}
 	printk(KERN_INFO "register watchpoint on slot %d\n", slot);
 	/* hbp = register_wide_hw_breakpoint(&attr, awid_simple_handler, NULL); */
-	preempt_disable();
+
+	printk(KERN_INFO "watchpoint attr adddr %lx\n", (unsigned long)(&attr));
 
 	current->thread.debug.awid_hbp[slot] =
 		kmalloc(sizeof(struct perf_event *) * nr_cpu_ids, GFP_KERNEL);
-	get_online_cpus();
-	for_each_online_cpu (cpu) {
-		bp = current->thread.debug.awid_hbp[slot] + cpu;
-		*bp = perf_event_create_kernel_counter(
-			&attr, cpu, current, awid_simple_handler, NULL);
-		if (IS_ERR(*bp)) {
-			ret = PTR_ERR(*bp);
-			goto fail;
-		}
+	cpu = get_cpu();
+	bp = current->thread.debug.awid_hbp[slot] + cpu;
+	printk(KERN_INFO "watchpoint bp pointer adddr %lx\n",
+	       (unsigned long)(&bp));
+	*bp = perf_event_create_kernel_counter(&attr, cpu, current,
+					       awid_simple_handler, NULL);
+	printk(KERN_INFO "watchpoint bp adddr %lx\n", (unsigned long)(bp));
+
+	if (IS_ERR(*bp)) {
+		ret = PTR_ERR(*bp);
+		goto fail;
 	}
-	for_each_online_cpu (cpu) {
-		printk(KERN_INFO "user bp address %lx\n",
-		       (unsigned long)(current->thread.debug
-					       .awid_hbp[slot][cpu]));
-	}
+	/* get_online_cpus(); */
+	/* for_each_online_cpu (cpu) { */
+	/* 	bp = current->thread.debug.awid_hbp[slot] + cpu; */
+	/* 	*bp = perf_event_create_kernel_counter( */
+	/* 		&attr, cpu, current, awid_simple_handler, NULL); */
+	/* 	if (IS_ERR(*bp)) { */
+	/* 		ret = PTR_ERR(*bp); */
+	/* 		goto fail; */
+	/* 	} */
+	/* } */
+	/* for_each_online_cpu (cpu) { */
+	/* 	printk(KERN_INFO "user bp address %lx\n", */
+	/* 	       (unsigned long)(current->thread.debug */
+	/* 				       .awid_hbp[slot][cpu])); */
+	/* } */
 	preempt_enable();
 
 	/* if (IS_ERR((void __force *)hbp)) { */
