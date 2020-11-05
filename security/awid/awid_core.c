@@ -1,5 +1,6 @@
 #include "awid_core.h"
 
+#include <linux/cpu.h>
 #include <linux/init.h> /* Needed for the macros */
 #include <linux/hw_breakpoint.h>
 #include <asm-generic/errno-base.h>
@@ -133,7 +134,7 @@ SYSCALL_DEFINE4(register_watchpoint,
 		enum HW_BREAKPOINT_TYPE, wp_type, enum HW_BREAKPOINT_AUTH,
 		wp_auth)
 {
-	int ret, slot;
+	int ret, slot, cpu;
 	unsigned long size;
 	struct perf_event_attr attr;
 	printk("--------------------------------------\n");
@@ -174,12 +175,23 @@ SYSCALL_DEFINE4(register_watchpoint,
 	}
 	printk(KERN_INFO "register watchpoint on slot %d\n", slot);
 	/* hbp = register_wide_hw_breakpoint(&attr, awid_simple_handler, NULL); */
+	current->thread.debug.awid_hbp[slot] =
+		kmalloc(sizeof(struct perf_event *) * nr_cpu_ids, GFP_KERNEL);
 	struct perf_event *bp;
-	bp = register_user_hw_breakpoint(&attr, awid_simple_handler, NULL,
-					 current);
-	printk(KERN_INFO "user bp address %lx\n", (unsigned long)(bp));
-	if (IS_ERR(bp)) {
-		goto fail;
+	get_online_cpus();
+	for_each_online_cpu (cpu) {
+		bp = perf_event_create_kernel_counter(
+			&attr, cpu, current, awid_simple_handler, NULL);
+		if (IS_ERR(bp)) {
+			ret = PTR_ERR(bp);
+			goto fail;
+		}
+		current->thread.debug.awid_hbp[slot][cpu] = bp;
+	}
+	for_each_online_cpu (cpu) {
+		printk(KERN_INFO "user bp address %lx\n",
+		       (unsigned long)(current->thread.debug
+					       .awid_hbp[slot][cpu]));
 	}
 	/* if (IS_ERR((void __force *)hbp)) { */
 	/* 	ret = PTR_ERR((void __force *)hbp); */
