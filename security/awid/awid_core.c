@@ -127,7 +127,6 @@ int awid_find_wp_slot(void)
 	return -1;
 }
 
-
 SYSCALL_DEFINE4(register_watchpoint,
 		// asmlinkage long __arm64_sys_register_watchpoint(
 		unsigned long, addr, enum HW_BREAKPOINT_LEN, wp_length,
@@ -174,26 +173,33 @@ SYSCALL_DEFINE4(register_watchpoint,
 		return -EPERM;
 	}
 	printk(KERN_INFO "register watchpoint on slot %d\n", slot);
-	hbp = register_wide_hw_breakpoint(&attr, awid_simple_handler, NULL);
-	if (IS_ERR((void __force *)hbp)) {
-		ret = PTR_ERR((void __force *)hbp);
-		*hbp = NULL;
-		printk(KERN_INFO "Watchpoint registration done %d\n", ret);
+	/* hbp = register_wide_hw_breakpoint(&attr, awid_simple_handler, NULL); */
+	struct perf_event *bp;
+	bp = register_user_hw_breakpoint(&attr, awid_simple_handler, NULL,
+					 current);
+	if (IS_ERR(bp)) {
 		goto fail;
 	}
-	size = copy_from_user(&awid_hwps[0], &hbp, sizeof(hbp));
-	printk(KERN_INFO "copy remain size %lu\n", size);
-	printk(KERN_INFO "copy addr %lx value %lx\n", (unsigned long)&awid_hwps[0], (unsigned long)awid_hwps[0]);
+	/* if (IS_ERR((void __force *)hbp)) { */
+	/* 	ret = PTR_ERR((void __force *)hbp); */
+	/* 	*hbp = NULL; */
+	/* 	printk(KERN_INFO "Watchpoint registration done %d\n", ret); */
+	/* 	goto fail; */
+	/* } */
+	/* size = copy_from_user(&awid_hwps[0], &hbp, sizeof(hbp)); */
+	/* printk(KERN_INFO "copy remain size %lu\n", size); */
+	/* printk(KERN_INFO "copy addr %lx value %lx\n", */
+	/*        (unsigned long)&awid_hwps[0], (unsigned long)awid_hwps[0]); */
 	/* current->thread.debug.awid_hbp[slot] = */
 	/* 	kmalloc(sizeof(struct perf_event **), GFP_KERNEL); */
 	/* unsigned long remain = */
 	/* 	copy_from_user(current->thread.debug.awid_hbp + slot, hbp, */
 	/* 		       sizeof(struct perf_event **)); */
 	/* printk(KERN_INFO "copy remain %lu\n", remain); */
-	printk(KERN_INFO "hbp %lx\ntarget slot %lx %lx\n", (unsigned long)hbp,
-	       (unsigned long)(current->thread.debug.awid_hbp + slot),
-	       (unsigned long)current->thread.debug.awid_hbp[slot]);
-	hbp = NULL;
+	/* printk(KERN_INFO "hbp %lx\ntarget slot %lx %lx\n", (unsigned long)hbp, */
+	/*        (unsigned long)(current->thread.debug.awid_hbp + slot), */
+	/*        (unsigned long)current->thread.debug.awid_hbp[slot]); */
+	/* hbp = NULL; */
 
 	/* printk(KERN_INFO "HW Breakpoint for %s write installed\n", ksym_name); */
 	printk(KERN_INFO "Watchpoint registration succeed\n");
