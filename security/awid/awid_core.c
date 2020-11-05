@@ -135,8 +135,8 @@ SYSCALL_DEFINE4(register_watchpoint,
 		wp_auth)
 {
 	int ret, slot, cpu;
-	unsigned long size;
-	struct perf_event *bp;
+	/* unsigned long size; */
+	struct perf_event **bp;
 	struct perf_event_attr attr;
 	printk("--------------------------------------\n");
 	printk(KERN_INFO
@@ -182,13 +182,13 @@ SYSCALL_DEFINE4(register_watchpoint,
 		kmalloc(sizeof(struct perf_event *) * nr_cpu_ids, GFP_KERNEL);
 	get_online_cpus();
 	for_each_online_cpu (cpu) {
-		bp = perf_event_create_kernel_counter(
+		bp = current->thread.debug.awid_hbp[slot] + cpu;
+		*bp = perf_event_create_kernel_counter(
 			&attr, cpu, current, awid_simple_handler, NULL);
-		if (IS_ERR(bp)) {
-			ret = PTR_ERR(bp);
+		if (IS_ERR(*bp)) {
+			ret = PTR_ERR(*bp);
 			goto fail;
 		}
-		current->thread.debug.awid_hbp[slot][cpu] = bp;
 	}
 	for_each_online_cpu (cpu) {
 		printk(KERN_INFO "user bp address %lx\n",
