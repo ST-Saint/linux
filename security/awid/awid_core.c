@@ -177,6 +177,7 @@ SYSCALL_DEFINE4(register_watchpoint,
 	struct perf_event *bp;
 	bp = register_user_hw_breakpoint(&attr, awid_simple_handler, NULL,
 					 current);
+	printk(KERN_INFO "user bp address %lx\n", (unsigned long)(bp));
 	if (IS_ERR(bp)) {
 		goto fail;
 	}
