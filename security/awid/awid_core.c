@@ -136,6 +136,7 @@ SYSCALL_DEFINE4(register_watchpoint,
 {
 	int ret, slot, cpu;
 	unsigned long size;
+	struct perf_event *bp;
 	struct perf_event_attr attr;
 	printk("--------------------------------------\n");
 	printk(KERN_INFO
@@ -175,9 +176,10 @@ SYSCALL_DEFINE4(register_watchpoint,
 	}
 	printk(KERN_INFO "register watchpoint on slot %d\n", slot);
 	/* hbp = register_wide_hw_breakpoint(&attr, awid_simple_handler, NULL); */
+	preempt_disable();
+
 	current->thread.debug.awid_hbp[slot] =
 		kmalloc(sizeof(struct perf_event *) * nr_cpu_ids, GFP_KERNEL);
-	struct perf_event *bp;
 	get_online_cpus();
 	for_each_online_cpu (cpu) {
 		bp = perf_event_create_kernel_counter(
@@ -193,6 +195,8 @@ SYSCALL_DEFINE4(register_watchpoint,
 		       (unsigned long)(current->thread.debug
 					       .awid_hbp[slot][cpu]));
 	}
+	preempt_enable();
+
 	/* if (IS_ERR((void __force *)hbp)) { */
 	/* 	ret = PTR_ERR((void __force *)hbp); */
 	/* 	*hbp = NULL; */
