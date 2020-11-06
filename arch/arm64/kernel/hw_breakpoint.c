@@ -981,15 +981,16 @@ void hw_breakpoint_thread_switch(struct task_struct *next)
 			}
 		}
 	}
+}
 
-	/*
+/*
  * CPU initialisation.
  */
-	static int hw_breakpoint_reset(unsigned int cpu)
-	{
-		int i;
-		struct perf_event **slots;
-		/*
+static int hw_breakpoint_reset(unsigned int cpu)
+{
+	int i;
+	struct perf_event **slots;
+	/*
 	 * When a CPU goes through cold-boot, it does not have any installed
 	 * slot, so it is safe to share the same function for restoring and
 	 * resetting breakpoints; when a CPU is hotplugged in, it goes
@@ -999,90 +1000,81 @@ void hw_breakpoint_thread_switch(struct task_struct *next)
 	 * notifier some slots might be initialized; if so they are
 	 * reprogrammed according to the debug slots content.
 	 */
-		for (slots = this_cpu_ptr(bp_on_reg), i = 0; i < core_num_brps;
-		     ++i) {
-			if (slots[i]) {
-				hw_breakpoint_control(slots[i],
-						      HW_BREAKPOINT_RESTORE);
-			} else {
-				write_wb_reg(AARCH64_DBG_REG_BCR, i, 0UL);
-				write_wb_reg(AARCH64_DBG_REG_BVR, i, 0UL);
-			}
+	for (slots = this_cpu_ptr(bp_on_reg), i = 0; i < core_num_brps; ++i) {
+		if (slots[i]) {
+			hw_breakpoint_control(slots[i], HW_BREAKPOINT_RESTORE);
+		} else {
+			write_wb_reg(AARCH64_DBG_REG_BCR, i, 0UL);
+			write_wb_reg(AARCH64_DBG_REG_BVR, i, 0UL);
 		}
-
-		for (slots = this_cpu_ptr(wp_on_reg), i = 0; i < core_num_wrps;
-		     ++i) {
-			if (slots[i]) {
-				hw_breakpoint_control(slots[i],
-						      HW_BREAKPOINT_RESTORE);
-			} else {
-				write_wb_reg(AARCH64_DBG_REG_WCR, i, 0UL);
-				write_wb_reg(AARCH64_DBG_REG_WVR, i, 0UL);
-			}
-		}
-
-		return 0;
 	}
+
+	for (slots = this_cpu_ptr(wp_on_reg), i = 0; i < core_num_wrps; ++i) {
+		if (slots[i]) {
+			hw_breakpoint_control(slots[i], HW_BREAKPOINT_RESTORE);
+		} else {
+			write_wb_reg(AARCH64_DBG_REG_WCR, i, 0UL);
+			write_wb_reg(AARCH64_DBG_REG_WVR, i, 0UL);
+		}
+	}
+
+	return 0;
+}
 
 #ifdef CONFIG_CPU_PM
-	extern void cpu_suspend_set_dbg_restorer(
-		int (*hw_bp_restore)(unsigned int));
+extern void cpu_suspend_set_dbg_restorer(int (*hw_bp_restore)(unsigned int));
 #else
-	static inline void cpu_suspend_set_dbg_restorer(
-		int (*hw_bp_restore)(unsigned int))
-	{
-	}
+static inline void
+cpu_suspend_set_dbg_restorer(int (*hw_bp_restore)(unsigned int))
+{
+}
 #endif
 
-	/*
+/*
  * One-time initialisation.
  */
-	static int __init arch_hw_breakpoint_init(void)
-	{
-		int ret;
+static int __init arch_hw_breakpoint_init(void)
+{
+	int ret;
 
-		core_num_brps = get_num_brps();
-		core_num_wrps = get_num_wrps();
+	core_num_brps = get_num_brps();
+	core_num_wrps = get_num_wrps();
 
-		pr_info("found %d breakpoint and %d watchpoint registers.\n",
-			core_num_brps, core_num_wrps);
+	pr_info("found %d breakpoint and %d watchpoint registers.\n",
+		core_num_brps, core_num_wrps);
 
-		/* Register debug fault handlers. */
-		hook_debug_fault_code(DBG_ESR_EVT_HWBP, breakpoint_handler,
-				      SIGTRAP, TRAP_HWBKPT,
-				      "hw-breakpoint handler");
-		hook_debug_fault_code(DBG_ESR_EVT_HWWP, watchpoint_handler,
-				      SIGTRAP, TRAP_HWBKPT,
-				      "hw-watchpoint handler");
+	/* Register debug fault handlers. */
+	hook_debug_fault_code(DBG_ESR_EVT_HWBP, breakpoint_handler, SIGTRAP,
+			      TRAP_HWBKPT, "hw-breakpoint handler");
+	hook_debug_fault_code(DBG_ESR_EVT_HWWP, watchpoint_handler, SIGTRAP,
+			      TRAP_HWBKPT, "hw-watchpoint handler");
 
-		/*
+	/*
 	 * Reset the breakpoint resources. We assume that a halting
 	 * debugger will leave the world in a nice state for us.
 	 */
-		ret = cpuhp_setup_state(
-			CPUHP_AP_PERF_ARM_HW_BREAKPOINT_STARTING,
-			"perf/arm64/hw_breakpoint:starting",
-			hw_breakpoint_reset, NULL);
-		if (ret)
-			pr_err("failed to register CPU hotplug notifier: %d\n",
-			       ret);
+	ret = cpuhp_setup_state(CPUHP_AP_PERF_ARM_HW_BREAKPOINT_STARTING,
+				"perf/arm64/hw_breakpoint:starting",
+				hw_breakpoint_reset, NULL);
+	if (ret)
+		pr_err("failed to register CPU hotplug notifier: %d\n", ret);
 
-		/* Register cpu_suspend hw breakpoint restore hook */
-		cpu_suspend_set_dbg_restorer(hw_breakpoint_reset);
+	/* Register cpu_suspend hw breakpoint restore hook */
+	cpu_suspend_set_dbg_restorer(hw_breakpoint_reset);
 
-		return ret;
-	}
-	arch_initcall(arch_hw_breakpoint_init);
+	return ret;
+}
+arch_initcall(arch_hw_breakpoint_init);
 
-	void hw_breakpoint_pmu_read(struct perf_event * bp)
-	{
-	}
+void hw_breakpoint_pmu_read(struct perf_event *bp)
+{
+}
 
-	/*
+/*
  * Dummy function to register with die_notifier.
  */
-	int hw_breakpoint_exceptions_notify(struct notifier_block * unused,
-					    unsigned long val, void *data)
-	{
-		return NOTIFY_DONE;
-	}
+int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
+				    unsigned long val, void *data)
+{
+	return NOTIFY_DONE;
+}
