@@ -951,7 +951,8 @@ void hw_breakpoint_thread_switch(struct task_struct *next)
 	cpu = get_cpu();
 	for (i = 0; i < ARM_MAX_WRP; ++i) {
 		if (current_debug_info->awid_hbp[i] != NULL &&
-		    current_debug_info->awid_hbp[i][cpu] != NULL) {
+		    current_debug_info->awid_hbp[i][cpu] != NULL &&
+		    *current_debug_info->awid_hbp[i][cpu] != NULL) {
 			printk(KERN_DEBUG
 			       "access per cpu error pid: %d id: %d cpu: %d addr %lx\n",
 			       current->pid, i, cpu,
@@ -969,7 +970,8 @@ void hw_breakpoint_thread_switch(struct task_struct *next)
 	info = NULL;
 	for (i = 0; i < ARM_MAX_WRP; ++i) {
 		if (next_debug_info->awid_hbp[i] != NULL &&
-		    current_debug_info->awid_hbp[i][cpu] != NULL) {
+		    current_debug_info->awid_hbp[i][cpu] != NULL &&
+		    *current_debug_info->awid_hbp[i][cpu] != NULL) {
 			{
 				/* wp = next_debug_info->awid_hbp[i][cpu]; */
 				/* printk(KERN_INFO */

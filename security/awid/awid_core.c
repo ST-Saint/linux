@@ -189,6 +189,8 @@ SYSCALL_DEFINE4(register_watchpoint,
 		       (unsigned long)(&bp));
 		printk(KERN_INFO "watchpoint bp adddr %lx\n",
 		       (unsigned long)(bp));
+		printk(KERN_INFO "watchpoint bp value %lx\n",
+		       (unsigned long)(*bp));
 	}
 	cpu = get_cpu();
 	*bp = perf_event_create_kernel_counter(&attr, cpu, current,
