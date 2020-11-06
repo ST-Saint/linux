@@ -185,8 +185,10 @@ SYSCALL_DEFINE4(register_watchpoint,
 	/* bp = &current->thread.debug.awid_hbp[slot][cpu]; */
 	printk(KERN_INFO "watchpoint bp pointer adddr %lx\n",
 	       (unsigned long)(&bp));
+	preempt_disable();
 	*bp = perf_event_create_kernel_counter(&attr, cpu, current,
 					       awid_simple_handler, NULL);
+	preempt_enable();
 	printk(KERN_INFO "watchpoint bp adddr %lx\n", (unsigned long)(bp));
 
 	if (IS_ERR(*bp)) {
