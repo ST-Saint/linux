@@ -962,7 +962,7 @@ void hw_breakpoint_thread_switch(struct task_struct *next)
 			       current->pid, wp->attr.bp_addr);
 			info = counter_arch_bp(wp);
 			info->ctrl.enabled = 0;
-			hw_breakpoint_control(wp, HW_BREAKPOINT_INSTALL);
+			hw_breakpoint_control(wp, HW_BREAKPOINT_UNINSTALL);
 		}
 	}
 	wp = NULL;
@@ -970,13 +970,13 @@ void hw_breakpoint_thread_switch(struct task_struct *next)
 	for (i = 0; i < ARM_MAX_WRP; ++i) {
 		if (next_debug_info->awid_hbp[i] != NULL &&
 		    current_debug_info->awid_hbp[i][cpu] != NULL) {
-			/* wp = next_debug_info->awid_hbp[i][cpu]; */
-			/* printk(KERN_INFO */
-			/*        "found wbp in pid: %d address: %llx and enable\n", */
-			/*        current->pid, wp->attr.bp_addr); */
-			/* info = counter_arch_bp(wp); */
-			/* info->ctrl.enabled = 1; */
-			/* hw_breakpoint_control(wp, HW_BREAKPOINT_UNINSTALL); */
+			wp = next_debug_info->awid_hbp[i][cpu];
+			printk(KERN_INFO
+			       "found wbp in pid: %d address: %llx and enable\n",
+			       current->pid, wp->attr.bp_addr);
+			info = counter_arch_bp(wp);
+			info->ctrl.enabled = 1;
+			hw_breakpoint_control(wp, HW_BREAKPOINT_INSTALL);
 		}
 	}
 }

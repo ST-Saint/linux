@@ -169,7 +169,7 @@ SYSCALL_DEFINE4(register_watchpoint,
 	} else {
 		return -EINVAL;
 	}
-	attr.disabled = 1;
+	attr.disabled = 0;
 
 	slot = awid_find_wp_slot();
 	if (slot == -1) {
