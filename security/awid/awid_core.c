@@ -141,8 +141,8 @@ SYSCALL_DEFINE4(register_watchpoint,
 	struct perf_event_attr attr;
 	printk("--------------------------------------\n");
 	printk(KERN_INFO
-	       "syscall func. My pid: %d, tgid: %d, comm: %s, uid: %d, euid: %d\n",
-	       current->pid, current->tgid, current->comm,
+	       "syscall func. cpu: %d, My pid: %d, tgid: %d, comm: %s, uid: %d, euid: %d\n",
+	       get_cpu(), current->pid, current->tgid, current->comm,
 	       current->cred->uid.val, current->cred->euid.val);
 	printk("--------------------------------------\n");
 

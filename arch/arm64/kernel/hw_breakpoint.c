@@ -212,6 +212,8 @@ static int hw_breakpoint_slot_setup(struct perf_event **slots, int max_slots,
 			}
 			break;
 		case HW_BREAKPOINT_UNINSTALL:
+			printk(KERN_INFO "control slot id: %d, value: %lx", i,
+			       (unsigned long)*slot);
 			if (*slot == bp) {
 				*slot = NULL;
 				return i;
@@ -953,9 +955,10 @@ void hw_breakpoint_thread_switch(struct task_struct *next)
 		if (current_debug_info->awid_hbp[i] != NULL &&
 		    current_debug_info->awid_hbp[i][cpu] != NULL) {
 			printk(KERN_DEBUG
-			       "access per cpu error pid: %d id: %d cpu: %d addr %lx\n",
+			       "access per cpu error pid: %d id: %d cpu: %d addr %lx value %lx\n",
 			       current->pid, i, cpu,
-			       (unsigned long)&current_debug_info->awid_hbp[i]);
+			       (unsigned long)&current_debug_info->awid_hbp[i],
+			       (unsigned long)current_debug_info->awid_hbp[i]);
 			wp = current_debug_info->awid_hbp[i][cpu];
 			printk(KERN_INFO
 			       "found wbp in pid: %d address: %llx and disable\n",
