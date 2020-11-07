@@ -946,6 +946,7 @@ void hw_breakpoint_thread_switch(struct task_struct *next)
 		toggle_bp_registers(AARCH64_DBG_REG_BCR, DBG_ACTIVE_EL0,
 				    !next_debug_info->bps_disabled);
 
+	printk(KERN_INFO "toggle here");
 	/* Update watchpoints. */
 	if (current_debug_info->wps_disabled != next_debug_info->wps_disabled)
 		toggle_bp_registers(AARCH64_DBG_REG_WCR, DBG_ACTIVE_EL0,
