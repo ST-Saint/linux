@@ -186,8 +186,8 @@ SYSCALL_DEFINE4(register_watchpoint,
 	get_online_cpus();
 	for_each_online_cpu (cpu) {
 		bp = &current->thread.debug.awid_hbp[slot][cpu];
-		printk(KERN_INFO "watchpoint bp pointer adddr %lx\n",
-		       (unsigned long)(&bp));
+		/* printk(KERN_INFO "watchpoint bp pointer adddr %lx\n", */
+		/*        (unsigned long)(&bp)); */
 		printk(KERN_INFO "watchpoint bp adddr %lx\n",
 		       (unsigned long)(bp));
 		printk(KERN_INFO "watchpoint bp value %lx\n",

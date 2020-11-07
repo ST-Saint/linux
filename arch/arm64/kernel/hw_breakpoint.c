@@ -212,8 +212,9 @@ static int hw_breakpoint_slot_setup(struct perf_event **slots, int max_slots,
 			}
 			break;
 		case HW_BREAKPOINT_UNINSTALL:
-			printk(KERN_INFO "control slot id: %d, value: %lx", i,
-			       (unsigned long)*slot);
+			printk(KERN_INFO
+			       "control slot id: %d, value: %lx bp value: %lx\n",
+			       i, (unsigned long)*slot, bp);
 			if (*slot == bp) {
 				*slot = NULL;
 				return i;
