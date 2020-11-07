@@ -184,6 +184,10 @@ SYSCALL_DEFINE4(register_watchpoint,
 		kzalloc(sizeof(struct perf_event *) * nr_cpu_ids, GFP_KERNEL);
 	/* bp = kmalloc(sizeof(struct perf_event *) * nr_cpu_ids, GFP_KERNEL); */
 	get_online_cpus();
+	cpu = get_cpu();
+	bp = &current->thread.debug.awid_hbp[slot][cpu];
+	*bp = perf_event_create_kernel_counter(&attr, cpu, current,
+					       awid_simple_handler, NULL);
 	for_each_online_cpu (cpu) {
 		bp = &current->thread.debug.awid_hbp[slot][cpu];
 		/* printk(KERN_INFO "watchpoint bp pointer adddr %lx\n", */
@@ -193,10 +197,6 @@ SYSCALL_DEFINE4(register_watchpoint,
 		printk(KERN_INFO "watchpoint bp value %lx\n",
 		       (unsigned long)(*bp));
 	}
-	cpu = get_cpu();
-	bp = &current->thread.debug.awid_hbp[slot][cpu];
-	*bp = perf_event_create_kernel_counter(&attr, cpu, current,
-					       awid_simple_handler, NULL);
 	if (IS_ERR(*bp)) {
 		ret = PTR_ERR(*bp);
 		goto fail;

@@ -958,8 +958,10 @@ void hw_breakpoint_thread_switch(struct task_struct *next)
 			printk(KERN_DEBUG
 			       "access per cpu error pid: %d id: %d cpu: %d addr %lx value %lx\n",
 			       current->pid, i, cpu,
-			       (unsigned long)&current_debug_info->awid_hbp[i],
-			       (unsigned long)current_debug_info->awid_hbp[i]);
+			       (unsigned long)(&current_debug_info
+							->awid_hbp[i][cpu]),
+			       (unsigned long)
+				       current_debug_info->awid_hbp[i][cpu]);
 			wp = current_debug_info->awid_hbp[i][cpu];
 			printk(KERN_INFO
 			       "found wbp in pid: %d address: %llx and disable\n",
