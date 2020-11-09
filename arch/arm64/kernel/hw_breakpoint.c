@@ -237,8 +237,8 @@ static int hw_breakpoint_slot_setup(struct perf_event **slots, int max_slots,
 static int hw_breakpoint_control(struct perf_event *bp,
 				 enum hw_breakpoint_ops ops)
 {
-	printk("hw_breakpoint_control dump");
 	printk("--------------------------------------------------");
+	printk("hw_breakpoint_control dump\n");
 	dump_stack();
 	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
 	struct perf_event **slots;

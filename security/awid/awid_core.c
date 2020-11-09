@@ -146,7 +146,7 @@ SYSCALL_DEFINE4(register_watchpoint,
 	       "syscall func. cpu: %d, My pid: %d, tgid: %d, comm: %s, uid: %d, euid: %d\n",
 	       get_cpu(), current->pid, current->tgid, current->comm,
 	       current->cred->uid.val, current->cred->euid.val);
-	printk("--------------------------------------\n");
+	printk("\n");
 
 	printk("addr: %lx length: %d type: %d auth: %d\n", addr, wp_length,
 	       wp_type, wp_auth);
