@@ -1,5 +1,6 @@
 #include "awid_core.h"
 
+#include "linux/err.h"
 #include "linux/gfp.h"
 #include "linux/preempt.h"
 #include <linux/cpu.h>
@@ -25,7 +26,7 @@
 #include <net/sock.h>
 #include <linux/syscalls.h>
 
-struct perf_event **hbp;
+struct perf_event *hbp;
 struct perf_event **awid_hwps[ARM_MAX_WRP];
 
 static void awid_simple_handler(struct perf_event *bp,
@@ -172,32 +173,39 @@ SYSCALL_DEFINE4(register_watchpoint,
 	}
 	attr.disabled = 0;
 
-	slot = awid_find_wp_slot();
-	if (slot == -1) {
-		return -EPERM;
-	}
-	/* printk(KERN_INFO "register watchpoint on slot %d\n", slot); */
-	/* hbp = register_wide_hw_breakpoint(&attr, awid_simple_handler, NULL); */
+	hbp = register_user_hw_breakpoint(&attr, awid_simple_handler, NULL,
+					  current);
 
-	/* printk(KERN_INFO "watchpoint attr adddr %lx\n", (unsigned long)(&attr)); */
-
-	current->thread.debug.awid_hbp[slot] =
-		kzalloc(sizeof(struct perf_event *) * nr_cpu_ids, GFP_ATOMIC);
-	/* bp = kmalloc(sizeof(struct perf_event *) * nr_cpu_ids, GFP_KERNEL); */
-	get_online_cpus();
-	cpu = get_cpu();
-	bp = &current->thread.debug.awid_hbp[slot][cpu];
-	*bp = perf_event_create_kernel_counter(&attr, cpu, current,
-					       awid_simple_handler, NULL);
-	for_each_online_cpu (cpu) {
-		bp = &current->thread.debug.awid_hbp[slot][cpu];
-		/* printk(KERN_INFO "watchpoint bp pointer adddr %lx\n", */
-		/*        (unsigned long)(&bp)); */
-		printk(KERN_INFO "watchpoint bp adddr %lx\n",
-		       (unsigned long)(bp));
-		printk(KERN_INFO "watchpoint bp value %lx\n",
-		       (unsigned long)(*bp));
+	if (IS_ERR(hbp)) {
+		ret = PTR_ERR(hbp);
+		goto fail;
 	}
+
+	/* slot = awid_find_wp_slot(); */
+	/* if (slot == -1) { */
+	/* 	return -EPERM; */
+	/* } */
+	/* /\* printk(KERN_INFO "register watchpoint on slot %d\n", slot); *\/ */
+
+	/* /\* printk(KERN_INFO "watchpoint attr adddr %lx\n", (unsigned long)(&attr)); *\/ */
+
+	/* current->thread.debug.awid_hbp[slot] = */
+	/* 	kzalloc(sizeof(struct perf_event *) * nr_cpu_ids, GFP_ATOMIC); */
+	/* /\* bp = kmalloc(sizeof(struct perf_event *) * nr_cpu_ids, GFP_KERNEL); *\/ */
+	/* get_online_cpus(); */
+	/* cpu = get_cpu(); */
+	/* bp = &current->thread.debug.awid_hbp[slot][cpu]; */
+	/* *bp = perf_event_create_kernel_counter(&attr, cpu, current, */
+	/* 				       awid_simple_handler, NULL); */
+	/* for_each_online_cpu (cpu) { */
+	/* 	bp = &current->thread.debug.awid_hbp[slot][cpu]; */
+	/* 	/\* printk(KERN_INFO "watchpoint bp pointer adddr %lx\n", *\/ */
+	/* 	/\*        (unsigned long)(&bp)); *\/ */
+	/* 	printk(KERN_INFO "watchpoint bp adddr %lx\n", */
+	/* 	       (unsigned long)(bp)); */
+	/* 	printk(KERN_INFO "watchpoint bp value %lx\n", */
+	/* 	       (unsigned long)(*bp)); */
+	/* } */
 	if (IS_ERR(*bp)) {
 		ret = PTR_ERR(*bp);
 		goto fail;
