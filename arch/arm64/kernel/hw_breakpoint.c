@@ -955,50 +955,50 @@ void hw_breakpoint_thread_switch(struct task_struct *next)
 		toggle_bp_registers(AARCH64_DBG_REG_WCR, DBG_ACTIVE_EL0,
 				    !next_debug_info->wps_disabled);
 
-	if (!next_debug_info->bps_disabled) {
-		/*  enable current watchpoint domains and disable next watchpoint domains */
-		/* cpu = get_cpu(); */
-		/* if (!current_debug_info->bps_disabled) { */
-		/* 	for (i = 0; i < ARM_MAX_WRP; ++i) { */
-		/* 		if (current_debug_info->awid_hbp[i] != NULL && */
-		/* 		    current_debug_info->awid_hbp[i][cpu] != */
-		/* 			    NULL) { */
-		/* 			printk(KERN_DEBUG */
-		/* 			       "access per cpu error pid: %d id: %d cpu: %d addr %lx value %lx\n", */
-		/* 			       current->pid, i, cpu, */
-		/* 			       (unsigned long)(&current_debug_info */
-		/* 							->awid_hbp */
-		/* 								[i] */
-		/* 								[cpu]), */
-		/* 			       (unsigned long)current_debug_info */
-		/* 				       ->awid_hbp[i][cpu]); */
-		/* 			wp = current_debug_info */
-		/* 				     ->awid_hbp[i][cpu]; */
-		/* 			printk(KERN_INFO */
-		/* 			       "found wbp in pid: %d address: %llx and disable\n", */
-		/* 			       current->pid, wp->attr.bp_addr); */
-		/* 			info = counter_arch_bp(wp); */
-		/* 			info->ctrl.enabled = 0; */
-		/* 			hw_breakpoint_control( */
-		/* 				wp, HW_BREAKPOINT_UNINSTALL); */
-		/* 		} */
-		/* 	} */
-		/* } */
-		/* wp = NULL; */
-		/* info = NULL; */
-		/* for (i = 0; i < ARM_MAX_WRP; ++i) { */
-		/* 	if (next_debug_info->awid_hbp[i] != NULL && */
-		/* 	    current_debug_info->awid_hbp[i][cpu] != NULL) { */
-		/* 		/\* wp = next_debug_info->awid_hbp[i][cpu]; *\/ */
-		/* 		/\* printk(KERN_INFO *\/ */
-		/* 		/\*        "found wbp in pid: %d address: %llx and enable\n", *\/ */
-		/* 		/\*        current->pid, wp->attr.bp_addr); *\/ */
-		/* 		/\* info = counter_arch_bp(wp); *\/ */
-		/* 		/\* info->ctrl.enabled = 1; *\/ */
-		/* 		/\* hw_breakpoint_control(wp, HW_BREAKPOINT_INSTALL); *\/ */
-		/* 	} */
-		/* } */
-	}
+	/* if (!next_debug_info->bps_disabled) { */
+	/*  enable current watchpoint domains and disable next watchpoint domains */
+	/* cpu = get_cpu(); */
+	/* if (!current_debug_info->bps_disabled) { */
+	/* 	for (i = 0; i < ARM_MAX_WRP; ++i) { */
+	/* 		if (current_debug_info->awid_hbp[i] != NULL && */
+	/* 		    current_debug_info->awid_hbp[i][cpu] != */
+	/* 			    NULL) { */
+	/* 			printk(KERN_DEBUG */
+	/* 			       "access per cpu error pid: %d id: %d cpu: %d addr %lx value %lx\n", */
+	/* 			       current->pid, i, cpu, */
+	/* 			       (unsigned long)(&current_debug_info */
+	/* 							->awid_hbp */
+	/* 								[i] */
+	/* 								[cpu]), */
+	/* 			       (unsigned long)current_debug_info */
+	/* 				       ->awid_hbp[i][cpu]); */
+	/* 			wp = current_debug_info */
+	/* 				     ->awid_hbp[i][cpu]; */
+	/* 			printk(KERN_INFO */
+	/* 			       "found wbp in pid: %d address: %llx and disable\n", */
+	/* 			       current->pid, wp->attr.bp_addr); */
+	/* 			info = counter_arch_bp(wp); */
+	/* 			info->ctrl.enabled = 0; */
+	/* 			hw_breakpoint_control( */
+	/* 				wp, HW_BREAKPOINT_UNINSTALL); */
+	/* 		} */
+	/* 	} */
+	/* } */
+	/* wp = NULL; */
+	/* info = NULL; */
+	/* for (i = 0; i < ARM_MAX_WRP; ++i) { */
+	/* 	if (next_debug_info->awid_hbp[i] != NULL && */
+	/* 	    current_debug_info->awid_hbp[i][cpu] != NULL) { */
+	/* 		/\* wp = next_debug_info->awid_hbp[i][cpu]; *\/ */
+	/* 		/\* printk(KERN_INFO *\/ */
+	/* 		/\*        "found wbp in pid: %d address: %llx and enable\n", *\/ */
+	/* 		/\*        current->pid, wp->attr.bp_addr); *\/ */
+	/* 		/\* info = counter_arch_bp(wp); *\/ */
+	/* 		/\* info->ctrl.enabled = 1; *\/ */
+	/* 		/\* hw_breakpoint_control(wp, HW_BREAKPOINT_INSTALL); *\/ */
+	/* 	} */
+	/* } */
+	/* } */
 }
 
 /*

@@ -48,7 +48,7 @@ void test_ntid()
 		}
 		case 'w': {
 			printf("write wp value before %d\n", test_value);
-			c = 1;
+			test_value = 1;
 			printf("write wp value after %d\n", test_value);
 			break;
 		}
