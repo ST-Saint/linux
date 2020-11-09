@@ -1,5 +1,6 @@
 #include "awid_core.h"
 
+#include "linux/gfp.h"
 #include "linux/preempt.h"
 #include <linux/cpu.h>
 #include <linux/init.h> /* Needed for the macros */
@@ -181,7 +182,7 @@ SYSCALL_DEFINE4(register_watchpoint,
 	printk(KERN_INFO "watchpoint attr adddr %lx\n", (unsigned long)(&attr));
 
 	current->thread.debug.awid_hbp[slot] =
-		kzalloc(sizeof(struct perf_event *) * nr_cpu_ids, GFP_KERNEL);
+		kzalloc(sizeof(struct perf_event *) * nr_cpu_ids, GFP_ATOMIC);
 	/* bp = kmalloc(sizeof(struct perf_event *) * nr_cpu_ids, GFP_KERNEL); */
 	get_online_cpus();
 	cpu = get_cpu();

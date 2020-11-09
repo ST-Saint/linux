@@ -7,7 +7,7 @@
  * Author: Will Deacon <will.deacon@arm.com>
  */
 
-#include "linux/printk.h"
+#include <linux/printk.h>
 #define pr_fmt(fmt) "hw-breakpoint: " fmt
 
 #include <linux/compat.h>
