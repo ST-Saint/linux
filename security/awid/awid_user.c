@@ -43,14 +43,14 @@ void test_ntid()
 			break;
 		}
 		case 'r': {
-			printf("read wp value %d\n", c);
-      break;
+			printf("read wp value %d\n", test_value);
+			break;
 		}
 		case 'w': {
-			printf("write wp value before %d\n", c);
+			printf("write wp value before %d\n", test_value);
 			c = 1;
-			printf("write wp value after %d\n", c);
-      break;
+			printf("write wp value after %d\n", test_value);
+			break;
 		}
 		case 'q': {
 			return;
