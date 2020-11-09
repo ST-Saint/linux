@@ -7,6 +7,7 @@
  * Author: Will Deacon <will.deacon@arm.com>
  */
 
+#include "linux/printk.h"
 #define pr_fmt(fmt) "hw-breakpoint: " fmt
 
 #include <linux/compat.h>
@@ -236,6 +237,9 @@ static int hw_breakpoint_slot_setup(struct perf_event **slots, int max_slots,
 static int hw_breakpoint_control(struct perf_event *bp,
 				 enum hw_breakpoint_ops ops)
 {
+	printk("hw_breakpoint_control dump");
+	printk("--------------------------------------------------");
+	dump_stack();
 	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
 	struct perf_event **slots;
 	struct debug_info *debug_info = &current->thread.debug;
@@ -947,11 +951,9 @@ void hw_breakpoint_thread_switch(struct task_struct *next)
 				    !next_debug_info->bps_disabled);
 
 	/* Update watchpoints. */
-	if (current_debug_info->wps_disabled != next_debug_info->wps_disabled) {
-		printk(KERN_INFO "toggle here");
+	if (current_debug_info->wps_disabled != next_debug_info->wps_disabled)
 		toggle_bp_registers(AARCH64_DBG_REG_WCR, DBG_ACTIVE_EL0,
 				    !next_debug_info->wps_disabled);
-	}
 
 	if (!next_debug_info->bps_disabled) {
 		/*  enable current watchpoint domains and disable next watchpoint domains */
