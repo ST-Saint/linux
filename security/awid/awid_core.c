@@ -206,10 +206,10 @@ SYSCALL_DEFINE4(register_watchpoint,
 	/* 	printk(KERN_INFO "watchpoint bp value %lx\n", */
 	/* 	       (unsigned long)(*bp)); */
 	/* } */
-	if (IS_ERR(*bp)) {
-		ret = PTR_ERR(*bp);
-		goto fail;
-	}
+	/* if (IS_ERR(*bp)) { */
+	/* 	ret = PTR_ERR(*bp); */
+	/* 	goto fail; */
+	/* } */
 	/* get_online_cpus(); */
 	/* for_each_online_cpu (cpu) { */
 	/* 	bp = current->thread.debug.awid_hbp[slot] + cpu; */
