@@ -176,10 +176,10 @@ SYSCALL_DEFINE4(register_watchpoint,
 	if (slot == -1) {
 		return -EPERM;
 	}
-	printk(KERN_INFO "register watchpoint on slot %d\n", slot);
-	hbp = register_wide_hw_breakpoint(&attr, awid_simple_handler, NULL);
+	/* printk(KERN_INFO "register watchpoint on slot %d\n", slot); */
+	/* hbp = register_wide_hw_breakpoint(&attr, awid_simple_handler, NULL); */
 
-	printk(KERN_INFO "watchpoint attr adddr %lx\n", (unsigned long)(&attr));
+	/* printk(KERN_INFO "watchpoint attr adddr %lx\n", (unsigned long)(&attr)); */
 
 	current->thread.debug.awid_hbp[slot] =
 		kzalloc(sizeof(struct perf_event *) * nr_cpu_ids, GFP_ATOMIC);
