@@ -14,7 +14,7 @@ PWD := ${CURDIR}
 KDIR := $(CURDIR)/../../
 SOURCES=$(wildcard *.c^)
 HEADERS=$(wildcard *.h^)
-all: $(SOURCES) $(HEADERS)
+all: $(SOURCES) $(HEADERS) awid_user
 	make -C $(KDIR) M=$(PWD)
 awid_user: awid_user.c
 	aarch64-linux-gnu-gcc awid_user.c -o awid_user -lpthread
