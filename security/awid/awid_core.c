@@ -175,7 +175,7 @@ SYSCALL_DEFINE4(register_watchpoint,
 	attr.disabled = 0;
 
 	hbp = register_user_hw_breakpoint(&attr, awid_simple_handler, NULL,
-					  NULL);
+					  current);
 
 	if (IS_ERR(hbp)) {
 		ret = PTR_ERR(hbp);
