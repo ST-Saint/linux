@@ -3,6 +3,7 @@
 #include "linux/err.h"
 #include "linux/gfp.h"
 #include "linux/preempt.h"
+#include "linux/smp.h"
 #include <linux/cpu.h>
 #include <linux/init.h> /* Needed for the macros */
 #include <linux/hw_breakpoint.h>
@@ -143,11 +144,10 @@ SYSCALL_DEFINE4(register_watchpoint,
 	struct perf_event_attr attr;
 	printk("--------------------------------------\n");
 	printk(KERN_INFO
-	       "syscall func. My pid: %d, tgid: %d, comm: %s, uid: %d, euid: %d\n",
-	       current->pid, current->tgid, current->comm,
+	       "syscall func. cpu: %d, My pid: %d, tgid: %d, comm: %s, uid: %d, euid: %d\n",
+	       smp_processor_id(), current->pid, current->tgid, current->comm,
 	       current->cred->uid.val, current->cred->euid.val);
 	printk("\n");
-	return 0;
 
 	printk("addr: %lx length: %d type: %d auth: %d\n", addr, wp_length,
 	       wp_type, wp_auth);
