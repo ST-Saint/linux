@@ -46,36 +46,6 @@ static void awid_simple_handler(struct perf_event *bp,
 	do_exit(SIGKILL);
 }
 
-int check_watchpoint_auth(struct perf_event *wp)
-{
-	int i;
-	for (i = 0; i < ARM_MAX_WRP; ++i) {
-		if (wp == current->thread.debug.hbp_watch[i]) {
-			// wp->attr.bp_auth;
-			return 0;
-		}
-	}
-	return -EPERM;
-}
-
-int grant_watchpoint_to_pid(struct perf_event *bp, struct pid *pid)
-{
-	int i;
-	int ret = !check_watchpoint_auth(bp);
-	struct task_struct *target;
-	if (ret) {
-		return ret;
-	}
-	target = get_pid_task(pid, PIDTYPE_PID);
-	for (i = 0; i < ARM_MAX_WRP; ++i) {
-		if (target->thread.debug.hbp_watch[i] == NULL) {
-			target->thread.debug.hbp_watch[i] = bp;
-			return 0;
-		}
-	}
-	return -EPERM;
-}
-
 asmlinkage __attribute__((optimize("O0"))) long
 __arm64_sys_watchpoint_trigger(struct perf_event *wp)
 {
@@ -105,13 +75,6 @@ __arm64_sys_watchpoint_trigger(struct perf_event *wp)
 
 void awid_clear(void)
 {
-	int i;
-	for (i = 0; i < ARM_MAX_WRP; ++i) {
-		if (awid_hwps[i] != NULL) {
-			unregister_wide_hw_breakpoint(awid_hwps[i]);
-			awid_hwps[i] = NULL;
-		}
-	}
 }
 
 asmlinkage long __arm64_sys_watchpoint_clear(void)
