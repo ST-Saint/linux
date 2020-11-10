@@ -39,11 +39,11 @@
  */
 struct bp_cpuinfo {
 	/* Number of pinned cpu breakpoints in a cpu */
-	unsigned int	cpu_pinned;
+	unsigned int cpu_pinned;
 	/* tsk_pinned[n] is the number of tasks having n+1 breakpoints */
-	unsigned int	*tsk_pinned;
+	unsigned int *tsk_pinned;
 	/* Number of non-pinned cpu/task breakpoints in a cpu */
-	unsigned int	flexible; /* XXX: placeholder, see fetch_this_slot() */
+	unsigned int flexible; /* XXX: placeholder, see fetch_this_slot() */
 };
 
 static DEFINE_PER_CPU(struct bp_cpuinfo, bp_cpuinfo[TYPE_MAX]);
@@ -108,7 +108,7 @@ static int task_bp_pinned(int cpu, struct perf_event *bp, enum bp_type_idx type)
 	struct perf_event *iter;
 	int count = 0;
 
-	list_for_each_entry(iter, &bp_task_head, hw.bp_list) {
+	list_for_each_entry (iter, &bp_task_head, hw.bp_list) {
 		if (iter->hw.target == tsk &&
 		    find_slot_idx(iter->attr.bp_type) == type &&
 		    (iter->cpu < 0 || cpu == iter->cpu))
@@ -129,14 +129,13 @@ static const struct cpumask *cpumask_of_bp(struct perf_event *bp)
  * Report the number of pinned/un-pinned breakpoints we have in
  * a given cpu (cpu > -1) or in all of them (cpu = -1).
  */
-static void
-fetch_bp_busy_slots(struct bp_busy_slots *slots, struct perf_event *bp,
-		    enum bp_type_idx type)
+static void fetch_bp_busy_slots(struct bp_busy_slots *slots,
+				struct perf_event *bp, enum bp_type_idx type)
 {
 	const struct cpumask *cpumask = cpumask_of_bp(bp);
 	int cpu;
 
-	for_each_cpu(cpu, cpumask) {
+	for_each_cpu (cpu, cpumask) {
 		struct bp_cpuinfo *info = get_bp_info(cpu, type);
 		int nr;
 
@@ -160,8 +159,7 @@ fetch_bp_busy_slots(struct bp_busy_slots *slots, struct perf_event *bp,
  * ensure no flexible event can ever be scheduled before a pinned event
  * in a same cpu.
  */
-static void
-fetch_this_slot(struct bp_busy_slots *slots, int weight)
+static void fetch_this_slot(struct bp_busy_slots *slots, int weight)
 {
 	slots->pinned += weight;
 }
@@ -187,9 +185,8 @@ static void toggle_bp_task_slot(struct perf_event *bp, int cpu,
 /*
  * Add/remove the given breakpoint in our constraint table
  */
-static void
-toggle_bp_slot(struct perf_event *bp, bool enable, enum bp_type_idx type,
-	       int weight)
+static void toggle_bp_slot(struct perf_event *bp, bool enable,
+			   enum bp_type_idx type, int weight)
 {
 	const struct cpumask *cpumask = cpumask_of_bp(bp);
 	int cpu;
@@ -204,7 +201,7 @@ toggle_bp_slot(struct perf_event *bp, bool enable, enum bp_type_idx type,
 	}
 
 	/* Pinned counter task profiling */
-	for_each_cpu(cpu, cpumask)
+	for_each_cpu (cpu, cpumask)
 		toggle_bp_task_slot(bp, cpu, type, weight);
 
 	if (enable)
@@ -276,7 +273,7 @@ __weak void arch_unregister_hw_breakpoint(struct perf_event *bp)
  */
 static int __reserve_bp_slot(struct perf_event *bp, u64 bp_type)
 {
-	struct bp_busy_slots slots = {0};
+	struct bp_busy_slots slots = { 0 };
 	enum bp_type_idx type;
 	int weight;
 	int ret;
@@ -286,8 +283,7 @@ static int __reserve_bp_slot(struct perf_event *bp, u64 bp_type)
 		return -ENOMEM;
 
 	/* Basic checks */
-	if (bp_type == HW_BREAKPOINT_EMPTY ||
-	    bp_type == HW_BREAKPOINT_INVALID)
+	if (bp_type == HW_BREAKPOINT_EMPTY || bp_type == HW_BREAKPOINT_INVALID)
 		return -EINVAL;
 
 	type = find_slot_idx(bp_type);
@@ -429,7 +425,7 @@ static int hw_breakpoint_parse(struct perf_event *bp,
 
 int register_perf_hw_breakpoint(struct perf_event *bp)
 {
-	struct arch_hw_breakpoint hw = { };
+	struct arch_hw_breakpoint hw = {};
 	int err;
 
 	err = reserve_bp_slot(bp);
@@ -455,8 +451,7 @@ int register_perf_hw_breakpoint(struct perf_event *bp)
  */
 struct perf_event *
 register_user_hw_breakpoint(struct perf_event_attr *attr,
-			    perf_overflow_handler_t triggered,
-			    void *context,
+			    perf_overflow_handler_t triggered, void *context,
 			    struct task_struct *tsk)
 {
 	return perf_event_create_kernel_counter(attr, -1, tsk, triggered,
@@ -469,15 +464,14 @@ static void hw_breakpoint_copy_attr(struct perf_event_attr *to,
 {
 	to->bp_addr = from->bp_addr;
 	to->bp_type = from->bp_type;
-	to->bp_len  = from->bp_len;
+	to->bp_len = from->bp_len;
 	to->disabled = from->disabled;
 }
 
-int
-modify_user_hw_breakpoint_check(struct perf_event *bp, struct perf_event_attr *attr,
-			        bool check)
+int modify_user_hw_breakpoint_check(struct perf_event *bp,
+				    struct perf_event_attr *attr, bool check)
 {
-	struct arch_hw_breakpoint hw = { };
+	struct arch_hw_breakpoint hw = {};
 	int err;
 
 	err = hw_breakpoint_parse(bp, attr, &hw);
@@ -510,7 +504,8 @@ modify_user_hw_breakpoint_check(struct perf_event *bp, struct perf_event_attr *a
  * @bp: the breakpoint structure to modify
  * @attr: new breakpoint attributes
  */
-int modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *attr)
+int modify_user_hw_breakpoint(struct perf_event *bp,
+			      struct perf_event_attr *attr)
 {
 	int err;
 
@@ -553,12 +548,11 @@ EXPORT_SYMBOL_GPL(unregister_hw_breakpoint);
  *
  * @return a set of per_cpu pointers to perf events
  */
-struct perf_event * __percpu *
+struct perf_event *__percpu *
 register_wide_hw_breakpoint(struct perf_event_attr *attr,
-			    perf_overflow_handler_t triggered,
-			    void *context)
+			    perf_overflow_handler_t triggered, void *context)
 {
-	struct perf_event * __percpu *cpu_events, *bp;
+	struct perf_event *__percpu *cpu_events, *bp;
 	long err = 0;
 	int cpu;
 
@@ -567,7 +561,7 @@ register_wide_hw_breakpoint(struct perf_event_attr *attr,
 		return (void __percpu __force *)ERR_PTR(-ENOMEM);
 
 	get_online_cpus();
-	for_each_online_cpu(cpu) {
+	for_each_online_cpu (cpu) {
 		bp = perf_event_create_kernel_counter(attr, cpu, NULL,
 						      triggered, context);
 		if (IS_ERR(bp)) {
@@ -591,11 +585,11 @@ EXPORT_SYMBOL_GPL(register_wide_hw_breakpoint);
  * unregister_wide_hw_breakpoint - unregister a wide breakpoint in the kernel
  * @cpu_events: the per cpu set of events to unregister
  */
-void unregister_wide_hw_breakpoint(struct perf_event * __percpu *cpu_events)
+void unregister_wide_hw_breakpoint(struct perf_event *__percpu *cpu_events)
 {
 	int cpu;
 
-	for_each_possible_cpu(cpu)
+	for_each_possible_cpu (cpu)
 		unregister_hw_breakpoint(per_cpu(*cpu_events, cpu));
 
 	free_percpu(cpu_events);
@@ -664,14 +658,14 @@ static void hw_breakpoint_stop(struct perf_event *bp, int flags)
 }
 
 static struct pmu perf_breakpoint = {
-	.task_ctx_nr	= perf_sw_context, /* could eventually get its own */
+	.task_ctx_nr = perf_sw_context, /* could eventually get its own */
 
-	.event_init	= hw_breakpoint_event_init,
-	.add		= hw_breakpoint_add,
-	.del		= hw_breakpoint_del,
-	.start		= hw_breakpoint_start,
-	.stop		= hw_breakpoint_stop,
-	.read		= hw_breakpoint_pmu_read,
+	.event_init = hw_breakpoint_event_init,
+	.add = hw_breakpoint_add,
+	.del = hw_breakpoint_del,
+	.start = hw_breakpoint_start,
+	.stop = hw_breakpoint_stop,
+	.read = hw_breakpoint_pmu_read,
 };
 
 int __init init_hw_breakpoint(void)
@@ -682,12 +676,12 @@ int __init init_hw_breakpoint(void)
 	for (i = 0; i < TYPE_MAX; i++)
 		nr_slots[i] = hw_breakpoint_slots(i);
 
-	for_each_possible_cpu(cpu) {
+	for_each_possible_cpu (cpu) {
 		for (i = 0; i < TYPE_MAX; i++) {
 			struct bp_cpuinfo *info = get_bp_info(cpu, i);
 
-			info->tsk_pinned = kcalloc(nr_slots[i], sizeof(int),
-							GFP_KERNEL);
+			info->tsk_pinned =
+				kcalloc(nr_slots[i], sizeof(int), GFP_KERNEL);
 			if (!info->tsk_pinned)
 				goto err_alloc;
 		}
@@ -699,8 +693,8 @@ int __init init_hw_breakpoint(void)
 
 	return register_die_notifier(&hw_breakpoint_exceptions_nb);
 
- err_alloc:
-	for_each_possible_cpu(err_cpu) {
+err_alloc:
+	for_each_possible_cpu (err_cpu) {
 		for (i = 0; i < TYPE_MAX; i++)
 			kfree(get_bp_info(err_cpu, i)->tsk_pinned);
 		if (err_cpu == cpu)
