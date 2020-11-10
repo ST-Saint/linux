@@ -137,10 +137,9 @@ SYSCALL_DEFINE4(register_watchpoint,
 	}
 	attr.disabled = 0;
 
-	preempt_disable();
 	hbp = register_user_hw_breakpoint(&attr, awid_simple_handler, NULL,
-					  current);
-	preempt_enable();
+					  NULL);
+
 	if (IS_ERR(hbp)) {
 		ret = PTR_ERR(hbp);
 		goto fail;
