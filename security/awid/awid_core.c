@@ -147,6 +147,7 @@ SYSCALL_DEFINE4(register_watchpoint,
 	       get_cpu(), current->pid, current->tgid, current->comm,
 	       current->cred->uid.val, current->cred->euid.val);
 	printk("\n");
+	return 0;
 
 	printk("addr: %lx length: %d type: %d auth: %d\n", addr, wp_length,
 	       wp_type, wp_auth);
