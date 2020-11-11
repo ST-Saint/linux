@@ -141,11 +141,13 @@ SYSCALL_DEFINE3(register_watchpoint,
 			&attr, cpu, NULL, awid_simple_handler, NULL);
 		put_cpu();
 	} else {
-		get_online_cpus();
-		cpu = smp_processor_id();
+		/* get_online_cpus(); */
+		/* cpu = smp_processor_id(); */
+		cpu = get_cpu();
 		hbp = perf_event_create_kernel_counter(
 			&attr, cpu, current, awid_simple_handler, NULL);
-		put_online_cpus();
+		put_cpu();
+		/* put_online_cpus(); */
 	}
 
 	if (IS_ERR(hbp)) {
