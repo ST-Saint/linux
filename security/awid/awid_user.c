@@ -30,7 +30,7 @@ void test_ntid()
 	/* printf("syscall id %d\n", __NR_register_watchpoint); */
 	// printf("test value addr: %x\n\n", (unsigned long)(&test_value));
 	ret = syscall(__NR_register_watchpoint, (unsigned long)(&test_value),
-		      HW_BREAKPOINT_LEN_4, HW_BREAKPOINT_W, HW_BREAKPOINT_SELF);
+		      HW_BREAKPOINT_LEN_4, HW_BREAKPOINT_W);
 	printf("syscall return %d\n\n", ret);
 	printf("------------------\n\n");
 	int i, n;

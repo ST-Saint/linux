@@ -95,11 +95,10 @@ int awid_find_wp_slot(void)
 	return -1;
 }
 
-SYSCALL_DEFINE4(register_watchpoint,
+SYSCALL_DEFINE3(register_watchpoint,
 		// asmlinkage long __arm64_sys_register_watchpoint(
 		unsigned long, addr, enum HW_BREAKPOINT_LEN, wp_length,
-		enum HW_BREAKPOINT_TYPE, wp_type, enum HW_BREAKPOINT_AUTH,
-		wp_auth)
+		enum HW_BREAKPOINT_TYPE, wp_type)
 {
 	int ret, slot, cpu;
 	/* unsigned long size; */
@@ -112,8 +111,7 @@ SYSCALL_DEFINE4(register_watchpoint,
 	       current->cred->uid.val, current->cred->euid.val);
 	printk("\n");
 
-	printk("addr: %lx length: %d type: %d auth: %d\n", addr, wp_length,
-	       wp_type, wp_auth);
+	printk("addr: %lx length: %d type: %d\n", addr, wp_length, wp_type);
 	hw_breakpoint_init(&attr);
 	attr.bp_addr = addr;
 	if (wp_length == HW_BREAKPOINT_LEN_1 ||
