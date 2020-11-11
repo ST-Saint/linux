@@ -1841,7 +1841,7 @@ static void list_add_event(struct perf_event *event,
 static inline void perf_event__state_init(struct perf_event *event)
 {
 	event->state = event->attr.disabled ? PERF_EVENT_STATE_OFF :
-					      PERF_EVENT_STATE_INACTIVE;
+						    PERF_EVENT_STATE_INACTIVE;
 }
 
 static void __perf_event_read_size(struct perf_event *event, int nr_siblings)
@@ -6144,8 +6144,8 @@ accounting:
 	if (!rb) {
 		rb = rb_alloc(nr_pages,
 			      event->attr.watermark ?
-				      event->attr.wakeup_watermark :
-				      0,
+					    event->attr.wakeup_watermark :
+					    0,
 			      event->cpu, flags);
 
 		if (!rb) {
@@ -9913,19 +9913,21 @@ restart:
  * if <size> is not specified or is zero, the range is treated as a single
  * address; not valid for ACTION=="filter".
  */
-enum { IF_ACT_NONE = -1,
-       IF_ACT_FILTER,
-       IF_ACT_START,
-       IF_ACT_STOP,
-       IF_SRC_FILE,
-       IF_SRC_KERNEL,
-       IF_SRC_FILEADDR,
-       IF_SRC_KERNELADDR,
+enum {
+	IF_ACT_NONE = -1,
+	IF_ACT_FILTER,
+	IF_ACT_START,
+	IF_ACT_STOP,
+	IF_SRC_FILE,
+	IF_SRC_KERNEL,
+	IF_SRC_FILEADDR,
+	IF_SRC_KERNELADDR,
 };
 
-enum { IF_STATE_ACTION = 0,
-       IF_STATE_SOURCE,
-       IF_STATE_END,
+enum {
+	IF_STATE_ACTION = 0,
+	IF_STATE_SOURCE,
+	IF_STATE_END,
 };
 
 static const match_table_t if_tokens = {
@@ -12032,6 +12034,7 @@ struct perf_event *perf_event_create_kernel_counter(
 	 * Get the target context (task or percpu):
 	 */
 	ctx = find_get_context(event->pmu, task, event);
+	printk(KERN_INFO "check ctx %d\n", ctx);
 	if (IS_ERR(ctx)) {
 		err = PTR_ERR(ctx);
 		goto err_free;
@@ -12053,7 +12056,6 @@ struct perf_event *perf_event_create_kernel_counter(
 		 */
 		struct perf_cpu_context *cpuctx =
 			container_of(ctx, struct perf_cpu_context, ctx);
-		printk(KERN_INFO "cpuctx online %d\n", cpuctx->online);
 		if (!cpuctx->online) {
 			err = -ENODEV;
 			goto err_unlock;
