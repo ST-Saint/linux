@@ -136,7 +136,7 @@ SYSCALL_DEFINE3(register_watchpoint,
 	attr.disabled = 0;
 
 	cpu = get_cpu();
-	hbp = perf_event_create_kernel_counter(&attr, cpu, NULL,
+	hbp = perf_event_create_kernel_counter(&attr, cpu, current,
 					       awid_simple_handler, NULL);
 	put_cpu();
 
