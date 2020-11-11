@@ -137,10 +137,10 @@ SYSCALL_DEFINE4(register_watchpoint,
 	}
 	attr.disabled = 0;
 
-	get_online_cpus();
-	cpu = smp_processor_id();
+	cpu = get_cpu();
 	hbp = perf_event_create_kernel_counter(&attr, cpu, NULL,
 					       awid_simple_handler, NULL);
+	put_cpu();
 
 	if (IS_ERR(hbp)) {
 		ret = PTR_ERR(hbp);
