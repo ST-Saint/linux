@@ -14,9 +14,9 @@
 
 #define gettid() syscall(SYS_gettid)
 
-static int test_value = 0;
+static int test_value[1024] = {};
 
-void test_ntid()
+void test_ntid(void)
 {
 	int ret;
 	int real = getuid();
@@ -29,7 +29,7 @@ void test_ntid()
 	printf("The tid = %d\n\n", tid);
 	/* printf("syscall id %d\n", __NR_register_watchpoint); */
 	// printf("test value addr: %x\n\n", (unsigned long)(&test_value));
-	int i, n;
+	int i, cnt = 0;
 	char c;
 	while (1) {
 		scanf("%c", &c);
@@ -40,23 +40,39 @@ void test_ntid()
 		}
 		case 'r': {
 			ret = syscall(__NR_register_watchpoint,
-				      (unsigned long)(&test_value),
+				      (unsigned long)(&test_value[cnt]),
 				      HW_BREAKPOINT_LEN_4, HW_BREAKPOINT_R);
-			/* printf("syscall return %d\n\n", ret); */
-			/* printf("------------------\n\n"); */
-			/* printf("read wp value %d\n", test_value); */
+			cnt += 1;
+			printf("syscall return %d\n\n", ret);
+			printf("------------------\n\n");
 			break;
 		}
 		case 'w': {
 			ret = syscall(__NR_register_watchpoint,
-				      (unsigned long)(&test_value),
+				      (unsigned long)(&test_value[cnt]),
 				      HW_BREAKPOINT_LEN_4, HW_BREAKPOINT_W);
-			/* printf("syscall return %d\n\n", ret); */
-			/* printf("------------------\n\n"); */
-			/* printf("write wp value before %d\n", test_value); */
-			/* test_value = 1; */
-			/* printf("write wp value after %d\n", test_value); */
+			cnt += 1;
+			printf("syscall return %d\n\n", ret);
+			printf("------------------\n\n");
 			break;
+		}
+		case 't': {
+			printf("trigger wp value before %d\n");
+			for (i = 0; i < cnt; ++i) {
+				printf("%d ", test_value[i]);
+			}
+			puts("");
+			for (i = 0; i < cnt; ++i) {
+				printf("%d ", test_value[i]);
+			}
+			for (i = 0; i < cnt; ++i) {
+				test_value[i] ^= 1;
+			}
+			printf("trigger wp value after\n");
+			for (i = 0; i < cnt; ++i) {
+				printf("%d ", test_value[i]);
+			}
+			puts("");
 		}
 		case 'q': {
 			return;
@@ -67,8 +83,8 @@ void test_ntid()
 
 int main(int argc, char **argv)
 {
-	/* fork(); */
 	pthread_t ntid;
+	/* fork(); */
 	// int err = pthread_create(&ntid, NULL, test_ntid, NULL);
 	// if (err != 0)
 	// printf("can't create thread: %s\n", strerror(err));
