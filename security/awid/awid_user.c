@@ -42,20 +42,20 @@ void test_ntid()
 			ret = syscall(__NR_register_watchpoint,
 				      (unsigned long)(&test_value),
 				      HW_BREAKPOINT_LEN_4, HW_BREAKPOINT_R);
-			printf("syscall return %d\n\n", ret);
-			printf("------------------\n\n");
-			printf("read wp value %d\n", test_value);
+			/* printf("syscall return %d\n\n", ret); */
+			/* printf("------------------\n\n"); */
+			/* printf("read wp value %d\n", test_value); */
 			break;
 		}
 		case 'w': {
 			ret = syscall(__NR_register_watchpoint,
 				      (unsigned long)(&test_value),
 				      HW_BREAKPOINT_LEN_4, HW_BREAKPOINT_W);
-			printf("syscall return %d\n\n", ret);
-			printf("------------------\n\n");
-			printf("write wp value before %d\n", test_value);
-			test_value = 1;
-			printf("write wp value after %d\n", test_value);
+			/* printf("syscall return %d\n\n", ret); */
+			/* printf("------------------\n\n"); */
+			/* printf("write wp value before %d\n", test_value); */
+			/* test_value = 1; */
+			/* printf("write wp value after %d\n", test_value); */
 			break;
 		}
 		case 'q': {
