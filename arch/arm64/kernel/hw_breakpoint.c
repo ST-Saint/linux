@@ -205,6 +205,10 @@ static int hw_breakpoint_slot_setup(struct perf_event **slots, int max_slots,
 
 	for (i = 0; i < max_slots; ++i) {
 		slot = &slots[i];
+		printk(KERN_INFO
+		       "control cpu %d pid %d slot  id: %d, value: %lx bp value: %lx\n",
+		       smp_processor_id(), current->pid, i,
+		       (unsigned long)*slot, bp);
 		switch (ops) {
 		case HW_BREAKPOINT_INSTALL:
 			if (!*slot) {
@@ -213,10 +217,6 @@ static int hw_breakpoint_slot_setup(struct perf_event **slots, int max_slots,
 			}
 			break;
 		case HW_BREAKPOINT_UNINSTALL:
-			printk(KERN_INFO
-			       "control slot uninstall cpu %d pid %d id: %d, value: %lx bp value: %lx\n",
-			       get_cpu(), current->pid, i, (unsigned long)*slot,
-			       bp);
 			if (*slot == bp) {
 				*slot = NULL;
 				return i;
@@ -296,7 +296,6 @@ static int hw_breakpoint_control(struct perf_event *bp,
 		disable_debug_monitors(dbg_el);
 		break;
 	}
-
 	printk("hw_breakpoint_control af dump op: %d preemtp count: %d\n", ops,
 	       preempt_count());
 	printk("--------------------------------------------------\n\n");
