@@ -136,18 +136,19 @@ SYSCALL_DEFINE3(register_watchpoint,
 	attr.disabled = 0;
 
 	if (wp_type == HW_BREAKPOINT_R) {
-		cpu = get_cpu();
+		get_online_cpus();
+		cpu = smp_processor_id();
 		hbp = perf_event_create_kernel_counter(
 			&attr, cpu, NULL, awid_simple_handler, NULL);
-		put_cpu();
+		/* get_cpu(); */
+		/* put_cpu(); */
+		put_online_cpus();
 	} else {
-		/* get_online_cpus(); */
-		/* cpu = smp_processor_id(); */
-		cpu = get_cpu();
+		get_online_cpus();
+		cpu = smp_processor_id();
 		hbp = perf_event_create_kernel_counter(
 			&attr, cpu, current, awid_simple_handler, NULL);
-		put_cpu();
-		/* put_online_cpus(); */
+		put_online_cpus();
 	}
 
 	if (IS_ERR(hbp)) {
