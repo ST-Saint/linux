@@ -239,7 +239,7 @@ static int hw_breakpoint_control(struct perf_event *bp,
 {
 	printk("--------------------------------------------------");
 	printk("hw_breakpoint_control dump op: %d\n", ops);
-	/* dump_stack(); */
+	dump_stack();
 	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
 	struct perf_event **slots;
 	struct debug_info *debug_info = &current->thread.debug;
@@ -797,7 +797,7 @@ static int watchpoint_handler(unsigned long addr, unsigned int esr,
 		 * 0 => load, otherwise => store
 		 */
 		access = (esr & AARCH64_ESR_ACCESS_MASK) ? HW_BREAKPOINT_W :
-							   HW_BREAKPOINT_R;
+								 HW_BREAKPOINT_R;
 		if (!(access & hw_breakpoint_type(wp)))
 			continue;
 
