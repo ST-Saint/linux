@@ -238,7 +238,8 @@ static int hw_breakpoint_control(struct perf_event *bp,
 				 enum hw_breakpoint_ops ops)
 {
 	printk("--------------------------------------------------");
-	printk("hw_breakpoint_control dump op: %d\n", ops);
+	printk("hw_breakpoint_control dump op: %d preemtp count: %d\n", ops,
+	       preempt_count());
 	dump_stack();
 	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
 	struct perf_event **slots;
