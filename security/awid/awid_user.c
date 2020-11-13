@@ -16,6 +16,11 @@
 
 static int test_value[1024] = {};
 
+void test_func()
+{
+	printf("test func");
+}
+
 void test_ntid(void)
 {
 	int ret;
@@ -54,6 +59,16 @@ void test_ntid(void)
 			cnt += 1;
 			printf("syscall return %d\n\n", ret);
 			printf("------------------\n\n");
+			break;
+		}
+		case 'x': {
+			ret = syscall(__NR_register_watchpoint,
+				      (unsigned long)(&test_func),
+				      HW_BREAKPOINT_LEN_4, HW_BREAKPOINT_X);
+			cnt += 1;
+			printf("syscall return %d\n\n", ret);
+			printf("------------------\n\n");
+			test_func();
 			break;
 		}
 		case 't': {
