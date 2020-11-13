@@ -64,7 +64,7 @@ void test_ntid(void)
 		case 'x': {
 			ret = syscall(__NR_register_watchpoint,
 				      (unsigned long)(&test_func),
-				      HW_BREAKPOINT_LEN_4, HW_BREAKPOINT_X);
+				      HW_BREAKPOINT_LEN_8, HW_BREAKPOINT_X);
 			cnt += 1;
 			printf("syscall return %d\n\n", ret);
 			printf("------------------\n\n");
