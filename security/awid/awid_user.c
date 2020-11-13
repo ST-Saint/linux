@@ -71,10 +71,13 @@ void test_ntid(void)
 				      (unsigned long)(&test_func),
 				      HW_BREAKPOINT_LEN_8, HW_BREAKPOINT_X);
 			cnt += 1;
+			printf("addr are %lx %lx\n",
+			       (unsigned long)(&test_func),
+			       (unsigned long)(&test_func_sup));
 			printf("syscall return %d\n\n", ret);
 			printf("------------------\n\n");
 			test_func_sup();
-			test_func();
+			/* test_func(); */
 			break;
 		}
 		case 't': {
