@@ -21,6 +21,11 @@ void test_func()
 	printf("test func");
 }
 
+void test_func_sup()
+{
+	printf("test addr offset");
+}
+
 void test_ntid(void)
 {
 	int ret;
@@ -68,6 +73,7 @@ void test_ntid(void)
 			cnt += 1;
 			printf("syscall return %d\n\n", ret);
 			printf("------------------\n\n");
+			test_func_sup();
 			test_func();
 			break;
 		}
