@@ -51,7 +51,7 @@ void test_ntid(void)
 		case 'r': {
 			ret = syscall(__NR_register_watchpoint,
 				      (unsigned long)(&test_value[cnt]),
-				      HW_BREAKPOINT_LEN_4, HW_BREAKPOINT_R);
+				      HW_BREAKPOINT_LEN_5, HW_BREAKPOINT_R);
 			cnt += 1;
 			printf("syscall return %d\n\n", ret);
 			printf("------------------\n\n");
@@ -60,7 +60,7 @@ void test_ntid(void)
 		case 'w': {
 			ret = syscall(__NR_register_watchpoint,
 				      (unsigned long)(&test_value[cnt]),
-				      HW_BREAKPOINT_LEN_4, HW_BREAKPOINT_W);
+				      HW_BREAKPOINT_LEN_5, HW_BREAKPOINT_W);
 			cnt += 1;
 			printf("syscall return %d\n\n", ret);
 			printf("------------------\n\n");
@@ -82,19 +82,19 @@ void test_ntid(void)
 		}
 		case 't': {
 			printf("trigger wp value before %d\n");
-			for (i = 0; i < cnt; ++i) {
-				printf("%d ", test_value[i]);
+			for (i = cnt << 1; i >= 0; --i) {
+				printf("(%d, %d) ", i, test_value[i]);
 			}
 			puts("");
-			for (i = 0; i < cnt; ++i) {
-				printf("%d ", test_value[i]);
+			for (i = cnt << 1; i >= 0; --i) {
+				printf("(%d, %d) ", i, test_value[i]);
 			}
-			for (i = 0; i < cnt; ++i) {
+			for (i = cnt << 1; i >= 0; --i) {
 				test_value[i] ^= 1;
 			}
 			printf("trigger wp value after\n");
-			for (i = 0; i < cnt; ++i) {
-				printf("%d ", test_value[i]);
+			for (i = cnt << 1; i >= 0; --i) {
+				printf("(%d, %d) ", i, test_value[i]);
 			}
 			puts("");
 		}
