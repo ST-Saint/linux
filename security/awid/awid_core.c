@@ -126,9 +126,8 @@ SYSCALL_DEFINE3(register_watchpoint,
 	} else {
 		return -EINVAL;
 	}
-	if (wp_type == HW_BREAKPOINT_EMPTY || wp_type == HW_BREAKPOINT_R ||
-	    wp_type == HW_BREAKPOINT_W || wp_type == HW_BREAKPOINT_RW ||
-	    wp_type == HW_BREAKPOINT_X || wp_type == HW_BREAKPOINT_INVALID) {
+	if (wp_type == HW_BREAKPOINT_R || wp_type == HW_BREAKPOINT_W ||
+	    wp_type == HW_BREAKPOINT_RW) {
 		attr.bp_type = wp_type;
 	} else {
 		return -EINVAL;
