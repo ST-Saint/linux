@@ -16,7 +16,7 @@ typedef struct {
 
 extern sysent_t syscalls;
 static const sysent_t sysentries = {
-	sys_open, /* */
+	do_sys_open, /* */
 	ksys_close, /* */
 	ksys_write, /* */
 	ksys_read, /* */
