@@ -34,13 +34,11 @@
 #include "linux/types.h"
 #include "linux/kernel.h"
 #include "loader.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
+#include <linux/string.h>
+#include <linux/unistd.h>
+#include <linux/types.h>
+#include <linux/stat.h>
+#include <linux/fcntl.h>
 #include <linux/syscalls.h>
 
 #ifndef DOX
