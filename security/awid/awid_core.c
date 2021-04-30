@@ -1,5 +1,9 @@
 #include "awid_core.h"
+#include "loader.h"
+#include "loader_config.h"
+#include "loader_user_data.h"
 
+#include "asm/syscall_wrapper.h"
 #include "linux/err.h"
 #include "linux/gfp.h"
 #include "linux/preempt.h"
@@ -93,6 +97,26 @@ int awid_find_wp_slot(void)
 		}
 	}
 	return -1;
+}
+
+SYSCALL_DEFINE3(awid_setup_slots, unsigned long, start_addr,
+		enum HW_BREAKPOINT_LEN, slot_length, enum HW_BREAKPOINT_TYPE,
+		wp_type)
+{
+	struct ELFExec *exec;
+	loader_env_t loader_env;
+	loader_env.env = env;
+	load_elf("./lsample.so", loader_env, &exec);
+}
+
+SYSCALL_DEFINE1(awid_switch_to, int, slot_index)
+{
+	/* TODO entry gate */
+}
+
+SYSCALL_DEFINE0(awid_exit)
+{
+	/* TODO exit gate */
 }
 
 SYSCALL_DEFINE3(register_watchpoint,
@@ -229,7 +253,7 @@ static int __init awid_module_init(void)
 
 static void __exit awid_module_exit(void)
 {
-	awid_clear();
+	/* awid_clear(); */
 }
 
 module_init(awid_module_init);

@@ -1,5 +1,7 @@
 /* #include "awid_nluser.h" */
 #include "awid_core.h"
+#include "loader.h"
+#include <dlfcn.h>
 #include <errno.h>
 #include <linux/netlink.h>
 #include <linux/hw_breakpoint.h>
@@ -16,6 +18,10 @@
 
 static int test_value[1024] = {};
 
+extern int add_so(int a, int b);
+extern int sub_so(int a, int b);
+extern void maliciosu_read_so(char *c);
+
 void test_func()
 {
 	printf("test func");
@@ -24,6 +30,10 @@ void test_func()
 void test_func_sup()
 {
 	printf("test addr offset");
+}
+
+void loadso()
+{
 }
 
 void test_ntid(void)
