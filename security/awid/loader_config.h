@@ -109,7 +109,6 @@ extern void arch_jumpTo(entry_t entry);
 #define ERR(...)                                                               \
 	do {                                                                   \
 		printk(KERN_ERR "ELF: " __VA_ARGS__);                          \
-		__asm__ volatile("brk");                                       \
 	} while (0)
 #define MSG(msg) printk(KERN_INFO "ELF: " msg)
 
