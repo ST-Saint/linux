@@ -78,9 +78,11 @@
 #endif
 
 #if 0
-#define LOADER_ALIGN_ALLOC(size, align, perm) ((void *)memalign(align, size))
-#else
+#define LOADER_ALIGN_ALLOC(size, align, perm) ((void *)kvmalloc(size, GFP_USER))
+#define LOADER_ALIGN_ALLOC_SDRAM(size, align, perm)                            \
+	((void *)kvmalloc(size, GFP_USER))
 
+#else
 extern void *do_alloc(size_t size, size_t align, ELFSecPerm_t perm);
 extern void *do_alloc_sdram(size_t size, size_t align, ELFSecPerm_t perm);
 
