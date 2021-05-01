@@ -65,8 +65,8 @@
 	ksys_write(userdata.fd, buffer, size)
 #define LOADER_CLOSE(userdata) ksys_close(userdata.fd)
 #define LOADER_SEEK_FROM_START(userdata, off)                                  \
-	(ksys_lseek(userdata.fd, off, SEEK_SET) == -1)
-#define LOADER_TELL(userdata) ksys_lseek(userdata.fd, 0, SEEK_CUR)
+	(sys_lseek(userdata.fd, off, SEEK_SET) == -1)
+#define LOADER_TELL(userdata) sys_lseek(userdata.fd, 0, SEEK_CUR)
 #endif
 
 #if 0
