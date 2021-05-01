@@ -2,14 +2,15 @@
 #define LOADER_USER_DATA_H
 
 #include "linux/types.h"
+#include "loader_config.h"
 #include <linux/unistd.h>
 #include <linux/syscalls.h>
 
 typedef struct {
-	int (*open)(const char *path, int mode, ...);
-	int (*close)(int fd);
-	int (*write)(int fd, const void *data, size_t size);
-	int (*read)(int fd, void *buf, size_t size);
+	long (*open)(int, const char *path, int mode, umode_t);
+	int (*close)(unsigned int fd);
+	long (*write)(unsigned int fd, const char *data, size_t size);
+	long (*read)(unsigned int fd, char *buf, size_t size);
 	int (*printf)(const char *fmt, ...);
 	/* int (*scanf)(const char *fmt, ...); */
 } sysent_t;
