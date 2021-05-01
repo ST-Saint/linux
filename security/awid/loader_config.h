@@ -61,11 +61,12 @@
 #define LOADER_OPEN_FOR_RD(userdata, path) userdata.fd = open(path, O_RDONLY)
 #define LOADER_FD_VALID(userdata) (userdata.fd != -1)
 #define LOADER_READ(userdata, buffer, size) sys_read(userdata.fd, buffer, size)
-#define LOADER_WRITE(userdata, buffer, size) write(userdata.fd, buffer, size)
-#define LOADER_CLOSE(userdata) close(userdata.fd)
+#define LOADER_WRITE(userdata, buffer, size)                                   \
+	sys_write(userdata.fd, buffer, size)
+#define LOADER_CLOSE(userdata) sys_close(userdata.fd)
 #define LOADER_SEEK_FROM_START(userdata, off)                                  \
-	(lseek(userdata.fd, off, SEEK_SET) == -1)
-#define LOADER_TELL(userdata) lseek(userdata.fd, 0, SEEK_CUR)
+	(sys_lseek(userdata.fd, off, SEEK_SET) == -1)
+#define LOADER_TELL(userdata) sys_lseek(userdata.fd, 0, SEEK_CUR)
 #endif
 
 #if 0
@@ -96,13 +97,13 @@ extern void arch_jumpTo(entry_t entry);
 
 #endif
 
-#define DBG(...) printk("ELF: " __VA_ARGS__)
+#define DBG(...) printk(KERN_DEBUG "ELF: " __VA_ARGS__)
 #define ERR(...)                                                               \
 	do {                                                                   \
-		printk("ELF: " __VA_ARGS__);                                   \
+		printk(KERN_ERR "ELF: " __VA_ARGS__);                          \
 		__asm__ volatile("bkpt");                                      \
 	} while (0)
-#define MSG(msg) dmesg("ELF: " msg)
+#define MSG(msg) printk(KERN_INFO "ELF: " msg)
 
 #else
 
