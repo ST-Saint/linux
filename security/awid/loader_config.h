@@ -77,7 +77,7 @@
 #define LOADER_TELL(userdata) seq_lseek(userdata.fd, 0, SEEK_CUR)
 #endif
 
-#if 0
+#if 1
 #define LOADER_ALIGN_ALLOC(size, align, perm) ((void *)kvmalloc(size, GFP_USER))
 #define LOADER_ALIGN_ALLOC_SDRAM(size, align, perm)                            \
 	((void *)kvmalloc(size, GFP_USER))
