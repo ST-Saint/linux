@@ -206,7 +206,7 @@ static int readSecHeader(ELFExec_t *e, int n, Elf64_Shdr *h)
 	off_t offset = SECTION_OFFSET(e, n);
 	if (LOADER_SEEK_FROM_START(e->user_data, offset) != 0)
 		return -1;
-	if (LOADER_READ(e->user_data.fd, h, sizeof(Elf64_Shdr)) !=
+	if (LOADER_READ(e->user_data, (char *)(h), sizeof(Elf64_Shdr)) !=
 	    sizeof(Elf64_Shdr))
 		return -1;
 	return 0;
@@ -229,8 +229,8 @@ static int readSymbol(ELFExec_t *e, int n, Elf64_Sym *sym, char *name,
 	off_t old = LOADER_TELL(e->user_data);
 	off_t pos = e->symbolTable + n * sizeof(Elf64_Sym);
 	if (LOADER_SEEK_FROM_START(e->user_data, pos) == 0)
-		if (LOADER_READ(e->user_data, sym, sizeof(Elf64_Sym)) ==
-		    sizeof(Elf64_Sym)) {
+		if (LOADER_READ(e->user_data, (char *)(sym),
+				sizeof(Elf64_Sym)) == sizeof(Elf64_Sym)) {
 			if (sym->st_name)
 				ret = readSymbolName(e, sym->st_name, name,
 						     nlen);
@@ -367,8 +367,8 @@ static int relocate(ELFExec_t *e, Elf64_Shdr *h, ELFSection_t *s,
 		(void)LOADER_SEEK_FROM_START(e->user_data, h->sh_offset);
 		DBG(" Offset   Info     Type             Name\n");
 		for (relCount = 0; relCount < relEntries; relCount++) {
-			if (LOADER_READ(e->user_data, &rel, sizeof(rel)) ==
-			    sizeof(rel)) {
+			if (LOADER_READ(e->user_data, (char *)(&rel),
+					sizeof(rel)) == sizeof(rel)) {
 				Elf64_Sym sym;
 				Elf64_Addr symAddr;
 
@@ -525,7 +525,7 @@ static int initElf(ELFExec_t *e)
 	if (!LOADER_FD_VALID(e->user_data))
 		return -1;
 
-	if (LOADER_READ(e->user_data, &h, sizeof(h)) != sizeof(h))
+	if (LOADER_READ(e->user_data, (char *)(&h), sizeof(h)) != sizeof(h))
 		return -1;
 
 	const char elfmagic[EI_MAGIC_SIZE] = EI_MAGIC;
@@ -672,8 +672,8 @@ void *get_sym(ELFExec_t *exec, const char *sym_name, int symbol_type)
 	entry_t *addr = 0;
 	for (i = 0; i < exec->symbolCount; i++) {
 		Elf64_Sym sym;
-		if (LOADER_READ(exec->user_data, &sym, sizeof(Elf64_Sym)) ==
-		    sizeof(Elf64_Sym)) {
+		if (LOADER_READ(exec->user_data, (char *)(&sym),
+				sizeof(Elf64_Sym)) == sizeof(Elf64_Sym)) {
 			if (sym.st_name &&
 			    (ELF32_ST_TYPE(sym.st_info) == symbol_type)) {
 				char name[LOADER_MAX_SYM_LENGTH] = "<unnamed>";
