@@ -32,6 +32,7 @@
 #include "loader.h"
 #include "asm/elf.h"
 #include "linux/elf.h"
+#include "linux/fs.h"
 #include "linux/types.h"
 #include "loader_config.h"
 
@@ -202,7 +203,8 @@ static int loadSecData(ELFExec_t *e, ELFSection_t *s, Elf64_Shdr *h,
 
 static int readSecHeader(ELFExec_t *e, int n, Elf64_Shdr *h)
 {
-	return -1;
+	if (LOADER_SEEK_FROM_START(e->user_data, offset) != 0)
+		return -1;
 	if (LOADER_READ(e->user_data.fd, h, sizeof(Elf64_Shdr)) !=
 	    sizeof(Elf64_Shdr))
 		return -1;

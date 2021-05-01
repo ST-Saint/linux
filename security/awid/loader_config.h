@@ -38,6 +38,7 @@
 #include <linux/unistd.h>
 #include <linux/types.h>
 #include <linux/stat.h>
+#include <linux/fs.h>
 #include <linux/fcntl.h>
 #include <linux/syscalls.h>
 
@@ -58,15 +59,16 @@
 #define LOADER_SEEK_FROM_START(fd, off) fseek(fd, off, SEEK_SET)
 #define LOADER_TELL(fd) ftell(fd)
 #else
-#define LOADER_OPEN_FOR_RD(userdata, path) userdata.fd = sys_open(path, O_RDONLY)
+#define LOADER_OPEN_FOR_RD(userdata, path)                                     \
+	userdata.fd = sys_open(path, O_RDONLY)
 #define LOADER_FD_VALID(userdata) (userdata.fd != -1)
 #define LOADER_READ(userdata, buffer, size) ksys_read(userdata.fd, buffer, size)
 #define LOADER_WRITE(userdata, buffer, size)                                   \
 	ksys_write(userdata.fd, buffer, size)
 #define LOADER_CLOSE(userdata) ksys_close(userdata.fd)
 #define LOADER_SEEK_FROM_START(userdata, off)                                  \
-	(sys_lseek(userdata.fd, off, SEEK_SET) == -1)
-#define LOADER_TELL(userdata) sys_lseek(userdata.fd, 0, SEEK_CUR)
+	(seq_lseek(userdata.fd, off, SEEK_SET) == -1)
+#define LOADER_TELL(userdata) seq_lseek(userdata.fd, 0, SEEK_CUR)
 #endif
 
 #if 0
