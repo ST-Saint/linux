@@ -549,7 +549,7 @@ static int initElf(ELFExec_t *e)
 	if (LOADER_SEEK_FROM_START(e->user_data,
 				   h.e_shoff + h.e_shstrndx * sizeof(sH)) != 0)
 		return -1;
-	if (LOADER_READ(e->user_data, &sH, sizeof(Elf64_Shdr)) !=
+	if (LOADER_READ(e->user_data, (char *)(&sH), sizeof(Elf64_Shdr)) !=
 	    sizeof(Elf64_Shdr))
 		return -1;
 
