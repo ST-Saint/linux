@@ -99,7 +99,7 @@ extern void arch_jumpTo(entry_t entry);
 #define DBG(...) printk("ELF: " __VA_ARGS__)
 #define ERR(...)                                                               \
 	do {                                                                   \
-		printf("ELF: " __VA_ARGS__);                                   \
+		printk("ELF: " __VA_ARGS__);                                   \
 		__asm__ volatile("bkpt");                                      \
 	} while (0)
 #define MSG(msg) dmesg("ELF: " msg)

@@ -129,16 +129,19 @@ SYSCALL_DEFINE3(awid_setup_slots, unsigned long, start_addr,
 	loader_env_t loader_env;
 	loader_env.env = &env;
 	load_elf("./lsample.so", loader_env, &exec);
+	return 0;
 }
 
 SYSCALL_DEFINE1(awid_switch_to, int, slot_index)
 {
 	/* TODO entry gate */
+	return 0;
 }
 
 SYSCALL_DEFINE0(awid_exit)
 {
 	/* TODO exit gate */
+	return 0;
 }
 
 SYSCALL_DEFINE3(register_watchpoint,

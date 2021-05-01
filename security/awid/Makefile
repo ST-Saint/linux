@@ -9,7 +9,7 @@
 # end
 
 obj-$(CONFIG_AWID) += awid.o
-awid-objs := awid_core.o
+awid-objs := awid_core.o loader.o
 PWD := ${CURDIR}
 KDIR := $(CURDIR)/../../
 SOURCES=$(wildcard *.c^)
