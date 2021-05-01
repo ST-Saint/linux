@@ -30,6 +30,7 @@
  *****************************************************************************/
 
 #include "loader.h"
+#include "asm/elf.h"
 #include "linux/elf.h"
 #include "linux/types.h"
 #include "loader_config.h"
@@ -294,29 +295,25 @@ static void relJmpCall(Elf64_Addr relAddr, int type, Elf64_Addr symAddr)
 static int relocateSymbol(Elf64_Addr relAddr, int type, Elf64_Addr symAddr)
 {
 	switch (type) {
-	case R_ARM_ABS32:
-		*((uint32_t *)relAddr) += symAddr;
+	case R_AARCH64_ABS32:
+		*((uint64_t *)relAddr) += symAddr;
 		DBG("  R_ARM_ABS32 relocated is 0x%08X\n",
-		    *((uint32_t *)relAddr));
+		    *((uint64_t *)relAddr));
 		break;
-	case R_ARM_THM_CALL:
-	case R_ARM_THM_JUMP24:
+	case R_AARCH64_CALL26:
+	case R_AARCH64_JUMP26:
 		relJmpCall(relAddr, type, symAddr);
 		DBG("  R_ARM_THM_CALL/JMP relocated is 0x%08X\n",
-		    *((uint32_t *)relAddr));
+		    *((uint64_t *)relAddr));
 		break;
-	case R_ARM_TARGET1:
-		// quoting https://sourceware.org/binutils/docs/ld/ARM.html :
-		// "interpreted as either ‘R_ARM_REL32’ or ‘R_ARM_ABS32’, depending on the target"
-		// implementation here is as R_ARM_ABS32
-		*((uint32_t *)relAddr) += symAddr;
-		DBG("  R_ARM_TARGET1 relocated is 0x%08X\n",
-		    *((uint32_t *)relAddr));
-		break;
-	case R_ARM_THM_JUMP11:
-		MSG("  R_ARM_THM_JUMP11 DISCARDED!\n");
-		// TODO : implement relocation type R_ARM_THM_JUMP11
-		break;
+	/* case R_ARM_TARGET1: */
+	/* 	// quoting https://sourceware.org/binutils/docs/ld/ARM.html : */
+	/* 	// "interpreted as either ‘R_ARM_REL32’ or ‘R_ARM_ABS32’, depending on the target" */
+	/* 	// implementation here is as R_ARM_ABS32 */
+	/* 	*((uint64_t *)relAddr) += symAddr; */
+	/* 	DBG("  R_ARM_TARGET1 relocated is 0x%08X\n", */
+	/* 	    *((uint64_t *)relAddr)); */
+	/* 	break; */
 	default:
 		DBG("  Undefined relocation %d\n", type);
 		return -1;
