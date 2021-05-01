@@ -92,12 +92,10 @@ extern void *do_alloc_sdram(size_t size, size_t align, ELFSecPerm_t perm);
 
 #endif
 
-extern int is_streq(const char *s1, const char *s2);
-
 #define LOADER_FREE(ptr) kfree(ptr)
-#define LOADER_STREQ(s1, s2) (is_streq(s1, s2))
+#define LOADER_STREQ(s1, s2) (!strcmp(s1, s2))
 
-#if 0
+#if 1
 #define LOADER_JUMP_TO(entry) entry();
 #else
 
