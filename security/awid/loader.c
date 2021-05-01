@@ -31,7 +31,6 @@
 
 #include "loader.h"
 #include "linux/elf.h"
-#include "app/sysent.h"
 #include "linux/types.h"
 #include "loader_config.h"
 

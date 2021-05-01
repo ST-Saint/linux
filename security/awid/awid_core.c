@@ -31,16 +31,6 @@
 #include <net/sock.h>
 #include <linux/syscalls.h>
 
-typedef struct {
-	long (*open)(int, const char *path, int mode, umode_t);
-	int (*close)(unsigned int fd);
-	long (*write)(unsigned int fd, const char *data, size_t size);
-	long (*read)(unsigned int fd, char *buf, size_t size);
-	int (*printf)(const char *fmt, ...);
-	/* int (*scanf)(const char *fmt, ...); */
-} sysent_t;
-
-extern sysent_t syscalls;
 static const sysent_t sysentries = {
 	do_sys_open, /* */
 	ksys_close, /* */
