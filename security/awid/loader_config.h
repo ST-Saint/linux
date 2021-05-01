@@ -60,13 +60,13 @@
 #else
 #define LOADER_OPEN_FOR_RD(userdata, path) userdata.fd = open(path, O_RDONLY)
 #define LOADER_FD_VALID(userdata) (userdata.fd != -1)
-#define LOADER_READ(userdata, buffer, size) sys_read(userdata.fd, buffer, size)
+#define LOADER_READ(userdata, buffer, size) ksys_read(userdata.fd, buffer, size)
 #define LOADER_WRITE(userdata, buffer, size)                                   \
-	sys_write(userdata.fd, buffer, size)
-#define LOADER_CLOSE(userdata) sys_close(userdata.fd)
+	ksys_write(userdata.fd, buffer, size)
+#define LOADER_CLOSE(userdata) ksys_close(userdata.fd)
 #define LOADER_SEEK_FROM_START(userdata, off)                                  \
-	(sys_lseek(userdata.fd, off, SEEK_SET) == -1)
-#define LOADER_TELL(userdata) sys_lseek(userdata.fd, 0, SEEK_CUR)
+	(ksys_lseek(userdata.fd, off, SEEK_SET) == -1)
+#define LOADER_TELL(userdata) ksys_lseek(userdata.fd, 0, SEEK_CUR)
 #endif
 
 #if 0
@@ -84,7 +84,7 @@ extern void *do_alloc_sdram(size_t size, size_t align, ELFSecPerm_t perm);
 
 extern int is_streq(const char *s1, const char *s2);
 
-#define LOADER_FREE(ptr) free(ptr)
+#define LOADER_FREE(ptr) kfree(ptr)
 #define LOADER_STREQ(s1, s2) (is_streq(s1, s2))
 
 #if 0
