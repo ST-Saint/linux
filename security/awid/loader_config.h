@@ -60,7 +60,7 @@
 #define LOADER_TELL(fd) ftell(fd)
 #else
 #define LOADER_OPEN_FOR_RD(userdata, path)                                     \
-	userdata.fd = sys_open(path, O_RDONLY)
+	userdata.fd = do_sys_open(AT_FDCWD, path, O_RDONLY)
 #define LOADER_FD_VALID(userdata) (userdata.fd != -1)
 #define LOADER_READ(userdata, buffer, size) ksys_read(userdata.fd, buffer, size)
 #define LOADER_WRITE(userdata, buffer, size)                                   \

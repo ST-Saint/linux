@@ -203,6 +203,7 @@ static int loadSecData(ELFExec_t *e, ELFSection_t *s, Elf64_Shdr *h,
 
 static int readSecHeader(ELFExec_t *e, int n, Elf64_Shdr *h)
 {
+	off_t offset = SECTION_OFFSET(e, n);
 	if (LOADER_SEEK_FROM_START(e->user_data, offset) != 0)
 		return -1;
 	if (LOADER_READ(e->user_data.fd, h, sizeof(Elf64_Shdr)) !=
