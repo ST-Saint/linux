@@ -44,6 +44,12 @@
 
 #ifndef DOX
 
+#define EI_MAGIC_SIZE 4
+#define EI_MAGIC                                                               \
+	{                                                                      \
+		0x7f, 'E', 'L', 'F'                                            \
+	}
+
 #define LOADER_MAX_SYM_LENGTH 33
 #define LOADER_USERDATA_T loader_env_t
 
