@@ -1,7 +1,7 @@
 #include "awid_core.h"
 #include "loader.h"
 #include "loader_config.h"
-#include "loader_user_data.h"
+#include "loader_userdata.h"
 
 #include "asm/syscall_wrapper.h"
 #include "linux/err.h"
@@ -127,7 +127,7 @@ SYSCALL_DEFINE3(awid_setup_slots, unsigned long, start_addr,
 {
 	struct ELFExec *exec;
 	loader_env_t loader_env;
-	loader_env.env = env;
+	loader_env.env = &env;
 	load_elf("./lsample.so", loader_env, &exec);
 }
 
