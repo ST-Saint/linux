@@ -62,8 +62,7 @@ static void awid_simple_handler(struct perf_event *bp,
 	do_exit(SIGKILL);
 }
 
-asmlinkage __attribute__((optimize("O0"))) long
-sys_watchpoint_trigger(struct perf_event *wp)
+SYSCALL_DEFINE1(sys_watchpoint_trigger, struct perf_event *, wp)
 {
 	switch (wp->attr.bp_type) {
 	default: {
