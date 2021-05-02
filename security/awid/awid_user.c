@@ -80,7 +80,6 @@ void test_ntid(void)
 			       (unsigned long)(&test_func));
 			printf("syscall return %d\n\n", ret);
 			printf("------------------\n\n");
-			test_func_sup();
 			/* test_func(); */
 			break;
 		}
