@@ -3,7 +3,6 @@
 
 #include "linux/types.h"
 #include <linux/unistd.h>
-#include <linux/syscalls.h>
 
 typedef struct loader_env {
 	int fd;

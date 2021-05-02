@@ -35,6 +35,7 @@
 #include "linux/fs.h"
 #include "linux/types.h"
 #include "loader_config.h"
+#include "linux/syscalls.h"
 
 #define IS_FLAGS_SET(v, m) ((v & m) == m)
 #define SECTION_OFFSET(e, n) (e->sectionTable + n * sizeof(Elf64_Shdr))

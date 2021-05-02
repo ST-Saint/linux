@@ -1,7 +1,7 @@
 ##
 # ARM Watchpoint Isolation Domain
 #
-# @wid.c
+# @awid.c
 # @version 0.1
 
 
