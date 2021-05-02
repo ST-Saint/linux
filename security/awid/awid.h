@@ -3,6 +3,7 @@
 
 typedef unsigned short umode_t;
 
+#include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include "loader.h"
