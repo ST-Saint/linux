@@ -1,6 +1,7 @@
 #ifndef __AWID_H_
 #define __AWID_H_
 
+#include <stdint.h>
 #include "loader.h"
 #include "loader_config.h"
 /* #include <uapi/linux/hw_breakpoint.h> */
