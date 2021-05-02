@@ -40,7 +40,6 @@
 #include <linux/stat.h>
 #include <linux/fs.h>
 #include <linux/fcntl.h>
-#include <linux/syscalls.h>
 
 #ifndef DOX
 

@@ -22,6 +22,10 @@ extern int add_so(int a, int b);
 extern int sub_so(int a, int b);
 extern void maliciosu_read_so(char *c);
 
+void test_func(void)
+{
+}
+
 void loadso(void)
 {
 }
@@ -73,7 +77,7 @@ void test_ntid(void)
 			cnt += 1;
 			printf("addr are %lx %lx\n",
 			       (unsigned long)(&test_func),
-			       (unsigned long)(&test_func_sup));
+			       (unsigned long)(&test_func));
 			printf("syscall return %d\n\n", ret);
 			printf("------------------\n\n");
 			test_func_sup();
