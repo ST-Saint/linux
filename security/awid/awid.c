@@ -1,6 +1,6 @@
 #include "awid.h"
 #include <stdio.h>
-#include <sys/syscall.h>
+#include <unistd.h>
 
 /* int awid_setup_slots(unsigned long, enum HW_BREAKPOINT_LEN, */
 /* 		     enum HW_BREAKPOINT_TYPE) */

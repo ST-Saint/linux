@@ -1,6 +1,8 @@
 #ifndef __AWID_H_
 #define __AWID_H_
 
+typedef unsigned short umode_t;
+
 #include <stdint.h>
 #include <stdlib.h>
 #include "loader.h"
