@@ -62,7 +62,7 @@ static void awid_simple_handler(struct perf_event *bp,
 	do_exit(SIGKILL);
 }
 
-SYSCALL_DEFINE1(sys_watchpoint_trigger, struct perf_event *, wp)
+SYSCALL_DEFINE1(watchpoint_trigger, struct perf_event *, wp)
 {
 	switch (wp->attr.bp_type) {
 	default: {
