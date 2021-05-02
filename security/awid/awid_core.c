@@ -63,7 +63,7 @@ static void awid_simple_handler(struct perf_event *bp,
 }
 
 asmlinkage __attribute__((optimize("O0"))) long
-__arm64_sys_watchpoint_trigger(struct perf_event *wp)
+sys_watchpoint_trigger(struct perf_event *wp)
 {
 	switch (wp->attr.bp_type) {
 	default: {
@@ -117,6 +117,7 @@ SYSCALL_DEFINE2(awid_load_so, const char *, path, int, index)
 	loader_env_t loader_env;
 	int ret;
 	loader_env.env = &env;
+	DBG("before load elf");
 	ret = load_elf(path, loader_env, &exec);
 	return ret;
 }

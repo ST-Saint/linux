@@ -523,11 +523,15 @@ static int initElf(ELFExec_t *e)
 	Elf64_Ehdr h;
 	Elf64_Shdr sH;
 
-	if (!LOADER_FD_VALID(e->user_data))
+	if (!LOADER_FD_VALID(e->user_data)) {
+		DBG("load fd invalid");
 		return -1;
+	}
 
-	if (LOADER_READ(e->user_data, (char *)(&h), sizeof(h)) != sizeof(h))
+	if (LOADER_READ(e->user_data, (char *)(&h), sizeof(h)) != sizeof(h)) {
+		DBG("load fd read error");
 		return -1;
+	}
 
 	const char elfmagic[EI_MAGIC_SIZE] = EI_MAGIC;
 	if (h.e_ident[EI_MAG0] != elfmagic[EI_MAG0])
@@ -547,12 +551,16 @@ static int initElf(ELFExec_t *e)
 	if (h.e_version != EV_CURRENT)
 		return 1;
 
-	if (LOADER_SEEK_FROM_START(e->user_data,
-				   h.e_shoff + h.e_shstrndx * sizeof(sH)) != 0)
+	if (LOADER_SEEK_FROM_START(
+		    e->user_data, h.e_shoff + h.e_shstrndx * sizeof(sH)) != 0) {
+		DBG("seek from start error");
 		return -1;
+	}
 	if (LOADER_READ(e->user_data, (char *)(&sH), sizeof(Elf64_Shdr)) !=
-	    sizeof(Elf64_Shdr))
+	    sizeof(Elf64_Shdr)) {
+		DBG("read shdr error");
 		return -1;
+	}
 
 	e->entry = h.e_entry;
 	e->sections = h.e_shnum;

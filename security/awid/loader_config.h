@@ -104,21 +104,21 @@ extern void arch_jumpTo(entry_t entry);
 
 #endif
 
-#ifndef __AWID_H_
-#define DBG(...) printk(KERN_DEBUG "ELF: " __VA_ARGS__)
-#define ERR(...)                                                               \
-	do {                                                                   \
-		printk(KERN_ERR "ELF: " __VA_ARGS__);                          \
-	} while (0)
-#define MSG(msg) printk(KERN_INFO "ELF: " msg)
-
-#else
+#ifdef __AWID_H_
 #define DBG(...) printf("ELF: " __VA_ARGS__)
 #define ERR(...)                                                               \
 	do {                                                                   \
 		printf("ELF: " __VA_ARGS__);                                   \
 	} while (0)
 #define MSG(msg) printf("ELF: " msg)
+
+#else
+#define DBG(...) printk(KERN_DEBUG "ELF: " __VA_ARGS__)
+#define ERR(...)                                                               \
+	do {                                                                   \
+		printk(KERN_ERR "ELF: " __VA_ARGS__);                          \
+	} while (0)
+#define MSG(msg) printk(KERN_INFO "ELF: " msg)
 
 #endif
 
