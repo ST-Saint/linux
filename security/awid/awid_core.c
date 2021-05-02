@@ -111,14 +111,20 @@ int awid_find_wp_slot(void)
 	return -1;
 }
 
+SYSCALL_DEFINE2(awid_load_so, const char *, path, int, index)
+{
+	struct ELFExec *exec;
+	loader_env_t loader_env;
+	int ret;
+	loader_env.env = &env;
+	ret = load_elf(path, loader_env, &exec);
+	return ret;
+}
+
 SYSCALL_DEFINE3(awid_setup_slots, unsigned long, start_addr,
 		enum HW_BREAKPOINT_LEN, slot_length, enum HW_BREAKPOINT_TYPE,
 		wp_type)
 {
-	struct ELFExec *exec;
-	loader_env_t loader_env;
-	loader_env.env = &env;
-	load_elf("./lsample.so", loader_env, &exec);
 	return 0;
 }
 

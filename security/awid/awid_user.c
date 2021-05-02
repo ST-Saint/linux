@@ -22,17 +22,7 @@ extern int add_so(int a, int b);
 extern int sub_so(int a, int b);
 extern void maliciosu_read_so(char *c);
 
-void test_func()
-{
-	printf("test func");
-}
-
-void test_func_sup()
-{
-	printf("test addr offset");
-}
-
-void loadso()
+void loadso(void)
 {
 }
 
