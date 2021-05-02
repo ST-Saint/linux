@@ -108,14 +108,12 @@ void test_ntid(void)
 	}
 }
 
+extern int awid_load_so(const char *path, int index);
+
 int main(int argc, char **argv)
 {
-	pthread_t ntid;
-	/* fork(); */
-	// int err = pthread_create(&ntid, NULL, test_ntid, NULL);
-	// if (err != 0)
-	// printf("can't create thread: %s\n", strerror(err));
-	// pthread_join(ntid,NULL);
-	test_ntid();
+	/* pthread_t ntid; */
+	/* test_ntid(); */
+	awid_load_so("./libsample.so", 1);
 	return 0;
 }
