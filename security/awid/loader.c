@@ -528,6 +528,9 @@ static int initElf(ELFExec_t *e)
 		return -1;
 	}
 
+	DBG("loader read return value: %d size: %d\n",
+	    LOADER_READ(e->user_data, (char *)(&h), sizeof(h)), sizeof(h));
+
 	if (LOADER_READ(e->user_data, (char *)(&h), sizeof(h)) != sizeof(h)) {
 		DBG("load fd read error");
 		return -1;
