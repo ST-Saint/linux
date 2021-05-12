@@ -534,6 +534,8 @@ static int initElf(ELFExec_t *e)
 		return -1;
 	}
 
+	DBG("fd value %08x %d", e->user_data.fd, e->user_data.fd);
+
 	const char elfmagic[EI_MAGIC_SIZE] = EI_MAGIC;
 	if (h.e_ident[EI_MAG0] != elfmagic[EI_MAG0])
 		return 1;
@@ -556,6 +558,8 @@ static int initElf(ELFExec_t *e)
 	if (h.e_version != EV_CURRENT)
 		return 1;
 
+	DBG("fd value %08x %d offset: %d", e->user_data.fd, e->user_data.fd,
+	    h.e_shoff + h.e_shstrndx * sizeof(sH));
 	if (LOADER_SEEK_FROM_START(
 		    e->user_data, h.e_shoff + h.e_shstrndx * sizeof(sH)) != 0) {
 		DBG("seek from start error");
