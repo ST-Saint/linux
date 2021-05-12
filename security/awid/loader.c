@@ -133,7 +133,9 @@ int loader_write(struct file *file, unsigned char *data, unsigned int size,
 
 int loader_llseek(LOADER_USERDATA_T userdata, off_t off)
 {
+	DBG("loader offset: %x %x\n", userdata.offset, off);
 	userdata.offset = vfs_llseek(userdata.fd, off, SEEK_SET);
+	DBG("loader offset ret: %x\n", userdata.offset);
 	return (userdata.offset == -1);
 }
 
@@ -236,7 +238,7 @@ static int loadSecData(ELFExec_t *e, ELFSection_t *s, Elf64_Shdr *h,
 static int readSecHeader(ELFExec_t *e, int n, Elf64_Shdr *h)
 {
 	off_t offset = SECTION_OFFSET(e, n);
-	DBG("read section header off: %d\n", offset);
+	DBG("read section header off: %x\n", offset);
 	if (LOADER_SEEK_FROM_START(e->user_data, offset) != 0)
 		return -1;
 	if (LOADER_READ(e->user_data, (char *)(h), sizeof(Elf64_Shdr)) !=
