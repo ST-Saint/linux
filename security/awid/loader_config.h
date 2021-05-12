@@ -67,7 +67,8 @@
 #define LOADER_OPEN_FOR_RD(userdata, path)                                     \
 	userdata.fd = filp_open(path, O_RDONLY, 0)
 #define LOADER_FD_VALID(userdata) (IS_ERR(userdata.fd))
-#define LOADER_READ(userdata, buffer, size) loader_read(userdata.fd, buffer, size, 0))
+#define LOADER_READ(userdata, buffer, size)                                    \
+	loader_read(userdata.fd, buffer, size, 0)
 #define LOADER_WRITE(userdata, buffer, size)                                   \
 	loader_write(userdata.fd, buffer, size, 0)
 #define LOADER_CLOSE(userdata) filp_close(userdata.fd)
