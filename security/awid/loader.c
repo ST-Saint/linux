@@ -31,6 +31,7 @@
 
 #include "loader.h"
 #include "asm/elf.h"
+#include "linux/elf-em.h"
 #include "linux/elf.h"
 #include "linux/fs.h"
 #include "linux/types.h"
@@ -543,11 +544,12 @@ static int initElf(ELFExec_t *e)
 	if (h.e_ident[EI_MAG3] != elfmagic[EI_MAG3])
 		return 1;
 	DBG("elf check elf magic done");
-	if (h.e_ident[EI_CLASS] != ELFCLASS32)
+	if (h.e_ident[EI_CLASS] != ELFCLASS32 &&
+	    h.e_ident[EI_CLASS] != ELFCLASS64)
 		return 1;
 	if (h.e_type != ET_REL)
 		return 1;
-	if (h.e_machine != EM_ARM) {
+	if (h.e_machine != EM_ARM && h.e_machine != EM_AARCH64) {
 		DBG("elf check machine failed");
 		return 1;
 	}
