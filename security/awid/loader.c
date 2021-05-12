@@ -515,7 +515,7 @@ static int loadSymbols(ELFExec_t *e)
 		if (IS_FLAGS_SET(founded, FoundAll))
 			return FoundAll;
 	}
-	MSG("Done");
+	DBG("Done founded: %x\n", founded);
 	return founded;
 }
 
@@ -767,17 +767,21 @@ int load_elf(const char *path, LOADER_USERDATA_T user_data,
 		DBG("Invalid elf %s\n", path);
 		return -1;
 	}
+	DBG("init elf done");
 	if (!IS_FLAGS_SET(loadSymbols(exec), FoundValid)) {
 		freeElf(exec);
 		LOADER_FREE(exec);
 		return -2;
 	}
+	DBG("load symbols done");
 	if (relocateSections(exec) != 0) {
 		freeElf(exec);
 		LOADER_FREE(exec);
 		return -3;
 	}
+	DBG("relocate sections done");
 	do_init(exec);
+	DBG("do init done");
 	*exec_ptr = exec;
 	return 0;
 }
