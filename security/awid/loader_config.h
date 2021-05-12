@@ -65,7 +65,10 @@
 #define LOADER_TELL(fd) ftell(fd)
 #else
 #define LOADER_OPEN_FOR_RD(userdata, path)                                     \
-	userdata.fd = filp_open(path, O_RDONLY, 0)
+	do {                                                                   \
+		userdata.fd = filp_open(path, O_RDONLY, 0);                    \
+		userdata.offset = 0;                                           \
+	} while (0)
 #define LOADER_FD_VALID(userdata) (!IS_ERR(userdata.fd))
 #define LOADER_READ(userdata, buffer, size)                                    \
 	loader_read(userdata.fd, buffer, size, userdata.offset)

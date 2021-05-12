@@ -108,25 +108,25 @@ typedef enum {
 } FindFlags_t;
 
 int loader_read(struct file *file, unsigned char *data, unsigned int size,
-		unsigned long long offset)
+		unsigned long long *offset)
 {
 	mm_segment_t oldfs;
 	int ret;
 	oldfs = get_fs();
 	set_fs(KERNEL_DS);
-	ret = vfs_read(file, data, size, &offset);
+	ret = vfs_read(file, data, size, offset);
 	set_fs(oldfs);
 	return ret;
 }
 
 int loader_write(struct file *file, unsigned char *data, unsigned int size,
-		 unsigned long long offset)
+		 unsigned long long *offset)
 {
 	mm_segment_t oldfs;
 	int ret;
 	oldfs = get_fs();
 	set_fs(KERNEL_DS);
-	ret = vfs_read(file, data, size, &offset);
+	ret = vfs_read(file, data, size, offset);
 	set_fs(oldfs);
 	return ret;
 }

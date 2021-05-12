@@ -127,7 +127,6 @@ SYSCALL_DEFINE2(awid_load_so, const char *, path, int, index)
 	/* DBG("fid value: %08x %d file: %08x %d flag: %u", fid, fid, fid.file, */
 	/*     fid.file, fid.flags); */
 	loader_env.env = &env;
-
 	DBG("before load elf");
 	ret = load_elf(path, loader_env, &exec);
 	return ret;
