@@ -558,7 +558,7 @@ static int initElf(ELFExec_t *e)
 	if (h.e_version != EV_CURRENT)
 		return 1;
 
-	DBG("fd value %08x %d offset: %d", e->user_data.fd, e->user_data.fd,
+	DBG("fd value %08x %llu offset: %d", e->user_data.fd, e->user_data.fd,
 	    h.e_shoff + h.e_shstrndx * sizeof(sH));
 	if (LOADER_SEEK_FROM_START(
 		    e->user_data, h.e_shoff + h.e_shstrndx * sizeof(sH)) != 0) {
