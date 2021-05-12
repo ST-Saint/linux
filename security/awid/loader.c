@@ -107,6 +107,36 @@ typedef enum {
 		   FoundRelInitArray | FoundFiniArray | FoundRelFiniArray
 } FindFlags_t;
 
+int loader_read(struct file *file, unsigned char *data, unsigned int size,
+		unsigned long long offset)
+{
+	mm_segment_t oldfs;
+	int ret;
+	oldfs = get_fs();
+	set_fs(KERNEL_DS);
+	ret = vfs_read(file, data, size, &offset);
+	set_fs(oldfs);
+	return ret;
+}
+
+int loader_write(struct file *file, unsigned char *data, unsigned int size,
+		 unsigned long long offset)
+{
+	mm_segment_t oldfs;
+	int ret;
+	oldfs = get_fs();
+	set_fs(KERNEL_DS);
+	ret = vfs_read(file, data, size, &offset);
+	set_fs(oldfs);
+	return ret;
+}
+
+int loader_llseek(LOADER_USERDATA_T userdata, off_t off)
+{
+	userdata.offset = vfs_llseek(userdata.fd, off, SEEK_SET);
+	return (userdata.offset == -1);
+}
+
 static int readSectionName(ELFExec_t *e, off_t off, char *buf, size_t max)
 {
 	int ret = -1;
@@ -206,6 +236,7 @@ static int loadSecData(ELFExec_t *e, ELFSection_t *s, Elf64_Shdr *h,
 static int readSecHeader(ELFExec_t *e, int n, Elf64_Shdr *h)
 {
 	off_t offset = SECTION_OFFSET(e, n);
+	DBG("read section header off: %d\n", offset);
 	if (LOADER_SEEK_FROM_START(e->user_data, offset) != 0)
 		return -1;
 	if (LOADER_READ(e->user_data, (char *)(h), sizeof(Elf64_Shdr)) !=
@@ -508,8 +539,10 @@ static int loadSymbols(ELFExec_t *e)
 			ERR("Error reading section");
 			return -1;
 		}
-		if (sectHdr.sh_name)
+		if (sectHdr.sh_name) {
+			DBG("read section name");
 			readSectionName(e, sectHdr.sh_name, name, sizeof(name));
+		}
 		DBG("Examining section %d %s\n", n, name);
 		founded |= placeInfo(e, &sectHdr, name, n);
 		if (IS_FLAGS_SET(founded, FoundAll))
