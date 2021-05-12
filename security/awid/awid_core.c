@@ -116,18 +116,18 @@ SYSCALL_DEFINE2(awid_load_so, const char *, path, int, index)
 	struct ELFExec *exec;
 	loader_env_t loader_env;
 	int ret;
-	int fd_int;
-	struct file *fi;
-	struct fd fid;
+	/* int fd_int; */
+	/* struct file *fi; */
+	/* struct fd fid; */
 
-	DBG("test filp open status");
-	fd_int = filp_open(path, O_RDONLY, 0);
-	fid = fdget_pos(fd_int);
-	DBG("fd int %08x %d", fd_int, fd_int);
-	DBG("fid value: %08x %d file: %08x %d flag: %u", fid, fid, fid.file,
-	    fid.file, fid.flags);
-
+	/* DBG("test filp open status"); */
+	/* fi = filp_open(path, O_RDONLY, 0); */
+	/* fid = fdget_pos(fd_int); */
+	/* DBG("fd int %08x %d", fd_int, fd_int); */
+	/* DBG("fid value: %08x %d file: %08x %d flag: %u", fid, fid, fid.file, */
+	/*     fid.file, fid.flags); */
 	loader_env.env = &env;
+
 	DBG("before load elf");
 	ret = load_elf(path, loader_env, &exec);
 	return ret;

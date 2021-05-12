@@ -66,11 +66,11 @@
 #else
 #define LOADER_OPEN_FOR_RD(userdata, path)                                     \
 	userdata.fd = filp_open(path, O_RDONLY, 0)
-#define LOADER_FD_VALID(userdata) (userdata.fd != -1)
-#define LOADER_READ(userdata, buffer, size) ksys_read(userdata.fd, buffer, size)
+#define LOADER_FD_VALID(userdata) (IS_ERR(userdata.fd))
+#define LOADER_READ(userdata, buffer, size) loader_read(userdata.fd, buffer, size, 0))
 #define LOADER_WRITE(userdata, buffer, size)                                   \
-	ksys_write(userdata.fd, buffer, size)
-#define LOADER_CLOSE(userdata) ksys_close(userdata.fd)
+	loader_write(userdata.fd, buffer, size, 0)
+#define LOADER_CLOSE(userdata) filp_close(userdata.fd)
 #define LOADER_SEEK_FROM_START(userdata, off)                                  \
 	(seq_lseek(userdata.fd, off, SEEK_SET) == -1)
 #define LOADER_TELL(userdata) seq_lseek(userdata.fd, 0, SEEK_CUR)
@@ -325,6 +325,30 @@ static uint32_t getUndefinedSymbol(LOADER_USERDATA_T *userdata,
 			return (uint32_t)(env->exported[i].ptr);
 	DBG("  Can not find address for symbol %s\n", sName);
 	return 0xffffffff;
+}
+
+static int loader_read(struct file *file, unsigned char *data,
+		       unsigned int size, unsigned long long offset)
+{
+	mm_segment_t oldfs;
+	int ret;
+	oldfs = get_fs();
+	set_fs(KERNEL_DS);
+	ret = vfs_read(file, data, size, &offset);
+	set_fs(oldfs);
+	return ret;
+}
+
+static int loader_write(struct file *file, unsigned char *data,
+			unsigned int size, unsigned long long offset)
+{
+	mm_segment_t oldfs;
+	int ret;
+	oldfs = get_fs();
+	set_fs(KERNEL_DS);
+	ret = vfs_read(file, data, size, &offset);
+	set_fs(oldfs);
+	return ret;
 }
 
 #endif /* LOADER_CONFIG_H_ */

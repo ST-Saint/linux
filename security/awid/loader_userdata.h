@@ -5,7 +5,7 @@
 #include <linux/unistd.h>
 
 typedef struct loader_env {
-	int fd;
+	struct file *fd;
 	const struct ELFEnv *env;
 } loader_env_t;
 
