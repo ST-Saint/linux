@@ -71,7 +71,7 @@
 	loader_read(userdata.fd, buffer, size, 0)
 #define LOADER_WRITE(userdata, buffer, size)                                   \
 	loader_write(userdata.fd, buffer, size, 0)
-#define LOADER_CLOSE(userdata) filp_close(userdata.fd)
+#define LOADER_CLOSE(userdata) filp_close(userdata.fd, NULL)
 #define LOADER_SEEK_FROM_START(userdata, off)                                  \
 	(seq_lseek(userdata.fd, off, SEEK_SET) == -1)
 #define LOADER_TELL(userdata) seq_lseek(userdata.fd, 0, SEEK_CUR)
