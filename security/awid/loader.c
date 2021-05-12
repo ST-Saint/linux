@@ -528,9 +528,6 @@ static int initElf(ELFExec_t *e)
 		return -1;
 	}
 
-	DBG("loader read return value: %d size: %d\n",
-	    LOADER_READ(e->user_data, (char *)(&h), sizeof(h)), sizeof(h));
-
 	if (LOADER_READ(e->user_data, (char *)(&h), sizeof(h)) != sizeof(h)) {
 		DBG("load fd read error");
 		return -1;
@@ -545,12 +542,15 @@ static int initElf(ELFExec_t *e)
 		return 1;
 	if (h.e_ident[EI_MAG3] != elfmagic[EI_MAG3])
 		return 1;
+	DBG("elf check elf magic done");
 	if (h.e_ident[EI_CLASS] != ELFCLASS32)
 		return 1;
 	if (h.e_type != ET_REL)
 		return 1;
-	if (h.e_machine != EM_ARM)
+	if (h.e_machine != EM_ARM) {
+		DBG("elf check machine failed");
 		return 1;
+	}
 	if (h.e_version != EV_CURRENT)
 		return 1;
 
