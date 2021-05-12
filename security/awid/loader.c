@@ -527,6 +527,13 @@ static int placeInfo(ELFExec_t *e, Elf64_Shdr *sh, const char *name, int n)
 	return 0;
 }
 
+static void dump_sechdr(Elf64_Shdr sechdr)
+{
+	DBG("dump section header:\nname %s\ntype: %d\nflag: %x\naddr: %x\noff: %x\nsize: %d\nentsize: %d\n",
+	    sechdr.sh_name, sechdr.sh_type, sechdr.sh_flags, sechdr.sh_addr,
+	    sechdr.sh_offset, sechdr.sh_size, sechdr.sh_entsize);
+}
+
 static int loadSymbols(ELFExec_t *e)
 {
 	int n;
@@ -539,6 +546,7 @@ static int loadSymbols(ELFExec_t *e)
 			ERR("Error reading section");
 			return -1;
 		}
+		dump_sechdr(sectHdr);
 		if (sectHdr.sh_name) {
 			DBG("read section name");
 			readSectionName(e, sectHdr.sh_name, name, sizeof(name));

@@ -292,7 +292,6 @@ loff_t seq_lseek(struct file *file, loff_t offset, int whence)
 	struct seq_file *m = file->private_data;
 	loff_t retval = -EINVAL;
 
-	printk("file value %08x %llu seq_file: %08x %d", file, file, m, m);
 	mutex_lock(&m->lock);
 	switch (whence) {
 	case SEEK_CUR:
