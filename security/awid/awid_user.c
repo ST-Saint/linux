@@ -114,6 +114,7 @@ int main(int argc, char **argv)
 {
 	/* pthread_t ntid; */
 	/* test_ntid(); */
-	awid_load_so("./libsample.so", 1);
+	/* awid_load_so("./libsample.so", 1); */
+	awid_load_so("./sample.o", 1);
 	return 0;
 }

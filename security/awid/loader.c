@@ -186,7 +186,7 @@ static void dumpData(uint8_t *data, size_t size)
   while (i < size) {
     if ((i & 0xf) == 0)
       DBG("\n  %04X: ", i);
-    DBG("%08x ", swabo(*((uint32_t* )(data + i))));
+    DBG("%08llx ", swabo(*((uint32_t* )(data + i))));
     i += sizeof(uint32_t);
   }
   DBG("\n");
@@ -337,13 +337,13 @@ static int relocateSymbol(Elf64_Addr relAddr, int type, Elf64_Addr symAddr)
 	switch (type) {
 	case R_AARCH64_ABS32:
 		*((uint64_t *)relAddr) += symAddr;
-		DBG("  R_ARM_ABS32 relocated is 0x%08X\n",
+		DBG("  R_ARM_ABS32 relocated is 0x%08LLX\n",
 		    *((uint64_t *)relAddr));
 		break;
 	case R_AARCH64_CALL26:
 	case R_AARCH64_JUMP26:
 		relJmpCall(relAddr, type, symAddr);
-		DBG("  R_ARM_THM_CALL/JMP relocated is 0x%08X\n",
+		DBG("  R_ARM_THM_CALL/JMP relocated is 0x%08LLX\n",
 		    *((uint64_t *)relAddr));
 		break;
 	/* case R_ARM_TARGET1: */
@@ -351,7 +351,7 @@ static int relocateSymbol(Elf64_Addr relAddr, int type, Elf64_Addr symAddr)
 	/* 	// "interpreted as either ‘R_ARM_REL32’ or ‘R_ARM_ABS32’, depending on the target" */
 	/* 	// implementation here is as R_ARM_ABS32 */
 	/* 	*((uint64_t *)relAddr) += symAddr; */
-	/* 	DBG("  R_ARM_TARGET1 relocated is 0x%08X\n", */
+	/* 	DBG("  R_ARM_TARGET1 relocated is 0x%08LLX\n", */
 	/* 	    *((uint64_t *)relAddr)); */
 	/* 	break; */
 	default:
@@ -417,12 +417,12 @@ static int relocate(ELFExec_t *e, Elf64_Shdr *h, ELFSection_t *s,
 
 				readSymbol(e, symEntry, &sym, name,
 					   sizeof(name));
-				DBG(" %08X %08X %-16s %s\n", rel.r_offset,
+				DBG(" %08LLX %08LLX %-16s %s\n", rel.r_offset,
 				    rel.r_info, typeStr(relType), name);
 
 				symAddr = addressOf(e, &sym, name);
 				if (symAddr != 0xffffffff) {
-					DBG("  symAddr=%08X relAddr=%08X\n",
+					DBG("  symAddr=%08LLX relAddr=%08LLX\n",
 					    symAddr, relAddr);
 					if (relocateSymbol(relAddr, relType,
 							   symAddr) == -1) {
@@ -533,7 +533,7 @@ static int placeInfo(ELFExec_t *e, Elf64_Shdr *sh, const char *name, int n)
 
 static void dump_sechdr(Elf64_Shdr sechdr)
 {
-	DBG("dump section header:\nname: %s\ntype: %d\nflag: %x\naddr: %x\noff: %x\nsize: %d\nentsize: %d\n",
+	DBG("dump section header:\nname: %s\ntype: %d\nflag: %x\naddr: %llx\noff: %x\nsize: %d\nentsize: %d\n",
 	    sechdr.sh_name, sechdr.sh_type, sechdr.sh_flags, sechdr.sh_addr,
 	    sechdr.sh_offset, sechdr.sh_size, sechdr.sh_entsize);
 }
@@ -581,7 +581,7 @@ static int initElf(ELFExec_t *e)
 		return -1;
 	}
 
-	DBG("fd value %08x %d", e->user_data->fd, e->user_data->fd);
+	DBG("fd value %08llx %d", e->user_data->fd, e->user_data->fd);
 
 	const char elfmagic[EI_MAGIC_SIZE] = EI_MAGIC;
 	if (h.e_ident[EI_MAG0] != elfmagic[EI_MAG0])
@@ -605,8 +605,8 @@ static int initElf(ELFExec_t *e)
 	if (h.e_version != EV_CURRENT)
 		return 1;
 
-	DBG("fd value %08x %llu offset: %d", e->user_data->fd, e->user_data->fd,
-	    h.e_shoff + h.e_shstrndx * sizeof(sH));
+	DBG("fd value %08llx %llu offset: %d", e->user_data->fd,
+	    e->user_data->fd, h.e_shoff + h.e_shstrndx * sizeof(sH));
 	if (LOADER_SEEK_FROM_START(
 		    e->user_data, h.e_shoff + h.e_shstrndx * sizeof(sH)) != 0) {
 		DBG("seek from start error");
@@ -698,7 +698,7 @@ static void do_init(ELFExec_t *e)
 		int i;
 		int n = sectHdr.sh_size >> 2;
 		for (i = 0; i < n; i++) {
-			DBG("Processing .init_array[%d] : %08x->%08x\n", i,
+			DBG("Processing .init_array[%d] : %08llx->%08llx\n", i,
 			    (int)entry, (int)*entry);
 			(*entry)();
 			entry++;
@@ -715,7 +715,7 @@ static void do_fini(ELFExec_t *e)
 		int i;
 		int n = e->fini_array_size >> 2;
 		for (i = 0; i < n; i++) {
-			DBG("Processing .fini_array[%d] : %08x->%08x\n", i,
+			DBG("Processing .fini_array[%d] : %08llx->%08llx\n", i,
 			    (int)entry, (int)*entry);
 			(*entry)();
 			entry++;
@@ -747,7 +747,7 @@ void *get_sym(ELFExec_t *exec, const char *sym_name, int symbol_type)
 				if (!ret) {
 					DBG("readSymbolName failed");
 				} else {
-					//DBG("sym %d = \"%s\" @ %08x, st_shndx = %d\n",i,name,sym.st_value, sym.st_shndx);
+					//DBG("sym %d = \"%s\" @ %08llx, st_shndx = %d\n",i,name,sym.st_value, sym.st_shndx);
 					if (LOADER_STREQ(name, sym_name)) {
 						ELFSection_t *symSec =
 							sectionOf(exec,
@@ -756,13 +756,13 @@ void *get_sym(ELFExec_t *exec, const char *sym_name, int symbol_type)
 							addr = (entry_t *)(((Elf64_Addr)symSec
 										    ->data) +
 									   sym.st_value);
-							DBG("sym \"%s\" found @ %08x\n",
+							DBG("sym \"%s\" found @ %08llx\n",
 							    name, addr);
 							break;
 						} else if (symbol_type ==
 							   STT_NOTYPE) {
 							addr = sym.st_value;
-							DBG("sym \"%s\" found @ %08x\n",
+							DBG("sym \"%s\" found @ %08llx\n",
 							    name, addr);
 							break;
 						}
