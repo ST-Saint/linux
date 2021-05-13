@@ -541,6 +541,8 @@ static int loadSymbols(ELFExec_t *e)
 	int n;
 	int founded = 0;
 	MSG("Scan ELF indexes...");
+	DBG("seciont table: %x, n: %d, elf64 shdr size: %d\n", e->sectionTable,
+	    n, sizeof(Elf64_Shdr));
 	for (n = 1; n < e->sections; n++) {
 		Elf64_Shdr sectHdr;
 		char name[LOADER_MAX_SYM_LENGTH] = "<unamed>";
