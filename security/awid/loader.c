@@ -114,7 +114,9 @@ int loader_read(struct file *file, unsigned char *data, unsigned int size,
 	int ret;
 	oldfs = get_fs();
 	set_fs(KERNEL_DS);
+	DBG("read before offset %x %x", offset, *offset);
 	ret = vfs_read(file, data, size, offset);
+	DBG("read after offset %x %x", offset, *offset);
 	set_fs(oldfs);
 	return ret;
 }
