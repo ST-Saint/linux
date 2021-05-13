@@ -6,7 +6,7 @@
 
 typedef struct loader_env {
 	struct file *fd;
-	loff_t offset;
+	long long offset;
 	const struct ELFEnv *env;
 } loader_env_t;
 
