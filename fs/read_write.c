@@ -295,7 +295,6 @@ EXPORT_SYMBOL(default_llseek);
 loff_t vfs_llseek(struct file *file, loff_t offset, int whence)
 {
 	loff_t (*fn)(struct file *, loff_t, int);
-	printk("vfs seek offset %x", offset);
 	fn = no_llseek;
 	if (file->f_mode & FMODE_LSEEK) {
 		if (file->f_op->llseek)
