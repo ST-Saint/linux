@@ -30,10 +30,13 @@
  *****************************************************************************/
 
 #include "loader.h"
+#include "asm-generic/mman-common.h"
 #include "asm/elf.h"
 #include "linux/elf-em.h"
 #include "linux/elf.h"
 #include "linux/fs.h"
+#include "linux/mm.h"
+#include "linux/mman.h"
 #include "linux/types.h"
 #include "loader_config.h"
 #include "linux/syscalls.h"
@@ -181,16 +184,16 @@ static uint32_t swabo(uint32_t hl)
 
 static void dumpData(uint8_t *data, size_t size)
 {
-#if 0
-  int i = 0;
-  while (i < size) {
-    if ((i & 0xf) == 0)
-      DBG("\n  %04X: ", i);
-    DBG("%08llx ", swabo(*((uint32_t* )(data + i))));
-    i += sizeof(uint32_t);
-  }
-  DBG("\n");
-#endif
+	/* #if 0 */
+	int i = 0;
+	while (i < size) {
+		if ((i & 0xf) == 0)
+			DBG("\n  %04X: ", i);
+		DBG("%08llx ", swabo(*((uint32_t *)(data + i))));
+		i += sizeof(uint32_t);
+	}
+	DBG("\n");
+	/* #endif */
 }
 
 typedef enum { sram = 0, sdram = 1 } MemType_t;
@@ -231,7 +234,7 @@ static int loadSecData(ELFExec_t *e, ELFSection_t *s, Elf64_Shdr *h,
 			ERR("     read data fail");
 			return -1;
 		}
-		/* DBG("DATA: "); */
+		DBG("DATA: ");
 		dumpData(s->data, h->sh_size);
 	}
 	return 0;
@@ -693,13 +696,17 @@ static void do_init(ELFExec_t *e)
 
 	if (e->init_array.data) {
 		MSG("Processing section .init_array.");
+		DBG("init array data: %llx sec Idx %d\n", e->init_array.data,
+		    e->init_array.secIdx);
 		if (readSecHeader(e, e->init_array.secIdx, &sectHdr) != 0) {
 			ERR("Error reading section header");
 			return;
 		}
 		dump_sechdr(sectHdr);
+		DBG("init array sh_size %d\n", sectHdr.sh_size);
 		n = sectHdr.sh_size >> 2;
-		entry = (entry_t **)(e->init_array.data);
+
+		entry = (entry_t **)(e->init_array.data + 0x20000);
 		for (i = 0; i < n; i++) {
 			DBG("Processing .init_array[%d] : %08llx->%08llx\n", i,
 			    (long long)entry, (long long)*entry);
@@ -801,9 +808,10 @@ static void clearELFExec(ELFExec_t *e)
 }
 
 int load_elf(const char *path, LOADER_USERDATA_T *user_data,
-	     ELFExec_t **exec_ptr)
+	     ELFExec_t **exec_ptr, unsigned long addr)
 {
 	ELFExec_t *exec;
+	struct kstat stat;
 	exec = LOADER_ALIGN_ALLOC(sizeof(ELFExec_t), 4,
 				  ELF_SEC_READ | ELF_SEC_WRITE);
 	if (!exec) {
@@ -813,6 +821,12 @@ int load_elf(const char *path, LOADER_USERDATA_T *user_data,
 	clearELFExec(exec);
 	exec->user_data = user_data;
 	LOADER_OPEN_FOR_RD(exec->user_data, path);
+	/* PROT_READ|PROT_WRITE     MAP_SHARED */
+	vfs_stat(path, &stat);
+	unsigned long mmap_ret =
+		vm_mmap(exec->user_data->fd, addr, stat.size,
+			PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE, 0);
+	DBG("mmap ret value: %llu\n", mmap_ret);
 	if (initElf(exec) != 0) {
 		DBG("Invalid elf %s\n", path);
 		return -1;

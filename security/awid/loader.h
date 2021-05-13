@@ -65,7 +65,7 @@ typedef struct ELFExec ELFExec_t;
  * @todo Error information
  */
 extern int load_elf(const char *path, LOADER_USERDATA_T *user_data,
-		    ELFExec_t **exec);
+		    ELFExec_t **exec, unsigned long addr);
 
 /**
  * Unload ELF
