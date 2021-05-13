@@ -689,8 +689,7 @@ static void do_init(ELFExec_t *e)
 {
 	Elf64_Shdr sectHdr;
 	entry_t **entry;
-	int i;
-	int n = sectHdr.sh_size >> 2;
+	int i, n;
 
 	if (e->init_array.data) {
 		MSG("Processing section .init_array.");
@@ -699,6 +698,7 @@ static void do_init(ELFExec_t *e)
 			return;
 		}
 		dump_sechdr(sectHdr);
+		n = sectHdr.sh_size >> 2;
 		entry = (entry_t **)(e->init_array.data);
 		for (i = 0; i < n; i++) {
 			DBG("Processing .init_array[%d] : %08llx->%08llx\n", i,
