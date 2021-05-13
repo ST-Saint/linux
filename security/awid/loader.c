@@ -114,9 +114,9 @@ int loader_read(struct file *file, unsigned char *data, unsigned int size,
 	int ret;
 	oldfs = get_fs();
 	set_fs(KERNEL_DS);
-	DBG("read before offset %x %x", offset, *offset);
+	/* DBG("read before offset %x %x", offset, *offset); */
 	ret = vfs_read(file, data, size, offset);
-	DBG("read after offset %x %x", offset, *offset);
+	/* DBG("read after offset %x %x", offset, *offset); */
 	set_fs(oldfs);
 	return ret;
 }
@@ -135,9 +135,9 @@ int loader_write(struct file *file, unsigned char *data, unsigned int size,
 
 int loader_llseek(LOADER_USERDATA_T *userdata, off_t off)
 {
-	DBG("loader offset: %x %x\n", userdata->offset, off);
+	/* DBG("loader offset: %x %x\n", userdata->offset, off); */
 	userdata->offset = vfs_llseek(userdata->fd, off, SEEK_SET);
-	DBG("loader offset ret: %x\n", userdata->offset);
+	/* DBG("loader offset ret: %x\n", userdata->offset); */
 	return (userdata->offset == -1);
 }
 
@@ -687,19 +687,22 @@ int jumpTo(ELFExec_t *e)
 
 static void do_init(ELFExec_t *e)
 {
+	Elf64_Shdr sectHdr;
+	entry_t **entry;
+	int i;
+	int n = sectHdr.sh_size >> 2;
+
 	if (e->init_array.data) {
 		MSG("Processing section .init_array.");
-		Elf64_Shdr sectHdr;
 		if (readSecHeader(e, e->init_array.secIdx, &sectHdr) != 0) {
 			ERR("Error reading section header");
 			return;
 		}
-		entry_t **entry = (entry_t **)(e->init_array.data);
-		int i;
-		int n = sectHdr.sh_size >> 2;
+		dump_sechdr(sectHdr);
+		entry = (entry_t **)(e->init_array.data);
 		for (i = 0; i < n; i++) {
 			DBG("Processing .init_array[%d] : %08llx->%08llx\n", i,
-			    (int)entry, (int)*entry);
+			    (long long)entry, (long long)*entry);
 			(*entry)();
 			entry++;
 		}
