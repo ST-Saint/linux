@@ -66,17 +66,17 @@
 #else
 #define LOADER_OPEN_FOR_RD(userdata, path)                                     \
 	do {                                                                   \
-		userdata.fd = filp_open(path, O_RDONLY, 0);                    \
-		userdata.offset = 0;                                           \
+		userdata->fd = filp_open(path, O_RDONLY, 0);                   \
+		userdata->offset = 0;                                          \
 	} while (0)
-#define LOADER_FD_VALID(userdata) (!IS_ERR(userdata.fd))
+#define LOADER_FD_VALID(userdata) (!IS_ERR(userdata->fd))
 #define LOADER_READ(userdata, buffer, size)                                    \
-	loader_read(userdata.fd, buffer, size, &userdata.offset)
+	loader_read(userdata->fd, buffer, size, &userdata->offset)
 #define LOADER_WRITE(userdata, buffer, size)                                   \
-	loader_write(userdata.fd, buffer, size, &userdata.offset)
-#define LOADER_CLOSE(userdata) filp_close(userdata.fd, NULL)
+	loader_write(userdata->fd, buffer, size, &userdata->offset)
+#define LOADER_CLOSE(userdata) filp_close(userdata->fd, NULL)
 #define LOADER_SEEK_FROM_START(userdata, off) loader_llseek(userdata, off)
-#define LOADER_TELL(userdata) (userdata.offset)
+#define LOADER_TELL(userdata) (userdata->offset)
 #endif
 
 #if 1

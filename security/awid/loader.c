@@ -50,7 +50,7 @@ typedef struct {
 } ELFSection_t;
 
 typedef struct ELFExec {
-	LOADER_USERDATA_T user_data;
+	LOADER_USERDATA_T *user_data;
 
 	size_t sections;
 	off_t sectionTable;
@@ -133,12 +133,12 @@ int loader_write(struct file *file, unsigned char *data, unsigned int size,
 	return ret;
 }
 
-int loader_llseek(LOADER_USERDATA_T userdata, off_t off)
+int loader_llseek(LOADER_USERDATA_T *userdata, off_t off)
 {
-	DBG("loader offset: %x %x\n", userdata.offset, off);
-	userdata.offset = vfs_llseek(userdata.fd, off, SEEK_SET);
-	DBG("loader offset ret: %x\n", userdata.offset);
-	return (userdata.offset == -1);
+	DBG("loader offset: %x %x\n", userdata->offset, off);
+	userdata->offset = vfs_llseek(userdata->fd, off, SEEK_SET);
+	DBG("loader offset ret: %x\n", userdata->offset);
+	return (userdata->offset == -1);
 }
 
 static int readSectionName(ELFExec_t *e, off_t off, char *buf, size_t max)
@@ -384,7 +384,7 @@ static ELFSection_t *sectionOf(ELFExec_t *e, int index)
 static Elf64_Addr addressOf(ELFExec_t *e, Elf64_Sym *sym, const char *sName)
 {
 	if (sym->st_shndx == SHN_UNDEF) {
-		return LOADER_GETUNDEFSYMADDR(&e->user_data, sName);
+		return LOADER_GETUNDEFSYMADDR(e->user_data, sName);
 	} else {
 		ELFSection_t *symSec = sectionOf(e, sym->st_shndx);
 		if (symSec)
@@ -581,7 +581,7 @@ static int initElf(ELFExec_t *e)
 		return -1;
 	}
 
-	DBG("fd value %08x %d", e->user_data.fd, e->user_data.fd);
+	DBG("fd value %08x %d", e->user_data->fd, e->user_data->fd);
 
 	const char elfmagic[EI_MAGIC_SIZE] = EI_MAGIC;
 	if (h.e_ident[EI_MAG0] != elfmagic[EI_MAG0])
@@ -605,7 +605,7 @@ static int initElf(ELFExec_t *e)
 	if (h.e_version != EV_CURRENT)
 		return 1;
 
-	DBG("fd value %08x %llu offset: %d", e->user_data.fd, e->user_data.fd,
+	DBG("fd value %08x %llu offset: %d", e->user_data->fd, e->user_data->fd,
 	    h.e_shoff + h.e_shstrndx * sizeof(sH));
 	if (LOADER_SEEK_FROM_START(
 		    e->user_data, h.e_shoff + h.e_shstrndx * sizeof(sH)) != 0) {
@@ -797,7 +797,7 @@ static void clearELFExec(ELFExec_t *e)
 	}
 }
 
-int load_elf(const char *path, LOADER_USERDATA_T user_data,
+int load_elf(const char *path, LOADER_USERDATA_T *user_data,
 	     ELFExec_t **exec_ptr)
 {
 	ELFExec_t *exec;

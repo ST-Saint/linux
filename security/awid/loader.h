@@ -47,12 +47,12 @@ extern "C" {
  * Protection flags of memory
  */
 typedef enum {
-  ELF_SEC_WRITE = 0x1, /*!< Enable for write */
-  ELF_SEC_READ = 0x2, /*!< Enable for read */
-  ELF_SEC_EXEC = 0x4, /*!< Enable for execution (instruction fetch) */
+	ELF_SEC_WRITE = 0x1, /*!< Enable for write */
+	ELF_SEC_READ = 0x2, /*!< Enable for read */
+	ELF_SEC_EXEC = 0x4, /*!< Enable for execution (instruction fetch) */
 } ELFSecPerm_t;
 
-typedef void (entry_t)(void);
+typedef void(entry_t)(void);
 
 typedef struct ELFExec ELFExec_t;
 
@@ -64,7 +64,8 @@ typedef struct ELFExec ELFExec_t;
  * @retval 0 On successful
  * @todo Error information
  */
-extern int load_elf(const char *path, LOADER_USERDATA_T user_data, ELFExec_t **exec);
+extern int load_elf(const char *path, LOADER_USERDATA_T *user_data,
+		    ELFExec_t **exec);
 
 /**
  * Unload ELF
@@ -89,7 +90,7 @@ extern int jumpTo(ELFExec_t *exec);
  * @retval function pointer, 0 On failure
  * @todo Error information
  */
-extern void * get_func(ELFExec_t *exec, const char *func_name);
+extern void *get_func(ELFExec_t *exec, const char *func_name);
 
 /**
  * Get object pointer
@@ -98,7 +99,7 @@ extern void * get_func(ELFExec_t *exec, const char *func_name);
  * @retval object pointer, 0 On failure
  * @todo Error information
  */
-extern void * get_obj(ELFExec_t *exec, const char *obj_name);
+extern void *get_obj(ELFExec_t *exec, const char *obj_name);
 
 /**
  * Get symbol
@@ -107,8 +108,7 @@ extern void * get_obj(ELFExec_t *exec, const char *obj_name);
  * @retval value, 0 On failure
  * @todo Error information
  */
-extern void * get_sym(ELFExec_t *exec, const char *sym_name, int symbol_type);
-
+extern void *get_sym(ELFExec_t *exec, const char *sym_name, int symbol_type);
 
 /** @} */
 
