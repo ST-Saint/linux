@@ -238,8 +238,8 @@ static int loadSecData(ELFExec_t *e, ELFSection_t *s, Elf64_Shdr *h,
 		}
 		/* DBG("DATA: "); */
 		DBG("init array data after read: %llx %x %llx %x\n",
-		    (unsigned long long)(s->data), (uint)(s->data), *(unsigned long long*)(s->data),
-		    *(uint*)(s->data));
+		    (unsigned long long)(s->data), (uint)(s->data),
+		    *(unsigned long long *)(s->data), *(uint *)(s->data));
 		dumpData(s->data, h->sh_size);
 	}
 	return 0;
@@ -717,8 +717,9 @@ static void do_init(ELFExec_t *e)
 		entry = (entry_t **)(e->init_array.data);
 		for (i = 0; i < n; i++) {
 			DBG("Processing .init_array[%d] : %08llx->%08llx\n", i,
-			    (unsigned long long)entry, *(unsigned long long*)entry);
-			(*entry)();
+			    (unsigned long long)entry,
+			    *(unsigned long long *)entry);
+			(*entry + 0x4000000)();
 			entry++;
 		}
 	} else {
@@ -836,11 +837,11 @@ int load_elf(const char *path, LOADER_USERDATA_T *user_data,
 		vm_mmap(exec->user_data->fd, addr, stat.size,
 			PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE, 0);
 	DBG("mmap ret value: %llx\n", mmap_ret);
-	int i;
-	for (i = 0; i < 1000; ++i) {
-		DBG("FILE MMAP: addr: %llx off: %x data: %x", mmap_ret + i, i,
-		    *(char *)(mmap_ret + i));
-	}
+	/* int i; */
+	/* for (i = 0; i < 1000; ++i) { */
+	/* DBG("FILE MMAP: addr: %llx off: %x data: %x", mmap_ret + i, i, */
+	/* *(char *)(mmap_ret + i)); */
+	/* } */
 	if (initElf(exec) != 0) {
 		DBG("Invalid elf %s\n", path);
 		return -1;
