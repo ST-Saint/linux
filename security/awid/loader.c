@@ -718,7 +718,8 @@ static void do_init(ELFExec_t *e)
 		n = sectHdr.sh_size >> 2;
 
 		oldfs = get_fs();
-		DBG("current fs: %d\n", oldfs);
+		DBG("current fs: %d KERNEL DS: %d USER DS: %d\n", oldfs,
+		    KERNEL_DS, USER_DS);
 		set_fs(USER_DS);
 		entry = (entry_t **)(e->init_array.data);
 		for (i = 0; i < n; i++) {
@@ -729,7 +730,7 @@ static void do_init(ELFExec_t *e)
 			entry++;
 		}
 		DBG("current fs: %d\n", oldfs);
-		set_fs(oldfs)
+		set_fs(oldfs);
 	} else {
 		MSG("No .init_array"); // and that's fine
 	}
