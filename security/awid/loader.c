@@ -544,9 +544,11 @@ static int placeInfo(ELFExec_t *e, Elf64_Shdr *sh, const char *name, int n)
 
 static void dump_sechdr(Elf64_Shdr sechdr)
 {
+#if 0
 	DBG("dump section header:\nname: %s\ntype: %d\nflag: %x\naddr: %llx\noff: %x\nsize: %d\nentsize: %d\n",
 	    sechdr.sh_name, sechdr.sh_type, sechdr.sh_flags, sechdr.sh_addr,
 	    sechdr.sh_offset, sechdr.sh_size, sechdr.sh_entsize);
+#endif
 }
 
 static int loadSymbols(ELFExec_t *e)
@@ -859,7 +861,7 @@ int load_elf(const char *path, LOADER_USERDATA_T *user_data,
 		return -3;
 	}
 	DBG("relocate sections done");
-	do_init(exec);
+	/* do_init(exec); */
 	DBG("do init done");
 	*exec_ptr = exec;
 	return 0;

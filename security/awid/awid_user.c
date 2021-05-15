@@ -115,5 +115,9 @@ int main(int argc, char **argv)
 	/* pthread_t ntid; */
 	/* test_ntid(); */
 	awid_load_so("./libsample.so", 1);
+	void (*a)(void) = 0x4000738;
+	printf("exec %llx %llx", a, *a);
+	a();
+	printf("exec init_done");
 	return 0;
 }
