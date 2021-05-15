@@ -717,7 +717,7 @@ static void do_init(ELFExec_t *e)
 		DBG("init array sh_size %d\n", sectHdr.sh_size);
 		n = sectHdr.sh_size >> 2;
 		entry = (entry_t **)(e->init_array.data);
-
+		*entry += 0x4000000;
 		oldfs = get_fs();
 		for (i = 0; i < 100; ++i) {
 			DBG("addr: %llx value %x\n",
