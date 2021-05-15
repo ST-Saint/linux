@@ -718,9 +718,9 @@ static void do_init(ELFExec_t *e)
 		n = sectHdr.sh_size >> 2;
 
 		oldfs = get_fs();
-		DBG("current fs: %d KERNEL DS: %d USER DS: %d\n", oldfs,
+		DBG("current fs: %lu KERNEL DS: %lu USER DS: %lu\n", oldfs,
 		    KERNEL_DS, USER_DS);
-		set_fs(USER_DS);
+		set_fs(KERNEL_DS);
 		entry = (entry_t **)(e->init_array.data);
 		for (i = 0; i < n; i++) {
 			DBG("Processing .init_array[%d] : %08llx->%08llx\n", i,
