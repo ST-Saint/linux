@@ -731,7 +731,7 @@ static void do_init(ELFExec_t *e)
 			DBG("Processing .init_array[%d] : %08llx->%08llx\n", i,
 			    (unsigned long long)entry,
 			    *(unsigned long long *)entry);
-			(*entry + 0x4000000)();
+			(*entry)();
 			entry++;
 		}
 		DBG("current fs: %d\n", oldfs);
