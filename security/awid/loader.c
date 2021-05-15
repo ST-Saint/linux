@@ -828,7 +828,8 @@ int load_elf(const char *path, LOADER_USERDATA_T *user_data,
 		vm_mmap(exec->user_data->fd, addr, stat.size,
 			PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE, 0);
 	DBG("mmap ret value: %llx\n", mmap_ret);
-	for (int i = 0; i < stat.size; ++i) {
+	int i;
+	for (i = 0; i < stat.size; ++i) {
 		DBG("%c", (char *)(mmap_ret + i));
 	}
 	if (initElf(exec) != 0) {
