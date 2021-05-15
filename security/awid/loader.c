@@ -716,12 +716,17 @@ static void do_init(ELFExec_t *e)
 		dump_sechdr(sectHdr);
 		DBG("init array sh_size %d\n", sectHdr.sh_size);
 		n = sectHdr.sh_size >> 2;
+		entry = (entry_t **)(e->init_array.data);
 
 		oldfs = get_fs();
-		DBG("current fs: %lu KERNEL DS: %lu USER DS: %lu\n", oldfs,
+		for (i = 0; i < 100; ++i) {
+			DBG("addr: %llx value %x\n",
+			    *(unsigned long long *)entry + i,
+			    *(char *)(*(unsigned long long *)entry) + i);
+		}
+		DBG("current fs: %llx KERNEL DS: %llx USER DS: %llx\n", oldfs,
 		    KERNEL_DS, USER_DS);
 		set_fs(KERNEL_DS);
-		entry = (entry_t **)(e->init_array.data);
 		for (i = 0; i < n; i++) {
 			DBG("Processing .init_array[%d] : %08llx->%08llx\n", i,
 			    (unsigned long long)entry,
