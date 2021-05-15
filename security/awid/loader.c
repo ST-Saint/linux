@@ -497,6 +497,8 @@ static int placeInfo(ELFExec_t *e, Elf64_Shdr *sh, const char *name, int n)
 		DBG("load section data init_array");
 		if (loadSecData(e, &e->init_array, sh, sram) == -1)
 			return FoundERROR;
+		DBG("load section data init_array data: %llx",
+		    e->init_array.data);
 		e->init_array.secIdx = n;
 		return FoundInitArray;
 	} else if (LOADER_STREQ(name, ".fini_array")) {
