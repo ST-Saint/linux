@@ -184,7 +184,7 @@ static uint32_t swabo(uint32_t hl)
 
 static void dumpData(uint8_t *data, size_t size)
 {
-	/* #if 0 */
+#if 0
 	int i = 0;
 	while (i < size) {
 		if ((i & 0xf) == 0)
@@ -193,7 +193,7 @@ static void dumpData(uint8_t *data, size_t size)
 		i += sizeof(uint32_t);
 	}
 	DBG("\n");
-	/* #endif */
+#endif
 }
 
 typedef enum { sram = 0, sdram = 1 } MemType_t;
@@ -234,7 +234,7 @@ static int loadSecData(ELFExec_t *e, ELFSection_t *s, Elf64_Shdr *h,
 			ERR("     read data fail");
 			return -1;
 		}
-		DBG("DATA: ");
+		/* DBG("DATA: "); */
 		dumpData(s->data, h->sh_size);
 	}
 	return 0;
@@ -706,7 +706,7 @@ static void do_init(ELFExec_t *e)
 		DBG("init array sh_size %d\n", sectHdr.sh_size);
 		n = sectHdr.sh_size >> 2;
 
-		entry = (entry_t **)(e->init_array.data + 0x20000);
+		entry = (entry_t **)(e->init_array.data + 0x4000000);
 		for (i = 0; i < n; i++) {
 			DBG("Processing .init_array[%d] : %08llx->%08llx\n", i,
 			    (long long)entry, (long long)*entry);
@@ -827,7 +827,10 @@ int load_elf(const char *path, LOADER_USERDATA_T *user_data,
 	unsigned long mmap_ret =
 		vm_mmap(exec->user_data->fd, addr, stat.size,
 			PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE, 0);
-	DBG("mmap ret value: %llu\n", mmap_ret);
+	DBG("mmap ret value: %llx\n", mmap_ret);
+	for (int i = 0; i < stat.size; ++i) {
+		DBG("%c", (char *)(mmap_ret + i));
+	}
 	if (initElf(exec) != 0) {
 		DBG("Invalid elf %s\n", path);
 		return -1;
