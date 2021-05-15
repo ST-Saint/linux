@@ -116,8 +116,8 @@ int main(int argc, char **argv)
 	/* test_ntid(); */
 	awid_load_so("./libsample.so", 1);
 	void (*a)(void) = 0x4000738;
-	printf("exec %llx %llx", a, *a);
+	printf("exec %llx %llx\n", a, *a);
 	a();
-	printf("exec init_done");
+	printf("exec init_done\n");
 	return 0;
 }

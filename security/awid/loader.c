@@ -832,12 +832,11 @@ int load_elf(const char *path, LOADER_USERDATA_T *user_data,
 	clearELFExec(exec);
 	exec->user_data = user_data;
 	LOADER_OPEN_FOR_RD(exec->user_data, path);
-	/* PROT_READ|PROT_WRITE     MAP_SHARED */
 	vfs_stat(path, &stat);
 	DBG("file stat size: %d\n", stat.size);
 	unsigned long mmap_ret =
 		vm_mmap(exec->user_data->fd, addr, stat.size,
-			PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE, 0);
+			PROT_READ | PROT_WRITE | PROT_EXEC, MAP_SHARED, 0);
 	DBG("mmap ret value: %llx\n", mmap_ret);
 	/* int i; */
 	/* for (i = 0; i < 1000; ++i) { */
@@ -861,7 +860,7 @@ int load_elf(const char *path, LOADER_USERDATA_T *user_data,
 		return -3;
 	}
 	DBG("relocate sections done");
-	/* do_init(exec); */
+	do_init(exec);
 	DBG("do init done");
 	*exec_ptr = exec;
 	return 0;
