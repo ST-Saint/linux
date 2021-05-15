@@ -184,7 +184,7 @@ static uint32_t swabo(uint32_t hl)
 
 static void dumpData(uint8_t *data, size_t size)
 {
-#if 0
+	/* #if 0 */
 	int i = 0;
 	while (i < size) {
 		if ((i & 0xf) == 0)
@@ -193,7 +193,7 @@ static void dumpData(uint8_t *data, size_t size)
 		i += sizeof(uint32_t);
 	}
 	DBG("\n");
-#endif
+	/* #endif */
 }
 
 typedef enum { sram = 0, sdram = 1 } MemType_t;
@@ -224,6 +224,8 @@ static int loadSecData(ELFExec_t *e, ELFSection_t *s, Elf64_Shdr *h,
 			*p++ = 0;
 		}
 	} else {
+		DBG("load section data at offset: %llx size: %x", h->sh_offset,
+		    h->sh_size);
 		if (LOADER_SEEK_FROM_START(e->user_data, h->sh_offset) != 0) {
 			ERR("    seek fail");
 			freeSection(s);
@@ -492,6 +494,7 @@ static int placeInfo(ELFExec_t *e, Elf64_Shdr *sh, const char *name, int n)
 		e->sdram_bss.secIdx = n;
 		return FoundSDRamBss;
 	} else if (LOADER_STREQ(name, ".init_array")) {
+		DBG("load section data init_array");
 		if (loadSecData(e, &e->init_array, sh, sram) == -1)
 			return FoundERROR;
 		e->init_array.secIdx = n;
