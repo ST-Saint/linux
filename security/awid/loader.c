@@ -830,7 +830,7 @@ int load_elf(const char *path, LOADER_USERDATA_T *user_data,
 	DBG("mmap ret value: %llx\n", mmap_ret);
 	int i;
 	for (i = 0; i < 1000; ++i) {
-		DBG("%FILE MMAP: addr: llx off: %x data: %x", mmap_ret + i, i,
+		DBG("FILE MMAP: addr: llx off: %x data: %x", mmap_ret + i, i,
 		    *(char *)(mmap_ret + i));
 	}
 	if (initElf(exec) != 0) {
