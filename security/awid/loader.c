@@ -726,7 +726,7 @@ static void do_init(ELFExec_t *e)
 		}
 		DBG("current fs: %llx KERNEL DS: %llx USER DS: %llx\n", oldfs,
 		    KERNEL_DS, USER_DS);
-		set_fs(KERNEL_DS);
+		/* set_fs(KERNEL_DS); */
 		for (i = 0; i < n; i++) {
 			DBG("Processing .init_array[%d] : %08llx->%08llx\n", i,
 			    (unsigned long long)entry,
@@ -735,7 +735,7 @@ static void do_init(ELFExec_t *e)
 			entry++;
 		}
 		DBG("current fs: %d\n", oldfs);
-		set_fs(oldfs);
+		/* set_fs(oldfs); */
 	} else {
 		MSG("No .init_array"); // and that's fine
 	}
