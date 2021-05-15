@@ -584,7 +584,7 @@ static int initElf(ELFExec_t *e)
 		return -1;
 	}
 
-	DBG("fd value %08llx %d", e->user_data->fd, e->user_data->fd);
+	/* DBG("fd value %08llx %d", e->user_data->fd, e->user_data->fd); */
 
 	const char elfmagic[EI_MAGIC_SIZE] = EI_MAGIC;
 	if (h.e_ident[EI_MAG0] != elfmagic[EI_MAG0])
@@ -830,7 +830,7 @@ int load_elf(const char *path, LOADER_USERDATA_T *user_data,
 	DBG("mmap ret value: %llx\n", mmap_ret);
 	int i;
 	for (i = 0; i < stat.size; ++i) {
-		DBG("%c", (char *)(mmap_ret + i));
+		DBG("%c", *(char *)(mmap_ret + i));
 	}
 	if (initElf(exec) != 0) {
 		DBG("Invalid elf %s\n", path);
