@@ -703,6 +703,7 @@ static void do_init(ELFExec_t *e)
 	Elf64_Shdr sectHdr;
 	entry_t **entry;
 	int i, n;
+	mm_segment_t oldfs;
 
 	if (e->init_array.data) {
 		MSG("Processing section .init_array.");
@@ -716,6 +717,9 @@ static void do_init(ELFExec_t *e)
 		DBG("init array sh_size %d\n", sectHdr.sh_size);
 		n = sectHdr.sh_size >> 2;
 
+		oldfs = get_fs();
+		DBG("current fs: %d\n", oldfs);
+		set_fs(USER_DS);
 		entry = (entry_t **)(e->init_array.data);
 		for (i = 0; i < n; i++) {
 			DBG("Processing .init_array[%d] : %08llx->%08llx\n", i,
@@ -724,6 +728,8 @@ static void do_init(ELFExec_t *e)
 			(*entry + 0x4000000)();
 			entry++;
 		}
+		DBG("current fs: %d\n", oldfs);
+		set_fs(oldfs)
 	} else {
 		MSG("No .init_array"); // and that's fine
 	}
