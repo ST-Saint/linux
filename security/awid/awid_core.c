@@ -111,7 +111,7 @@ int awid_find_wp_slot(void)
 	return -1;
 }
 
-unsigned long awid_offset[4] = { 0x200000, 0x400000, 0x800000, 0xa00000 };
+unsigned long awid_offset[4] = { 0x2000000, 0x4000000, 0x8000000, 0xa000000 };
 
 SYSCALL_DEFINE2(awid_load_so, const char *, path, int, index)
 {
