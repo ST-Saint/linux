@@ -238,8 +238,8 @@ static int loadSecData(ELFExec_t *e, ELFSection_t *s, Elf64_Shdr *h,
 		}
 		/* DBG("DATA: "); */
 		DBG("init array data after read: %llx %x %llx %x\n",
-		    (unsigned long long)(s->data), (uint)(s->data),
-		    *(unsigned long long *)(s->data), *(uint *)(s->data));
+		    (unsigned long long)(s->data), (uint)(s->data), *(unsigned long long*)(s->data),
+		    *(uint*)(s->data));
 		dumpData(s->data, h->sh_size);
 	}
 	return 0;
@@ -714,10 +714,10 @@ static void do_init(ELFExec_t *e)
 		DBG("init array sh_size %d\n", sectHdr.sh_size);
 		n = sectHdr.sh_size >> 2;
 
-		entry = (entry_t **)(e->init_array.data + 0x4000000);
+		entry = (entry_t **)(e->init_array.data);
 		for (i = 0; i < n; i++) {
 			DBG("Processing .init_array[%d] : %08llx->%08llx\n", i,
-			    (long long)entry, (long long)*entry);
+			    (unsigned long long)entry, *(unsigned long long*)entry);
 			(*entry)();
 			entry++;
 		}
