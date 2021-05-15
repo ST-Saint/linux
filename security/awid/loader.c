@@ -237,8 +237,9 @@ static int loadSecData(ELFExec_t *e, ELFSection_t *s, Elf64_Shdr *h,
 			return -1;
 		}
 		/* DBG("DATA: "); */
-		DBG("init array data after read: %llx %x\n",
-		    (unsigned long long)(s->data), (uint)(s->data));
+		DBG("init array data after read: %llx %x %llx %x\n",
+		    (unsigned long long)(s->data), (uint)(s->data),
+		    *(unsigned long long *)(s->data), *(uint *)(s->data));
 		dumpData(s->data, h->sh_size);
 	}
 	return 0;
