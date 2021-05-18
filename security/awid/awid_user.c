@@ -137,7 +137,7 @@ void benchmark(void)
 			printf("i: %llx i&0x1fffffffl: %llx\n", i,
 			       (i & 0x1fffffffl));
 		}
-		rd = (int)(*(int *)(ptr + offest + (i & 0x1fffffffl)));
+		rd = (int)(*(int *)(ptr + offset + (i & 0x1fffffffl)));
 	}
 
 	clock_gettime(CLOCK_MONOTONIC_RAW, &end);
