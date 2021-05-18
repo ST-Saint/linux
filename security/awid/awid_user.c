@@ -113,14 +113,13 @@ void benchmark(void)
 {
 	// one hwp len = 1 read
 	int ret, rd, wt;
-	int **ptr;
-	long long i, loop = (long long)100;
+	long long i, loop = (long long)(1e5);
 	struct timespec start, end;
 	uint64_t delta_us;
-	int *arr;
+	int *arr, ptr;
 
 	arr = (int *)malloc(0x20000000ul);
-	ptr = &arr;
+	ptr = arr;
 
 	printf("get address %llx\n", &arr);
 	ret = syscall(__NR_register_watchpoint, (unsigned long long)(ptr),
