@@ -113,7 +113,7 @@ void benchmark(void)
 {
 	// one hwp len = 1 read
 	int ret, rd, wt;
-	long long i, loop = 0x4000000ll, interval = 0xffffffll;
+	long long i, loop = 0xf000000ll, interval = 0xffffffll;
 	struct timespec start, end;
 	double delta_us;
 	int *arr, *ptr, offset = 0x200;
@@ -134,7 +134,7 @@ void benchmark(void)
 	printf("Get start clock %ld %ld\n", start.tv_sec, start.tv_nsec);
 	for (i = offset; i < loop; ++i) {
 		if ((i & interval) == 0) {
-			printf("i: %lld i&0x1fffffffl: %lld\n", i,
+			printf("i: %llx i&0x1fffffffl: %llx\n", i,
 			       (i & 0x1fffffffl));
 		}
 		rd = (int)(*(int *)(ptr + (i & 0x1fffffffl)));
