@@ -238,9 +238,9 @@ static int hw_breakpoint_control(struct perf_event *bp,
 				 enum hw_breakpoint_ops ops)
 {
 	printk("--------------------------------------------------");
-	printk("hw_breakpoint_control bf dump op: %d preemtp count: %d\n", ops,
-	       preempt_count());
-	dump_stack();
+	/* printk("hw_breakpoint_control bf dump op: %d preemtp count: %d\n", ops, */
+	/*        preempt_count()); */
+	/* dump_stack(); */
 	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
 	struct perf_event **slots;
 	struct debug_info *debug_info = &current->thread.debug;
@@ -296,9 +296,9 @@ static int hw_breakpoint_control(struct perf_event *bp,
 		disable_debug_monitors(dbg_el);
 		break;
 	}
-	printk("hw_breakpoint_control af dump op: %d preemtp count: %d\n", ops,
-	       preempt_count());
-	printk("--------------------------------------------------\n\n");
+	/* printk("hw_breakpoint_control af dump op: %d preemtp count: %d\n", ops, */
+	/*        preempt_count()); */
+	/* printk("--------------------------------------------------\n\n"); */
 	return 0;
 }
 
