@@ -115,7 +115,7 @@ void benchmark(void)
 	int ret, rd, wt;
 	long long i, loop = (long long)(1e5);
 	struct timespec start, end;
-	uint64_t delta_us;
+	double delta_us;
 	int *arr, *ptr, offset = 0x200;
 
 	arr = (int *)malloc(0x20000000ul);
@@ -138,9 +138,9 @@ void benchmark(void)
 
 	clock_gettime(CLOCK_MONOTONIC_RAW, &end);
 	printf("Get end clock %ld %ld\n", end.tv_sec, end.tv_nsec);
-	delta_us = (end.tv_sec - start.tv_sec) * 1000000 +
-		   (end.tv_nsec - start.tv_nsec) / 1000;
-	printf("delta time: %ld us\n", delta_us);
+	delta_us = (end.tv_sec - start.tv_sec) +
+		   (double)(end.tv_nsec - start.tv_nsec) / 1000000;
+	printf("delta time: %.8lf s\n", delta_us);
 }
 
 extern int awid_load_so(const char *path, int index);
