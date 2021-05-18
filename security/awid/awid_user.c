@@ -126,12 +126,14 @@ void benchmark(void)
 		return;
 	}
 
+	printf("Get start clock\n");
 	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
 
 	for (i = 0; i < loop; ++i) {
-		rd = *(ptr + i);
+		/* rd = *(ptr + i); */
 	}
 
+	printf("Get end clock\n");
 	clock_gettime(CLOCK_MONOTONIC_RAW, &end);
 	delta_us = (end.tv_sec - start.tv_sec) * 1000000 +
 		   (end.tv_nsec - start.tv_nsec) / 1000;
