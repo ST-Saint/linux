@@ -134,7 +134,7 @@ void benchmark(void)
 	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
 	printf("Get start clock %ld %ld\n", start.tv_sec, start.tv_nsec);
 	for (i = 10; i < loop; ++i) {
-		rd = *(ptr + i);
+		rd = (int)(*(int *)(ptr + i));
 	}
 
 	printf("Get end clock\n");
