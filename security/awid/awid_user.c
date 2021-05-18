@@ -1,4 +1,5 @@
 /* #include "awid_nluser.h" */
+#include <sys/time.h>
 #include "awid_core.h"
 #include "loader.h"
 #include <dlfcn.h>
@@ -108,16 +109,45 @@ void test_ntid(void)
 	}
 }
 
+void benchmark(void)
+{
+	// one hwp len = 1 read
+	int ret, rd, wt;
+	int *ptr = 0x80000000;
+	long long i, loop = (long long)1e7;
+	struct timespec start, end;
+	uint64_t delta_us;
+
+	ret = syscall(__NR_register_watchpoint, (unsigned long long)(ptr),
+		      HW_BREAKPOINT_LEN_1, HW_BREAKPOINT_R);
+
+	if (ret) {
+		printf("register hwp error: %d\n", ret);
+		return;
+	}
+
+	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+
+	for (i = 0; i < loop; ++i) {
+		rd = *(ptr + i);
+	}
+
+	clock_gettime(CLOCK_MONOTONIC_RAW, &end);
+	delta_us = (end.tv_sec - start.tv_sec) * 1000000 +
+		   (end.tv_nsec - start.tv_nsec) / 1000;
+}
+
 extern int awid_load_so(const char *path, int index);
 
 int main(int argc, char **argv)
 {
 	/* pthread_t ntid; */
 	/* test_ntid(); */
-	awid_load_so("./libsample.so", 1);
-	void (*a)(void) = 0x4000738;
-	printf("exec %llx %llx\n", a, *a);
-	a();
-	printf("exec init_done\n");
+	benchmark();
+	/* awid_load_so("./libsample.so", 1); */
+	/* void (*a)(void) = 0x4000738; */
+	/* printf("exec %llx %llx\n", a, *a); */
+	/* a(); */
+	/* printf("exec init_done\n"); */
 	return 0;
 }
