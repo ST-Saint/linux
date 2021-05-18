@@ -133,10 +133,10 @@ void benchmark(void)
 	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
 	printf("Get start clock %ld %ld\n", start.tv_sec, start.tv_nsec);
 	for (i = 0; i < loop; ++i) {
-		if ((i & interval) == 0) {
-			printf("i: %llx i&0x1fffffffl: %llx\n", i,
-			       (i & 0x1fffffffl));
-		}
+		/* if ((i & interval) == 0) { */
+		/* 	printf("i: %llx i&0x1fffffffl: %llx\n", i, */
+		/* 	       (i & 0x1fffffffl)); */
+		/* } */
 		rd = (int)(*(int *)(ptr + offset + (i & 0x1fffffffl)));
 	}
 
