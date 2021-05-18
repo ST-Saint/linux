@@ -113,11 +113,16 @@ void benchmark(void)
 {
 	// one hwp len = 1 read
 	int ret, rd, wt;
-	int *ptr = 0x80000000;
-	long long i, loop = (long long)1e7;
+	int **ptr;
+	long long i, loop = (long long)100;
 	struct timespec start, end;
 	uint64_t delta_us;
+	int *arr;
 
+	arr = (int *)malloc(0x20000000ul);
+	ptr = &arr;
+
+	printf("get address %llx\n", &arr);
 	ret = syscall(__NR_register_watchpoint, (unsigned long long)(ptr),
 		      HW_BREAKPOINT_LEN_1, HW_BREAKPOINT_R);
 
@@ -129,7 +134,7 @@ void benchmark(void)
 	printf("Get start clock");
 	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
 	printf("Get start clock %ld %ld\n", start.tv_sec, start.tv_nsec);
-	for (i = 0; i < 10; ++i) {
+	for (i = 10; i < loop; ++i) {
 		rd = *(ptr + i);
 	}
 
