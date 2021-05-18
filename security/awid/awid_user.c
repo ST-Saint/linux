@@ -130,18 +130,17 @@ void benchmark(void)
 		return;
 	}
 
-	printf("Get start clock");
 	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
 	printf("Get start clock %ld %ld\n", start.tv_sec, start.tv_nsec);
 	for (i = offset; i < loop; ++i) {
 		rd = (int)(*(int *)(ptr + (i & 0x1fffffffl)));
 	}
 
-	printf("Get end clock\n");
 	clock_gettime(CLOCK_MONOTONIC_RAW, &end);
+	printf("Get end clock %ld %ld\n", end.tv_sec, end.tv_nsec);
 	delta_us = (end.tv_sec - start.tv_sec) * 1000000 +
 		   (end.tv_nsec - start.tv_nsec) / 1000;
-	printf("delta time: %.8f us\n", delta_us);
+	printf("delta time: %ld us\n", delta_us);
 }
 
 extern int awid_load_so(const char *path, int index);
