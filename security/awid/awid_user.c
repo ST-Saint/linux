@@ -113,12 +113,12 @@ void benchmark(void)
 {
 	// one hwp len = 1 read
 	int ret, rd, wt;
-	long long i, loop = 0xf000000ll, interval = 0xffffffll;
+	long long i, loop = 0xf0000000ll, interval = 0xffffffll;
 	struct timespec start, end;
 	double delta_us;
 	int *arr, *ptr, offset = 0x200;
 
-	arr = (int *)malloc(0x20000000ul);
+	arr = (int *)malloc(0x80000000ul);
 	ptr = arr;
 
 	printf("get address %llx\n", &arr);
@@ -132,12 +132,12 @@ void benchmark(void)
 
 	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
 	printf("Get start clock %ld %ld\n", start.tv_sec, start.tv_nsec);
-	for (i = offset; i < loop; ++i) {
+	for (i = 0; i < loop; ++i) {
 		if ((i & interval) == 0) {
 			printf("i: %llx i&0x1fffffffl: %llx\n", i,
 			       (i & 0x1fffffffl));
 		}
-		rd = (int)(*(int *)(ptr + (i & 0x1fffffffl)));
+		rd = (int)(*(int *)(ptr + offest + (i & 0x1fffffffl)));
 	}
 
 	clock_gettime(CLOCK_MONOTONIC_RAW, &end);
