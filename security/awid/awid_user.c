@@ -116,7 +116,7 @@ void benchmark(void)
 	long long i, loop = (long long)(1e5);
 	struct timespec start, end;
 	uint64_t delta_us;
-	int *arr, ptr;
+	int *arr, *ptr;
 
 	arr = (int *)malloc(0x20000000ul);
 	ptr = arr;
