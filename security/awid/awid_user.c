@@ -1,5 +1,5 @@
 /* #include "awid_nluser.h" */
-#include <sys/time.h>
+#include <time.h>
 #include "awid_core.h"
 #include "loader.h"
 #include <dlfcn.h>
@@ -126,11 +126,11 @@ void benchmark(void)
 		return;
 	}
 
-	printf("Get start clock\n");
+	printf("Get start clock");
 	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
-
-	for (i = 0; i < loop; ++i) {
-		/* rd = *(ptr + i); */
+	printf("Get start clock %ld %ld\n", start.tv_sec, start.tv_nsec);
+	for (i = 0; i < 10; ++i) {
+		rd = *(ptr + i);
 	}
 
 	printf("Get end clock\n");
