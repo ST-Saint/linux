@@ -116,7 +116,7 @@ void benchmark(void)
 	long long i, loop = (long long)(1e5);
 	struct timespec start, end;
 	uint64_t delta_us;
-	int *arr, *ptr;
+	int *arr, *ptr, offset = 0x200;
 
 	arr = (int *)malloc(0x20000000ul);
 	ptr = arr;
@@ -133,8 +133,8 @@ void benchmark(void)
 	printf("Get start clock");
 	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
 	printf("Get start clock %ld %ld\n", start.tv_sec, start.tv_nsec);
-	for (i = 10; i < loop; ++i) {
-		rd = (int)(*(int *)(ptr + i));
+	for (i = offset; i < loop; ++i) {
+		rd = (int)(*(int *)(ptr + (i & 0x1fffffffl)));
 	}
 
 	printf("Get end clock\n");
