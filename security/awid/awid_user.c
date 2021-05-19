@@ -136,6 +136,7 @@ void test_serial(int hwp_num, unsigned long long addr,
 	delta_us = (end.tv_sec - start.tv_sec) +
 		   (double)(end.tv_nsec - start.tv_nsec) / 1000000000;
 	printf("delta time: %.8lf s\n", delta_us);
+	syscall(__NR_watchpoint_clear);
 }
 
 void test_random(int hwp_num, unsigned long long addr,
@@ -170,7 +171,7 @@ void test_random(int hwp_num, unsigned long long addr,
 void benchmark(void)
 {
 	// one hwp len = 1 read
-	long long i, hwp_num, loop = 0xf0000000ll, interval = 0xffffffll;
+	long long i, hwp_num, loop = 0xf000000ll, interval = 0xffffffll;
 	int *arr, *ptr, offset = 0x200;
 
 	arr = (int *)malloc(0x80000000ul);
