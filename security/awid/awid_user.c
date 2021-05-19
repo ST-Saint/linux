@@ -1,4 +1,5 @@
 /* #include "awid_nluser.h" */
+#include "linux/hw_breakpoint.h"
 #include <time.h>
 #include "awid_core.h"
 #include "loader.h"
@@ -109,42 +110,72 @@ void test_ntid(void)
 	}
 }
 
+void test_serial(int hwp_num, unsigned long long addr,
+		 enum HW_BREAKPOINT_LEN hwp_len,
+		 enum HW_BREAKPOINT_TYPE hwp_type, long long loop)
+{
+	struct timespec start, end;
+	int ret, i;
+	double delta_us;
+	long long offset;
+	for (i = 0; i < hwp_num; ++i) {
+		ret = syscall(__NR_register_watchpoint, addr, hwp_len,
+			      hwp_type);
+		if (ret) {
+			printf("register hwp error: %d\n", ret);
+			return;
+		}
+	}
+	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+	/* printf("Get start clock %ld %ld\n", start.tv_sec, start.tv_nsec); */
+	clock_gettime(CLOCK_MONOTONIC_RAW, &end);
+	/* printf("Get end clock %ld %ld\n", end.tv_sec, end.tv_nsec); */
+	for (i = 0; i < loop; ++i) {
+		rd = (int)(*(int *)(addr + offset + (i & 0x1fffffffl)));
+	}
+	delta_us = (end.tv_sec - start.tv_sec) +
+		   (double)(end.tv_nsec - start.tv_nsec) / 1000000000;
+	printf("delta time: %.8lf s\n", delta_us);
+}
+
+void test_random(int hwp_num, unsigned long long addr,
+		 enum HW_BREAKPOINT_LEN hwp_len,
+		 enum HW_BREAKPOINT_TYPE hwp_type, long long loop)
+{
+	struct timespec start, end;
+	int ret, i;
+	double delta_us;
+	long long offset;
+	for (i = 0; i < hwp_num; ++i) {
+		ret = syscall(__NR_register_watchpoint, addr, hwp_len,
+			      hwp_type);
+		if (ret) {
+			printf("register hwp error: %d\n", ret);
+			return;
+		}
+	}
+	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+	/* printf("Get start clock %ld %ld\n", start.tv_sec, start.tv_nsec); */
+	clock_gettime(CLOCK_MONOTONIC_RAW, &end);
+	/* printf("Get end clock %ld %ld\n", end.tv_sec, end.tv_nsec); */
+	for (i = 0; i < loop; ++i) {
+		rd = (int)(*(int *)(addr + offset + (i & 0x1fffffffl)));
+	}
+	delta_us = (end.tv_sec - start.tv_sec) +
+		   (double)(end.tv_nsec - start.tv_nsec) / 1000000000;
+	printf("delta time: %.8lf s\n", delta_us);
+	srand(time(0));
+}
+
 void benchmark(void)
 {
 	// one hwp len = 1 read
-	int ret, rd, wt;
 	long long i, loop = 0xf0000000ll, interval = 0xffffffll;
-	struct timespec start, end;
-	double delta_us;
 	int *arr, *ptr, offset = 0x200;
 
 	arr = (int *)malloc(0x80000000ul);
 	ptr = arr;
-
 	printf("get address %llx\n", &arr);
-	ret = syscall(__NR_register_watchpoint, (unsigned long long)(ptr),
-		      HW_BREAKPOINT_LEN_1, HW_BREAKPOINT_R);
-
-	if (ret) {
-		printf("register hwp error: %d\n", ret);
-		return;
-	}
-
-	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
-	printf("Get start clock %ld %ld\n", start.tv_sec, start.tv_nsec);
-	for (i = 0; i < loop; ++i) {
-		/* if ((i & interval) == 0) { */
-		/* 	printf("i: %llx i&0x1fffffffl: %llx\n", i, */
-		/* 	       (i & 0x1fffffffl)); */
-		/* } */
-		rd = (int)(*(int *)(ptr + offset + (i & 0x1fffffffl)));
-	}
-
-	clock_gettime(CLOCK_MONOTONIC_RAW, &end);
-	printf("Get end clock %ld %ld\n", end.tv_sec, end.tv_nsec);
-	delta_us = (end.tv_sec - start.tv_sec) +
-		   (double)(end.tv_nsec - start.tv_nsec) / 1000000000;
-	printf("delta time: %.8lf s\n", delta_us);
 }
 
 extern int awid_load_so(const char *path, int index);

@@ -861,11 +861,13 @@ __SYSCALL(__NR_awid_load_so, sys_awid_load_so)
 
 #define __NR_register_watchpoint 441
 __SYSCALL(__NR_register_watchpoint, sys_register_watchpoint)
-#define __NR_watchpoint_trigger 442
+#define __NR_watchpoint_clear 442
+__SYSCALL(__NR_watchpoint_clear, sys_watchpoint_clear)
+#define __NR_watchpoint_trigger 443
 __SYSCALL(__NR_watchpoint_trigger, sys_watchpoint_trigger)
 
 #undef __NR_syscalls
-#define __NR_syscalls 443
+#define __NR_syscalls 444
 
 /*
  * 32 bit systems traditionally used different

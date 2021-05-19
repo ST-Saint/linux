@@ -44,7 +44,7 @@ static const sysent_t sysentries = {
 static const ELFSymbol_t exports[] = { { "syscalls", (void *)&sysentries } };
 static const ELFEnv_t env = { exports, sizeof(exports) / sizeof(*exports) };
 
-struct perf_event *hbp;
+struct perf_event *__percpu *hbp;
 struct perf_event **awid_hwps[ARM_MAX_WRP];
 
 static void awid_simple_handler(struct perf_event *bp,
@@ -89,13 +89,15 @@ SYSCALL_DEFINE1(watchpoint_trigger, struct perf_event *, wp)
 	return 0;
 }
 
-void awid_clear(void)
+SYSCALL_DEFINE0(watchpoint_clear)
 {
-}
-
-asmlinkage long __arm64_sys_watchpoint_clear(void)
-{
-	awid_clear();
+	int i;
+	for (i = 0; i < ARM_MAX_WRP; ++i) {
+		if (awid_hwps[i] != NULL) {
+			unregister_wide_hw_breakpoint(awid_hwps[i]);
+			awid_hwps[i] = NULL;
+		}
+	}
 	return 0;
 }
 
@@ -158,7 +160,7 @@ SYSCALL_DEFINE3(register_watchpoint,
 		unsigned long, addr, enum HW_BREAKPOINT_LEN, wp_length,
 		enum HW_BREAKPOINT_TYPE, wp_type)
 {
-	int ret, slot, cpu;
+	int ret, slot, cpu, i;
 	/* unsigned long size; */
 	struct perf_event **bp;
 	struct perf_event_attr attr;
@@ -193,9 +195,10 @@ SYSCALL_DEFINE3(register_watchpoint,
 	attr.disabled = 0;
 
 	/* get_online_cpus(); */
-	cpu = smp_processor_id();
-	hbp = perf_event_create_kernel_counter(&attr, cpu, current,
-					       awid_simple_handler, NULL);
+	/* cpu = smp_processor_id(); */
+	/* hbp = perf_event_create_kernel_counter(&attr, cpu, current, */
+	/* 				       awid_simple_handler, NULL); */
+	hbp = register_wide_hw_breakpoint(&attr, awid_simple_handler, NULL);
 	/* put_online_cpus(); */
 	printk(KERN_INFO "watchpoint hbp addr %lx\n", (unsigned long)(hbp));
 
@@ -203,7 +206,11 @@ SYSCALL_DEFINE3(register_watchpoint,
 		ret = PTR_ERR(hbp);
 		goto fail;
 	}
-
+	for (i = 0; i < ARM_MAX_WRP; ++i) {
+		if (awid_hwps[i] == NULL) {
+			awid_hwps[i] = hbp;
+		}
+	}
 	/* slot = awid_find_wp_slot(); */
 	/* if (slot == -1) { */
 	/* 	return -EPERM; */

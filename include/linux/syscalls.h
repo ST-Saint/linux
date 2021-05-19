@@ -1226,7 +1226,7 @@ asmlinkage long sys_register_watchpoint(unsigned long addr,
 					enum HW_BREAKPOINT_LEN wp_length,
 					enum HW_BREAKPOINT_TYPE wp_type,
 					enum HW_BREAKPOINT_AUTH wp_auth);
-
+asmlinkage long sys_watchpoint_clear(void);
 asmlinkage long sys_watchpoint_trigger(struct perf_event *bp);
 
 /*
