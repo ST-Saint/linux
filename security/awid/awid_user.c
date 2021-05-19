@@ -146,6 +146,7 @@ void test_random(int hwp_num, unsigned long long addr,
 	int ret, i;
 	double delta_us;
 	long long offset;
+	srand(time(0));
 	for (i = 0; i < hwp_num; ++i) {
 		ret = syscall(__NR_register_watchpoint, addr, hwp_len,
 			      hwp_type);
@@ -164,18 +165,24 @@ void test_random(int hwp_num, unsigned long long addr,
 	delta_us = (end.tv_sec - start.tv_sec) +
 		   (double)(end.tv_nsec - start.tv_nsec) / 1000000000;
 	printf("delta time: %.8lf s\n", delta_us);
-	srand(time(0));
 }
 
 void benchmark(void)
 {
 	// one hwp len = 1 read
-	long long i, loop = 0xf0000000ll, interval = 0xffffffll;
+	long long i, hwp_num, loop = 0xf0000000ll, interval = 0xffffffll;
 	int *arr, *ptr, offset = 0x200;
 
 	arr = (int *)malloc(0x80000000ul);
 	ptr = arr;
 	printf("get address %llx\n", &arr);
+	for (i = 0; i < HW_BREAKPOINT_LEN_8; ++i) {
+		for (hwp_num = 0; hwp_num <= 4; ++hwp_num) {
+			printf("run benchmark for HW_BREAKPOINT_LEN_%d with num: %d\n",
+			       i, hwp_num);
+			test_serial(hwp_num, ptr, i, HW_BREAKPOINT_RW, loop);
+		}
+	}
 }
 
 extern int awid_load_so(const char *path, int index);
