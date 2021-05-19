@@ -115,7 +115,7 @@ void test_serial(int hwp_num, unsigned long long addr,
 		 enum HW_BREAKPOINT_TYPE hwp_type, long long loop)
 {
 	struct timespec start, end;
-	int ret, i;
+	int ret, i, rd, wt;
 	double delta_us;
 	long long offset;
 	for (i = 0; i < hwp_num; ++i) {
@@ -143,7 +143,7 @@ void test_random(int hwp_num, unsigned long long addr,
 		 enum HW_BREAKPOINT_TYPE hwp_type, long long loop)
 {
 	struct timespec start, end;
-	int ret, i;
+	int ret, i, rd, wt;
 	double delta_us;
 	long long offset;
 	srand(time(0));
