@@ -163,6 +163,7 @@ void test_random(int hwp_num, unsigned long long addr,
 	/* printf("Get end clock %ld %ld\n", end.tv_sec, end.tv_nsec); */
 	delta_us = (end.tv_sec - start.tv_sec) +
 		   (double)(end.tv_nsec - start.tv_nsec) / 1000000000;
+	printf("delta time: %.8lf s\n", delta_us);
 }
 
 void benchmark(void)
