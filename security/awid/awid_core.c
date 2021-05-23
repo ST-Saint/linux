@@ -169,7 +169,6 @@ SYSCALL_DEFINE3(register_watchpoint,
 	       "syscall func. cpu: %d, My pid: %d, tgid: %d, comm: %s, uid: %d, euid: %d\n",
 	       smp_processor_id(), current->pid, current->tgid, current->comm,
 	       current->cred->uid.val, current->cred->euid.val);
-	printk("\n");
 
 	printk("addr: %lx length: %d type: %d\n", addr, wp_length, wp_type);
 	hw_breakpoint_init(&attr);
