@@ -119,8 +119,8 @@ void test_serial(int hwp_num, unsigned long long addr,
 	double delta_us;
 	long long offset;
 	for (i = 0; i < hwp_num && hwp_len; ++i) {
-		printf(" register ") ret = syscall(__NR_register_watchpoint,
-						   addr, hwp_len, hwp_type);
+		ret = syscall(__NR_register_watchpoint, addr, hwp_len,
+			      hwp_type);
 		if (ret) {
 			printf("register hwp error: %d\n", ret);
 			return;
