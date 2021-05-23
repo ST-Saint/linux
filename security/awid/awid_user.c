@@ -128,11 +128,11 @@ void test_serial(int hwp_num, unsigned long long addr,
 	}
 	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
 	/* printf("Get start clock %ld %ld\n", start.tv_sec, start.tv_nsec); */
-	clock_gettime(CLOCK_MONOTONIC_RAW, &end);
-	/* printf("Get end clock %ld %ld\n", end.tv_sec, end.tv_nsec); */
 	for (i = 0; i < loop; ++i) {
 		rd = (int)(*(int *)(addr + offset + (i & 0x1fffffffl)));
 	}
+	clock_gettime(CLOCK_MONOTONIC_RAW, &end);
+	/* printf("Get end clock %ld %ld\n", end.tv_sec, end.tv_nsec); */
 	delta_us = (end.tv_sec - start.tv_sec) +
 		   (double)(end.tv_nsec - start.tv_nsec) / 1000000000;
 	printf("delta time: %.8lf s\n", delta_us);
@@ -158,11 +158,11 @@ void test_random(int hwp_num, unsigned long long addr,
 	}
 	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
 	/* printf("Get start clock %ld %ld\n", start.tv_sec, start.tv_nsec); */
-	clock_gettime(CLOCK_MONOTONIC_RAW, &end);
-	/* printf("Get end clock %ld %ld\n", end.tv_sec, end.tv_nsec); */
 	for (i = 0; i < loop; ++i) {
 		rd = (int)(*(int *)(addr + offset + (i & 0x1fffffffl)));
 	}
+	clock_gettime(CLOCK_MONOTONIC_RAW, &end);
+	/* printf("Get end clock %ld %ld\n", end.tv_sec, end.tv_nsec); */
 	delta_us = (end.tv_sec - start.tv_sec) +
 		   (double)(end.tv_nsec - start.tv_nsec) / 1000000000;
 	printf("delta time: %.8lf s\n", delta_us);
