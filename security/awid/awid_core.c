@@ -211,6 +211,7 @@ SYSCALL_DEFINE3(register_watchpoint,
 		if (awid_hwps[i] == NULL) {
 			printk(KERN_INFO "record hbp at %d\n", i);
 			awid_hwps[i] = hbp;
+			break;
 		}
 	}
 	/* slot = awid_find_wp_slot(); */
