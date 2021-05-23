@@ -112,12 +112,12 @@ void test_ntid(void)
 
 void test_serial(int hwp_num, unsigned long long addr,
 		 enum HW_BREAKPOINT_LEN hwp_len,
-		 enum HW_BREAKPOINT_TYPE hwp_type, long long loop)
+		 enum HW_BREAKPOINT_TYPE hwp_type, long long loop,
+		 long long offset)
 {
 	struct timespec start, end;
 	int ret, i, rd, wt;
 	double delta_us;
-	long long offset;
 	for (i = 0; i < hwp_num && hwp_len; ++i) {
 		ret = syscall(__NR_register_watchpoint, addr + i, hwp_len,
 			      hwp_type);
@@ -140,7 +140,8 @@ void test_serial(int hwp_num, unsigned long long addr,
 
 void test_random(int hwp_num, unsigned long long addr,
 		 enum HW_BREAKPOINT_LEN hwp_len,
-		 enum HW_BREAKPOINT_TYPE hwp_type, long long loop)
+		 enum HW_BREAKPOINT_TYPE hwp_type, long long loop,
+		 long long offset)
 {
 	struct timespec start, end;
 	int ret, i, rd, wt;
@@ -171,7 +172,7 @@ void benchmark(void)
 {
 	// one hwp len = 1 read
 	long long i, hwp_num, loop = 0xf000000ll, interval = 0xffffffll;
-	int *arr, *ptr, offset = 0x200;
+	int *arr, *ptr, offset = 0x20000;
 
 	arr = (int *)malloc(0x80000000ul);
 	ptr = arr;
@@ -180,7 +181,8 @@ void benchmark(void)
 		for (hwp_num = 4; hwp_num >= 0; --hwp_num) {
 			printf("run benchmark for HW_BREAKPOINT_LEN_%d with num: %d\n",
 			       i, hwp_num);
-			test_serial(hwp_num, ptr, i, HW_BREAKPOINT_RW, loop);
+			test_serial(hwp_num, ptr, i, HW_BREAKPOINT_RW, loop,
+				    offset);
 			syscall(__NR_watchpoint_clear);
 		}
 	}
