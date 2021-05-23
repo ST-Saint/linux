@@ -119,8 +119,8 @@ void test_serial(int hwp_num, unsigned long long addr,
 	double delta_us;
 	long long offset;
 	for (i = 0; i < hwp_num && hwp_len; ++i) {
-		ret = syscall(__NR_register_watchpoint, addr, hwp_len,
-			      hwp_type);
+		printf(" register ") ret = syscall(__NR_register_watchpoint,
+						   addr, hwp_len, hwp_type);
 		if (ret) {
 			printf("register hwp error: %d\n", ret);
 			return;
@@ -136,7 +136,6 @@ void test_serial(int hwp_num, unsigned long long addr,
 	delta_us = (end.tv_sec - start.tv_sec) +
 		   (double)(end.tv_nsec - start.tv_nsec) / 1000000000;
 	printf("delta time: %.8lf s\n", delta_us);
-	syscall(__NR_watchpoint_clear);
 }
 
 void test_random(int hwp_num, unsigned long long addr,
@@ -152,7 +151,7 @@ void test_random(int hwp_num, unsigned long long addr,
 		ret = syscall(__NR_register_watchpoint, addr, hwp_len,
 			      hwp_type);
 		if (ret) {
-			printf("register hwp error: %d\n", ret);
+			printf("register hwp error: %d id: %d\n", ret, i);
 			return;
 		}
 	}
@@ -182,6 +181,7 @@ void benchmark(void)
 			printf("run benchmark for HW_BREAKPOINT_LEN_%d with num: %d\n",
 			       i, hwp_num);
 			test_serial(hwp_num, ptr, i, HW_BREAKPOINT_RW, loop);
+			syscall(__NR_watchpoint_clear);
 		}
 	}
 }
