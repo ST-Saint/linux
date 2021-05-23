@@ -158,30 +158,35 @@ void test_random(int hwp_num, unsigned long long addr,
 	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
 	/* printf("Get start clock %ld %ld\n", start.tv_sec, start.tv_nsec); */
 	for (i = 0; i < loop; ++i) {
-		rd = (int)(*(int *)(addr + offset + (i & 0x1fffffffl)));
+		rd = (int)(*(int *)(addr + offset + (rnd[i] & 0x1fffffffl)));
 	}
 	clock_gettime(CLOCK_MONOTONIC_RAW, &end);
 	/* printf("Get end clock %ld %ld\n", end.tv_sec, end.tv_nsec); */
 	delta_us = (end.tv_sec - start.tv_sec) +
 		   (double)(end.tv_nsec - start.tv_nsec) / 1000000000;
-	printf("delta time: %.8lf s\n", delta_us);
 }
 
 void benchmark(void)
 {
 	// one hwp len = 1 read
 	long long i, hwp_num, loop = 0xf000000ll, interval = 0xffffffll;
-	int *arr, *ptr, offset = 0x20000;
+	int *arr, *rnd, *ptr, offset = 0x20000;
 
 	arr = (int *)malloc(0x80000000ul);
+	rnd = (int *)malloc(loop * sizeof(int));
+	for (i = 0; i < loop; ++i) {
+		rnd[i] = rand();
+	}
 	ptr = arr;
 	printf("get address %llx\n", &arr);
-	for (i = 0; i < HW_BREAKPOINT_LEN_8; ++i) {
+	for (i = 0; i <= HW_BREAKPOINT_LEN_8; ++i) {
 		for (hwp_num = 4; hwp_num >= 0; --hwp_num) {
 			printf("run benchmark for HW_BREAKPOINT_LEN_%d with num: %d\n",
 			       i, hwp_num);
-			test_serial(hwp_num, ptr, i, HW_BREAKPOINT_RW, loop,
-				    offset);
+			/* test_serial(hwp_num, ptr, i, HW_BREAKPOINT_RW, loop, */
+			/* 	    offset); */
+			test_random(hwp_num, ptr, i, HW_BREAKPOINT_RW, loop,
+				    offset, rnd);
 			syscall(__NR_watchpoint_clear);
 		}
 	}
