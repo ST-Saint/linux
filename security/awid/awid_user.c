@@ -177,7 +177,7 @@ void benchmark(void)
 	ptr = arr;
 	printf("get address %llx\n", &arr);
 	for (i = 0; i < HW_BREAKPOINT_LEN_8; ++i) {
-		for (hwp_num = 0; hwp_num <= 4; ++hwp_num) {
+		for (hwp_num = 4; hwp_num >= 0; --hwp_num) {
 			printf("run benchmark for HW_BREAKPOINT_LEN_%d with num: %d\n",
 			       i, hwp_num);
 			test_serial(hwp_num, ptr, i, HW_BREAKPOINT_RW, loop);

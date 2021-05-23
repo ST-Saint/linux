@@ -92,8 +92,10 @@ SYSCALL_DEFINE1(watchpoint_trigger, struct perf_event *, wp)
 SYSCALL_DEFINE0(watchpoint_clear)
 {
 	int i;
+	printk(KERN_INFO "clear watchpoint\n");
 	for (i = 0; i < ARM_MAX_WRP; ++i) {
 		if (awid_hwps[i] != NULL) {
+			printk(KERN_INFO "clear idx: %d\n", i);
 			unregister_wide_hw_breakpoint(awid_hwps[i]);
 			awid_hwps[i] = NULL;
 		}
@@ -207,6 +209,7 @@ SYSCALL_DEFINE3(register_watchpoint,
 	}
 	for (i = 0; i < ARM_MAX_WRP; ++i) {
 		if (awid_hwps[i] == NULL) {
+			printk(KERN_INFO "record hbp at %d\n", i);
 			awid_hwps[i] = hbp;
 		}
 	}
