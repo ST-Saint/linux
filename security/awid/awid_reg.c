@@ -34,12 +34,12 @@
 
 #define AARCH64_DBG_READ(N, REG, VAL)                                          \
 	do {                                                                   \
-		VAL = read_sysreg(dbg##REG##N##_el1);                          \
+		VAL = read_sysreg(dbg##REG##N##_el0);                          \
 	} while (0)
 
 #define AARCH64_DBG_WRITE(N, REG, VAL)                                         \
 	do {                                                                   \
-		write_sysreg(VAL, dbg##REG##N##_el1);                          \
+		write_sysreg(VAL, dbg##REG##N##_el0);                          \
 	} while (0)
 
 #define READ_WB_REG_CASE(OFF, N, REG, VAL)                                     \
