@@ -1,5 +1,8 @@
 #include <stdio.h>
 
+#define __stringify_1(x...) #x
+#define __stringify(x...) __stringify_1(x)
+
 #define ARM_MAX_BRP 16
 #define ARM_MAX_WRP 16
 #define AARCH64_DBG_REG_BVR 0
@@ -18,6 +21,11 @@
 #define AARCH64_DBG_READ(N, REG, VAL)                                          \
 	do {                                                                   \
 		VAL = read_sysreg(dbg##REG##N##_el1);                          \
+	} while (0)
+
+#define AARCH64_DBG_WRITE(N, REG, VAL)                                         \
+	do {                                                                   \
+		write_sysreg(VAL, dbg##REG##N##_el1);                          \
 	} while (0)
 
 #define READ_WB_REG_CASE(OFF, N, REG, VAL)                                     \
@@ -90,6 +98,7 @@ static unsigned long long read_wb_reg(int reg, int n)
 int main()
 {
 	unsigned int origin_value, control_value, check_value;
+	int i = 0;
 	origin_value = -1;
 	control_value = 0x117;
 	origin_value = read_wb_reg(AARCH64_DBG_REG_WCR, i);
