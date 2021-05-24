@@ -16,7 +16,6 @@
 #define read_sysreg(r)                                                         \
 	({                                                                     \
 		unsigned long long __val;                                      \
-		printf("mrs %0, " __stringify(r) : "=r"(__val));               \
 		asm volatile("mrs %0, " __stringify(r) : "=r"(__val));         \
 		__val;                                                         \
 	})
