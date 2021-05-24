@@ -5,11 +5,18 @@
 
 #define ARM_MAX_BRP 16
 #define ARM_MAX_WRP 16
-#define AARCH64_DBG_REG_BVR 0
 
+/* Virtual debug register bases. */
+#define AARCH64_DBG_REG_BVR 0
 #define AARCH64_DBG_REG_BCR (AARCH64_DBG_REG_BVR + ARM_MAX_BRP)
 #define AARCH64_DBG_REG_WVR (AARCH64_DBG_REG_BCR + ARM_MAX_BRP)
 #define AARCH64_DBG_REG_WCR (AARCH64_DBG_REG_WVR + ARM_MAX_WRP)
+
+/* Debug register names. */
+#define AARCH64_DBG_REG_NAME_BVR bvr
+#define AARCH64_DBG_REG_NAME_BCR bcr
+#define AARCH64_DBG_REG_NAME_WVR wvr
+#define AARCH64_DBG_REG_NAME_WCR wcr
 
 #define isb() asm volatile("isb" : : : "memory")
 
@@ -27,12 +34,12 @@
 
 #define AARCH64_DBG_READ(N, REG, VAL)                                          \
 	do {                                                                   \
-		VAL = read_sysreg(dbg##REG##N##_el0);                          \
+		VAL = read_sysreg(dbg##REG##N##_el1);                          \
 	} while (0)
 
 #define AARCH64_DBG_WRITE(N, REG, VAL)                                         \
 	do {                                                                   \
-		write_sysreg(VAL, dbg##REG##N##_el0);                          \
+		write_sysreg(VAL, dbg##REG##N##_el1);                          \
 	} while (0)
 
 #define READ_WB_REG_CASE(OFF, N, REG, VAL)                                     \
@@ -126,10 +133,9 @@ int main()
 	int i = 0;
 	origin_value = -1;
 	control_value = 0x117;
-	/* origin_value = read_wb_reg(AARCH64_DBG_REG_WCR, i); */
-	/* write_wb_reg(AARCH64_DBG_REG_WCR, i, control_value); */
-	/* check_value = read_wb_reg(AARCH64_DBG_REG_WCR, i); */
-	asm volatile("mrs r0, cpsr");
+	origin_value = read_wb_reg(AARCH64_DBG_REG_WCR, i);
+	write_wb_reg(AARCH64_DBG_REG_WCR, i, control_value);
+	check_value = read_wb_reg(AARCH64_DBG_REG_WCR, i);
 	printf("origin: %x control: %x check: %x\n", origin_value,
 	       control_value, check_value);
 	return 0;
