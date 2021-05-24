@@ -11,12 +11,19 @@
 #define AARCH64_DBG_REG_WVR (AARCH64_DBG_REG_BCR + ARM_MAX_BRP)
 #define AARCH64_DBG_REG_WCR (AARCH64_DBG_REG_WVR + ARM_MAX_WRP)
 
+#define isb() asm volatile("isb" : : : "memory")
+
 #define read_sysreg(r)                                                         \
 	({                                                                     \
 		unsigned long long __val;                                      \
 		asm volatile("mrs %0, " __stringify(r) : "=r"(__val));         \
 		__val;                                                         \
 	})
+#define write_sysreg(v, r)                                                     \
+	do {                                                                   \
+		unsigned long long __val = (unsigned long long)(v);            \
+		asm volatile("msr " __stringify(r) ", %x0" : : "rZ"(__val));   \
+	} while (0)
 
 #define AARCH64_DBG_READ(N, REG, VAL)                                          \
 	do {                                                                   \
@@ -88,11 +95,29 @@ static unsigned long long read_wb_reg(int reg, int n)
 		GEN_READ_WB_REG_CASES(AARCH64_DBG_REG_WCR,
 				      AARCH64_DBG_REG_NAME_WCR, val);
 	default:
-		pr_warn("attempt to read from unknown breakpoint register %d\n",
-			n);
+		printf("attempt to read from unknown breakpoint register %d\n",
+		       n);
 	}
 
 	return val;
+}
+
+static void write_wb_reg(int reg, int n, unsigned long long val)
+{
+	switch (reg + n) {
+		/* GEN_WRITE_WB_REG_CASES(AARCH64_DBG_REG_BVR, */
+		/* 		       AARCH64_DBG_REG_NAME_BVR, val); */
+		/* GEN_WRITE_WB_REG_CASES(AARCH64_DBG_REG_BCR, */
+		/* 		       AARCH64_DBG_REG_NAME_BCR, val); */
+		GEN_WRITE_WB_REG_CASES(AARCH64_DBG_REG_WVR,
+				       AARCH64_DBG_REG_NAME_WVR, val);
+		GEN_WRITE_WB_REG_CASES(AARCH64_DBG_REG_WCR,
+				       AARCH64_DBG_REG_NAME_WCR, val);
+	default:
+		printf("attempt to write to unknown breakpoint register %d\n",
+		       n);
+	}
+	isb();
 }
 
 int main()
