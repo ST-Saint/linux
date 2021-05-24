@@ -1,4 +1,4 @@
-#include "awid_reg.h"
+#include <stdio.h>
 
 #define ARM_MAX_BRP 16
 #define ARM_MAX_WRP 16
@@ -92,9 +92,10 @@ int main()
 	unsigned int origin_value, control_value, check_value;
 	origin_value = -1;
 	control_value = 0x117;
-	origin_value = read_wb_reg(ARM_BASE_WCR + i);
-	write_wb_reg(ARM_BASE_WCR + i, ctrl);
-	check_value = read_wb_reg(ARM_BASE_WCR + i);
+	origin_value = read_wb_reg(AARCH64_DBG_REG_WCR, i);
+	/* write_wb_reg(val_reg, i, info->address); */
+	write_wb_reg(AARCH64_DBG_REG_WCR, i, control_value);
+	check_value = read_wb_reg(AARCH64_DBG_REG_WCR, i);
 	printf("origin: %x control: %x check: %x\n", origin_value,
 	       control_value, check_value);
 	return 0;
