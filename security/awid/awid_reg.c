@@ -117,7 +117,7 @@ static void write_wb_reg(int reg, int n, unsigned long long val)
 		printf("attempt to write to unknown breakpoint register %d\n",
 		       n);
 	}
-	isb();
+	/* isb(); */
 }
 
 int main()
