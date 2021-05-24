@@ -12,8 +12,6 @@
 #define AARCH64_DBG_REG_WCR (AARCH64_DBG_REG_WVR + ARM_MAX_WRP)
 
 #define isb() asm volatile("isb" : : : "memory")
-/* asm volatile("mrs %0, " __stringify(r) : "=r"(__val)); */
-/* asm volatile("msr " __stringify(r) ", %x0" : : "rZ"(__val));   \ */
 
 #define read_sysreg(r)                                                         \
 	({                                                                     \
@@ -24,7 +22,6 @@
 #define write_sysreg(v, r)                                                     \
 	do {                                                                   \
 		unsigned long long __val = (unsigned long long)(v);            \
-		printf("msr " __stringify(r) ", %x0" : : "rZ"(__val));         \
 	} while (0)
 
 #define AARCH64_DBG_READ(N, REG, VAL)                                          \
